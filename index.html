@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<meta name="supported-color-schemes" content="light">
+<title>YNA Digital — Ratgeber Pflege</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    color-scheme:light;
+    --dust-grey:#d7d0c8; --bone:#c8c6af; --muted-teal:#95a78d; --rosy-taupe:#bd897e; --vibrant-coral:#f87666;
+    --coral-700:#d01f09; --teal-700:#5b6c53; --taupe-700:#814d42;
+    --ink:#1f2421; --paper:#ffffff; --cream:#faf8f4; --line:#e7e3dc; --text-muted:#5b6157;
+    --bg:var(--cream); --surface:var(--paper); --text:var(--ink);
+    --primary:var(--vibrant-coral); --on-primary:var(--ink); --link:var(--teal-700);
+    --font-display:'Sora',system-ui,Segoe UI,Roboto,sans-serif;
+    --font-body:'Inter',system-ui,Segoe UI,Roboto,sans-serif;
+    --font-mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+    --radius:18px; --radius-sm:14px;
+    --focus:0 0 0 3px #faf8f4,0 0 0 6px var(--teal-700);
+    --shadow:0 1px 1px rgba(31,36,33,.03), 0 18px 36px -20px rgba(31,36,33,.2);
+    --shadow-lg:0 1px 1px rgba(31,36,33,.04), 0 28px 50px -22px rgba(31,36,33,.28);
+    --glass:rgba(255,255,255,.76);
+    --glass-strong:rgba(255,255,255,.9);
+    --glass-border:rgba(255,255,255,.8);
+    --ease:cubic-bezier(.22,1,.36,1);
+    --header-h:148px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth;background:#faf8f4!important}
+  body{
+    margin:0;color:#1f2421!important;font-family:var(--font-body);font-size:18px;line-height:1.65;
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+    position:relative;
+    background:#faf8f4!important;
+  }
+  h1,h2,h3{font-family:var(--font-display);line-height:1.18;letter-spacing:-.01em;margin:0}
+  a{color:var(--link)}
+  ::selection{background:#f8766633;color:var(--ink)}
+  :focus-visible{outline:none;box-shadow:var(--focus);border-radius:6px}
+  .skip-link{position:absolute;left:-9999px;top:0;background:var(--ink);color:var(--cream);padding:12px 18px;border-radius:0 0 10px 0;font-weight:600;font-size:15px;z-index:100;border:0;cursor:pointer;font-family:inherit;-webkit-appearance:none;appearance:none}
+  .skip-link:focus{left:0}
+  .gradient-rule{height:6px;border:0;margin:0;position:relative;z-index:2;
+    background:linear-gradient(90deg,var(--dust-grey),var(--bone),var(--muted-teal),var(--rosy-taupe),var(--vibrant-coral),var(--dust-grey));
+    background-size:200% 100%;animation:shimmerBar 16s linear infinite}
+  @keyframes shimmerBar{0%{background-position:0% 0}100%{background-position:200% 0}}
+
+  /* Morphende Hintergrund-Blobs — rein dekorativ, fix positioniert, hinter dem Inhalt */
+  .bg-blobs{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+  .blob{position:absolute;filter:blur(54px);opacity:.46;will-change:transform,border-radius}
+  .blob-1{width:420px;height:420px;left:-130px;top:-90px;background:radial-gradient(circle at 35% 35%, var(--vibrant-coral), transparent 72%);
+    border-radius:46% 54% 62% 38% / 48% 42% 58% 52%;animation:morph1 26s var(--ease) infinite}
+  .blob-2{width:380px;height:380px;right:-110px;top:6%;background:radial-gradient(circle at 65% 35%, var(--muted-teal), transparent 72%);
+    border-radius:55% 45% 40% 60% / 45% 55% 45% 55%;animation:morph2 32s var(--ease) infinite}
+  .blob-3{width:360px;height:360px;left:-90px;bottom:8%;background:radial-gradient(circle at 40% 60%, var(--rosy-taupe), transparent 72%);
+    border-radius:42% 58% 56% 44% / 50% 46% 54% 50%;animation:morph3 30s var(--ease) infinite}
+  .blob-4{width:460px;height:460px;right:-150px;bottom:-130px;background:radial-gradient(circle at 60% 60%, var(--bone), transparent 72%);
+    border-radius:50% 50% 38% 62% / 55% 45% 55% 45%;animation:morph1 38s var(--ease) infinite reverse}
+  @keyframes morph1{0%,100%{border-radius:46% 54% 62% 38% / 48% 42% 58% 52%;transform:translate(0,0) scale(1)}50%{border-radius:60% 40% 38% 62% / 55% 60% 40% 45%;transform:translate(28px,-18px) scale(1.08)}}
+  @keyframes morph2{0%,100%{border-radius:55% 45% 40% 60% / 45% 55% 45% 55%;transform:translate(0,0) scale(1)}50%{border-radius:40% 60% 55% 45% / 60% 40% 60% 40%;transform:translate(-24px,22px) scale(1.06)}}
+  @keyframes morph3{0%,100%{border-radius:42% 58% 56% 44% / 50% 46% 54% 50%;transform:translate(0,0) scale(1)}50%{border-radius:58% 42% 44% 56% / 46% 54% 46% 54%;transform:translate(20px,16px) scale(1.05)}}
+
+  header.nav{position:sticky;top:0;z-index:50;background:rgba(250,248,244,.66);
+    backdrop-filter:blur(22px) saturate(180%);-webkit-backdrop-filter:blur(22px) saturate(180%);
+    border-bottom:1px solid rgba(255,255,255,.5);box-shadow:0 14px 32px -22px rgba(31,36,33,.28)}
+  .nav-inner{max-width:1080px;margin:0 auto;padding:12px 24px 0;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+  .nav-brand{display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-weight:700;font-size:18px;text-decoration:none;color:var(--ink);margin-bottom:10px;background:none;border:0;cursor:pointer;padding:0;-webkit-appearance:none;appearance:none;transition:transform .3s var(--ease)}
+  .nav-brand:hover{transform:scale(1.04)}
+  .nav-brand .sub{color:var(--teal-700);font-weight:500}
+  .badge{margin-left:auto;margin-bottom:10px;font-family:var(--font-mono);font-size:11.5px;color:var(--teal-700);
+    border:1px solid rgba(149,167,141,.35);padding:4px 9px;border-radius:99px;background:rgba(149,167,141,.12);white-space:nowrap}
+  .tabbar{max-width:1080px;margin:0 auto;padding:0 16px;display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:thin;padding-bottom:12px;list-style:none}
+  .tabbar::-webkit-scrollbar{height:6px}
+  .tabbar::-webkit-scrollbar-thumb{background:var(--bone);border-radius:99px}
+  .tab{flex:0 0 auto;font-family:var(--font-body);font-weight:600;font-size:14.5px;
+    border:1px solid rgba(255,255,255,.65);background:rgba(255,255,255,.42);color:var(--text-muted);
+    padding:10px 18px;border-radius:99px;min-height:44px;display:flex;align-items:center;white-space:nowrap;cursor:pointer;
+    -webkit-appearance:none;appearance:none;
+    box-shadow:0 1px 1px rgba(31,36,33,.03), 0 10px 20px -14px rgba(31,36,33,.2);
+    transition:transform .35s var(--ease), box-shadow .35s var(--ease), background .3s ease, color .3s ease}
+  .tab:hover{background:rgba(255,255,255,.92);color:var(--ink);transform:translateY(-3px) scale(1.035);
+    box-shadow:0 16px 28px -14px rgba(31,36,33,.3), 0 0 0 1px rgba(149,167,141,.4)}
+  .tab:active{transform:translateY(-1px) scale(.98)}
+
+  main{max-width:880px;margin:0 auto;padding:0 24px 70px;position:relative;z-index:1}
+  .topic{padding-top:54px;scroll-margin-top:var(--header-h)}
+  .eyebrow{font-family:var(--font-mono);font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--teal-700);
+    font-weight:600;display:inline-flex;align-items:center;gap:6px;background:rgba(149,167,141,.14);
+    border:1px solid rgba(149,167,141,.3);padding:6px 13px;border-radius:99px;margin-bottom:18px}
+  .lead{font-size:19px;max-width:62ch}
+  .muted{color:var(--text-muted)}
+  h2.title{font-size:clamp(1.7rem,4.4vw,2.3rem);margin-bottom:14px;color:var(--ink)}
+  #start .title{font-size:clamp(2.3rem,6.2vw,3.3rem);
+    background:linear-gradient(100deg, var(--ink) 8%, var(--teal-700) 48%, var(--coral-700) 88%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    filter:drop-shadow(0 6px 24px rgba(248,118,102,.2))}
+  section.block{padding:40px 0;border-top:1px solid rgba(31,36,33,.08);scroll-margin-top:var(--header-h)}
+  section.block:first-of-type{border-top:0}
+
+  .grid{display:grid;gap:16px}
+  .cols-2{grid-template-columns:repeat(2,1fr)}
+  .cols-3{grid-template-columns:repeat(3,1fr)}
+  .card{background:var(--glass);backdrop-filter:blur(18px) saturate(170%);-webkit-backdrop-filter:blur(18px) saturate(170%);
+    border:1px solid var(--glass-border);border-radius:var(--radius);padding:22px;
+    box-shadow:var(--shadow);transition:transform .4s var(--ease), box-shadow .4s var(--ease), background .3s ease}
+  .card:hover{transform:translateY(-4px);background:var(--glass-strong);box-shadow:var(--shadow-lg)}
+  .card h3{font-size:1.08rem;margin-bottom:8px}
+  .card p{margin:0;font-size:15.5px}
+
+  .topic-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:30px}
+  .topic-card{display:flex;flex-direction:column;align-items:flex-start;gap:8px;text-align:left;background:var(--glass);
+    backdrop-filter:blur(18px) saturate(170%);-webkit-backdrop-filter:blur(18px) saturate(170%);
+    border:1px solid var(--glass-border);border-radius:20px;padding:22px;box-shadow:var(--shadow);text-decoration:none;min-height:44px;
+    cursor:pointer;-webkit-appearance:none;appearance:none;font-family:inherit;width:100%;
+    transition:transform .45s var(--ease), box-shadow .45s var(--ease), background .3s ease}
+  .topic-card:hover{transform:translateY(-6px) rotate(-.4deg);background:var(--glass-strong);box-shadow:var(--shadow-lg)}
+  .topic-card .ic{width:42px;height:42px;border-radius:99px;display:flex;align-items:center;justify-content:center;
+    font-family:var(--font-display);font-weight:700;color:var(--ink);
+    box-shadow:0 10px 20px -10px rgba(31,36,33,.4), inset 0 1px 2px rgba(255,255,255,.5)}
+  .topic-card h3{font-size:1.05rem;margin:0;color:var(--ink)}
+  .topic-card p{margin:0;font-size:14.5px;color:var(--text-muted)}
+
+  .toc{background:var(--glass);backdrop-filter:blur(16px) saturate(170%);-webkit-backdrop-filter:blur(16px) saturate(170%);
+    border:1px solid var(--glass-border);border-radius:18px;padding:18px 22px;margin-top:24px;box-shadow:var(--shadow)}
+  .toc p{margin:0 0 10px;font-weight:600;font-family:var(--font-display);font-size:15px}
+  .toc ol{margin:0;padding:0;list-style:none;display:grid;gap:6px}
+  .toc li{display:flex;align-items:baseline;gap:10px}
+  .toc .n{font-family:var(--font-mono);color:var(--teal-700);font-weight:600;flex:0 0 20px;font-size:14px}
+  .toc .toclink{text-decoration:none;font-weight:600;color:var(--ink);padding:3px 0;font-size:15px;background:none;border:0;cursor:pointer;font-family:inherit;display:inline;-webkit-appearance:none;appearance:none;transition:color .25s ease}
+  .toc .toclink:hover{color:var(--teal-700)}
+
+  .scale-wrap{margin-top:26px}
+  .scale-bar{display:flex;height:50px;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.55);
+    box-shadow:0 20px 38px -18px rgba(31,36,33,.35), inset 0 2px 3px rgba(255,255,255,.35), inset 0 -2px 5px rgba(0,0,0,.08)}
+  .scale-bar span{display:block;height:100%}
+  .seg-0{background:var(--line)} .seg-1{background:var(--dust-grey)} .seg-2{background:var(--bone)}
+  .seg-3{background:var(--muted-teal)} .seg-4{background:var(--rosy-taupe)} .seg-5{background:var(--vibrant-coral)}
+  .scale-ticks{display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:12px;color:var(--text-muted);margin-top:6px;padding:0 1px}
+  .scale-caption{font-size:14.5px;color:var(--text-muted);margin-top:12px}
+  table.data{width:100%;border-collapse:separate;border-spacing:0;font-size:15px;margin-top:16px;
+    background:var(--glass);backdrop-filter:blur(16px) saturate(160%);-webkit-backdrop-filter:blur(16px) saturate(160%);
+    border:1px solid var(--glass-border);border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}
+  table.data th,table.data td{text-align:left;padding:12px 16px;border-bottom:1px solid rgba(31,36,33,.07)}
+  table.data tr:last-child td{border-bottom:0}
+  table.data th{font-family:var(--font-mono);font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);font-weight:500}
+  table.data td:not(:first-child),table.data th:not(:first-child){text-align:right;font-variant-numeric:tabular-nums}
+  table.data td:first-child{font-weight:700}
+  table.data tr.muted-row td{color:var(--text-muted);font-weight:400;font-style:italic}
+
+  .grade-grid{display:grid;gap:16px;margin-top:24px}
+  .grade-card{background:var(--glass);backdrop-filter:blur(18px) saturate(170%);-webkit-backdrop-filter:blur(18px) saturate(170%);
+    border:1px solid var(--glass-border);border-radius:20px;padding:24px;box-shadow:var(--shadow);
+    display:grid;grid-template-columns:56px 1fr;gap:18px;transition:transform .4s var(--ease), box-shadow .4s var(--ease), background .3s ease}
+  .grade-card:hover{transform:translateY(-4px);background:var(--glass-strong);box-shadow:var(--shadow-lg)}
+  .grade-num{width:56px;height:56px;border-radius:99px;display:flex;align-items:center;justify-content:center;
+    font-family:var(--font-display);font-weight:700;font-size:1.5rem;color:var(--ink);flex-shrink:0;
+    box-shadow:0 10px 22px -10px rgba(31,36,33,.4), inset 0 2px 4px rgba(255,255,255,.45), inset 0 -3px 6px rgba(0,0,0,.08)}
+  .grade-card h3{font-size:1.1rem;margin-bottom:3px}
+  .grade-points{font-family:var(--font-mono);font-size:13.5px;color:var(--teal-700);font-weight:600;margin-bottom:10px}
+  .grade-card p{margin:0;font-size:15.5px}
+  .grade-mini{display:flex;height:8px;border-radius:99px;overflow:hidden;margin:12px 0 14px;background:rgba(31,36,33,.06)}
+  .grade-mini span{display:block;height:100%}
+
+  .module-list{display:grid;gap:16px;margin-top:24px}
+  .module-row{display:grid;grid-template-columns:1fr auto;gap:8px 16px;align-items:baseline}
+  .module-row .name{font-weight:700;font-size:16px}
+  .module-row .pct{font-family:var(--font-mono);font-weight:600;color:var(--teal-700);font-size:15px}
+  .module-row .desc{grid-column:1/-1;font-size:15px;color:var(--text-muted);margin-top:2px}
+  .module-track{grid-column:1/-1;height:10px;border-radius:99px;background:rgba(31,36,33,.07);overflow:hidden;margin-top:4px}
+  .module-fill{height:100%;border-radius:99px;position:relative;overflow:hidden;
+    background:linear-gradient(90deg, var(--muted-teal), var(--teal-700))}
+  .module-fill::after{content:'';position:absolute;inset:0;background-size:200% 100%;
+    background-image:linear-gradient(110deg, transparent 30%, rgba(255,255,255,.45) 50%, transparent 70%);
+    animation:sheen 5s ease-in-out infinite}
+  @keyframes sheen{0%{background-position:200% 0}100%{background-position:-60% 0}}
+  .footnote{font-size:14px;color:var(--text-muted);margin-top:16px;padding-left:18px;border-left:3px solid rgba(31,36,33,.12)}
+
+  .callout{background:var(--glass);backdrop-filter:blur(16px) saturate(170%);-webkit-backdrop-filter:blur(16px) saturate(170%);
+    border:1px solid var(--glass-border);border-left:4px solid var(--muted-teal);
+    border-radius:var(--radius-sm);padding:18px 22px;margin-top:20px;font-size:15.5px;
+    box-shadow:0 1px 1px rgba(31,36,33,.03), 0 18px 34px -20px rgba(149,167,141,.4)}
+  .callout strong{font-family:var(--font-display)}
+  .callout.warn{border-left-color:var(--vibrant-coral);box-shadow:0 1px 1px rgba(31,36,33,.03), 0 18px 34px -20px rgba(248,118,102,.4)}
+
+  .step-list{display:grid;gap:0;margin-top:24px;border-radius:20px;overflow:hidden;background:var(--glass);
+    backdrop-filter:blur(18px) saturate(170%);-webkit-backdrop-filter:blur(18px) saturate(170%);
+    border:1px solid var(--glass-border);box-shadow:var(--shadow)}
+  .step{display:grid;grid-template-columns:48px 1fr;gap:16px;padding:20px 22px;border-bottom:1px solid rgba(31,36,33,.07);transition:background .3s ease}
+  .step:hover{background:rgba(149,167,141,.1)}
+  .step:last-child{border-bottom:0}
+  .step-num{width:38px;height:38px;border-radius:99px;background:linear-gradient(150deg, var(--ink), #34403a);
+    color:var(--cream);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:700;font-size:1rem;
+    box-shadow:0 8px 16px -6px rgba(31,36,33,.45), inset 0 1px 1px rgba(255,255,255,.25)}
+  .step h3{font-size:1.05rem;margin-bottom:5px}
+  .step p{margin:0;font-size:15.5px}
+
+  .faq{margin-top:20px;display:grid;gap:10px}
+  details{background:var(--glass);backdrop-filter:blur(16px) saturate(170%);-webkit-backdrop-filter:blur(16px) saturate(170%);
+    border:1px solid var(--glass-border);border-radius:16px;overflow:hidden;
+    box-shadow:var(--shadow);transition:box-shadow .35s ease, background .3s ease}
+  details[open]{background:var(--glass-strong);box-shadow:var(--shadow-lg)}
+  summary{font-family:var(--font-display);font-weight:600;font-size:16.5px;padding:16px 20px;cursor:pointer;
+    list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px}
+  summary::-webkit-details-marker{display:none}
+  summary::after{content:'+';font-family:var(--font-mono);font-size:20px;color:var(--teal-700);flex-shrink:0;
+    display:inline-block;transition:transform .4s var(--ease)}
+  details[open] summary::after{transform:rotate(45deg)}
+  details[open] summary{border-bottom:1px solid rgba(31,36,33,.08)}
+  .faq-a{padding:4px 20px 18px;font-size:15.5px;color:var(--text-muted)}
+
+  .stat{font-family:var(--font-display);font-weight:700;font-size:clamp(2.6rem,7.4vw,3.8rem);line-height:1;
+    background:linear-gradient(120deg, var(--ink), var(--teal-700) 55%, var(--coral-700));
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .stat-label{font-size:15.5px;color:var(--text-muted);margin-top:8px}
+  .stat-card{position:relative;background:rgba(255,255,255,.62);backdrop-filter:blur(22px) saturate(180%);
+    -webkit-backdrop-filter:blur(22px) saturate(180%);border:1px solid rgba(255,255,255,.8);border-radius:22px;
+    padding:30px 28px;box-shadow:0 1px 1px rgba(31,36,33,.04), 0 30px 56px -26px rgba(31,36,33,.32), inset 0 1px 0 rgba(255,255,255,.6);
+    margin-top:24px}
+
+  .motivate{margin-top:20px;padding:16px 20px 16px 54px;border-radius:var(--radius-sm);background:rgba(248,118,102,.1);
+    border:1px solid rgba(248,118,102,.28);font-size:15px;display:flex;gap:12px;align-items:flex-start;line-height:1.55;
+    position:relative}
+  .motivate .spark{display:none}
+  .motivate::before{content:'';position:absolute;left:18px;top:18px;width:18px;height:18px;
+    background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d01f09' stroke-width='2.3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='5' y1='12' x2='19' y2='12'/%3E%3Cpolyline points='13 6 19 12 13 18'/%3E%3C/svg%3E") no-repeat center/contain}
+  .motivate strong{font-family:var(--font-display);color:var(--coral-700)}
+
+  .callout{position:relative;padding-left:54px!important}
+  .callout::before{content:'';position:absolute;left:18px;top:19px;width:20px;height:20px;
+    background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235b6c53' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cline x1='12' y1='11' x2='12' y2='16'/%3E%3Ccircle cx='12' cy='7.7' r='.6' fill='%235b6c53' stroke='none'/%3E%3C/svg%3E") no-repeat center/contain}
+  .callout.warn::before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d01f09' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3L2 20h20L12 3z'/%3E%3Cline x1='12' y1='9' x2='12' y2='13.5'/%3E%3Ccircle cx='12' cy='16.5' r='.6' fill='%23d01f09' stroke='none'/%3E%3C/svg%3E") no-repeat center/contain}
+
+  .icon{display:inline-flex;flex-shrink:0}
+  .icon svg{display:block}
+
+  a.tel{font-family:var(--font-mono);font-weight:700;color:#fff;text-decoration:none;
+    background:linear-gradient(135deg, var(--coral-700), var(--taupe-700));
+    padding:13px 22px 13px 18px;border-radius:99px;white-space:nowrap;
+    font-size:1.22rem;display:inline-flex;align-items:center;gap:10px;min-height:48px;
+    box-shadow:0 1px 1px rgba(31,36,33,.04), 0 14px 28px -12px rgba(208,31,9,.5), inset 0 1px 0 rgba(255,255,255,.25);
+    transition:transform .3s var(--ease), box-shadow .3s var(--ease)}
+  a.tel:hover{transform:translateY(-2px) scale(1.03);box-shadow:0 1px 1px rgba(31,36,33,.05), 0 20px 36px -14px rgba(208,31,9,.58), inset 0 1px 0 rgba(255,255,255,.3)}
+  a.tel:active{transform:translateY(0) scale(.98)}
+  a.tel .icon svg{width:19px;height:19px}
+
+  footer{padding:44px 0 60px;color:var(--text-muted);font-size:14px;max-width:880px;margin:0 auto;padding-left:24px;padding-right:24px;position:relative;z-index:1}
+  footer .mark-mini{display:inline-block;vertical-align:middle;margin-right:8px}
+  footer .disclaimer{font-size:14.5px;color:var(--ink);background:var(--glass);backdrop-filter:blur(14px) saturate(160%);-webkit-backdrop-filter:blur(14px) saturate(160%);border:1px solid var(--glass-border);
+    border-radius:var(--radius-sm);padding:16px 20px;margin-bottom:14px;box-shadow:var(--shadow)}
+  footer .sources{font-size:13.5px;margin-bottom:14px}
+  footer a{font-weight:600}
+
+  @media (max-width:680px){
+    body{font-size:17px}
+    .cols-2,.cols-3{grid-template-columns:1fr}
+    .topic-grid{grid-template-columns:1fr}
+    .grade-card{grid-template-columns:44px 1fr}
+    .grade-num{width:44px;height:44px;font-size:1.2rem}
+    .step{grid-template-columns:38px 1fr}
+    .blob{filter:blur(34px)}
+    .blob-1,.blob-2,.blob-3,.blob-4{width:260px;height:260px}
+  }
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+  @media (prefers-color-scheme:dark){
+    :root{color-scheme:light}
+    html{background:#faf8f4!important}
+    body{color:#1f2421!important;background:#faf8f4!important}
+  }
+</style>
+</head>
+<body>
+<button type="button" class="skip-link" onclick="jump('inhalt')">Zum Inhalt springen</button>
+<hr class="gradient-rule" aria-hidden="true">
+<div class="bg-blobs" aria-hidden="true">
+  <span class="blob blob-1"></span>
+  <span class="blob blob-2"></span>
+  <span class="blob blob-3"></span>
+  <span class="blob blob-4"></span>
+</div>
+<header class="nav">
+  <div class="nav-inner">
+    <button type="button" class="nav-brand" onclick="jump('start')">
+      <svg width="26" height="26" viewBox="0 0 64 64" aria-hidden="true">
+        <g fill="none" stroke="#95a78d" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M16 15 L28 28"/><path d="M48 15 L36 28"/><path d="M32 38 L32 52"/>
+        </g><circle cx="32" cy="32" r="6.5" fill="#f87666"/>
+      </svg>
+      YNA&nbsp;<span class="sub">Digital</span>
+    </button>
+    <span class="badge">Ratgeber · Pflege</span>
+  </div>
+  <ul class="tabbar" aria-label="Themen">
+    <li><button type="button" class="tab" onclick="jump('start')">Start</button></li>
+    <li><button type="button" class="tab" onclick="jump('pflegegrad')">Pflegegrad</button></li>
+    <li><button type="button" class="tab" onclick="jump('leistungen')">Pflegegeld &amp; Leistungen</button></li>
+    <li><button type="button" class="tab" onclick="jump('entlastungsbetrag')">Entlastungsbetrag</button></li>
+    <li><button type="button" class="tab" onclick="jump('hilfsmittel')">Pflegehilfsmittel</button></li>
+    <li><button type="button" class="tab" onclick="jump('ersatzpflege')">Verhinderungs-/Kurzzeitpflege</button></li>
+    <li><button type="button" class="tab" onclick="jump('zuhause')">Zuhause organisieren</button></li>
+    <li><button type="button" class="tab" onclick="jump('demenz')">Demenz</button></li>
+    <li><button type="button" class="tab" onclick="jump('pflegedienst')">Pflegedienst finden</button></li>
+    <li><button type="button" class="tab" onclick="jump('versorgungsformen')">Versorgungsformen</button></li>
+    <li><button type="button" class="tab" onclick="jump('vorsorge')">Vorsorge &amp; Vollmacht</button></li>
+    <li><button type="button" class="tab" onclick="jump('gdb')">Schwerbehindertenausweis</button></li>
+    <li><button type="button" class="tab" onclick="jump('widerspruch-detail')">Widerspruch im Detail</button></li>
+    <li><button type="button" class="tab" onclick="jump('steuer')">Steuerliche Entlastung</button></li>
+    <li><button type="button" class="tab" onclick="jump('rente')">Rente für Pflegende</button></li>
+    <li><button type="button" class="tab" onclick="jump('pflegezeit')">Pflegezeit &amp; Beruf</button></li>
+    <li><button type="button" class="tab" onclick="jump('krankenhaus')">Nach dem Krankenhaus</button></li>
+    <li><button type="button" class="tab" onclick="jump('hospiz')">Hospiz &amp; Palliativ</button></li>
+    <li><button type="button" class="tab" onclick="jump('reha')">Reha vor Pflege</button></li>
+    <li><button type="button" class="tab" onclick="jump('pflegewg')">Pflege-WG</button></li>
+    <li><button type="button" class="tab" onclick="jump('dipa')">Digitale Pflegeanwendungen</button></li>
+    <li><button type="button" class="tab" onclick="jump('angehoerige-staerken')">Wenn die Kraft nachlässt</button></li>
+  </ul>
+</header>
+
+<main id="inhalt">
+
+  <!-- START -->
+  <section class="topic" id="start">
+    <p class="eyebrow"><span class="icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg></span>Ratgeber · Pflege verstehen</p>
+    <h2 class="title">Pflege verständlich erklärt.</h2>
+    <p class="lead">Sieben Themen, ein Klick entfernt. Wählen Sie oben in der Leiste oder hier unten, was Sie gerade brauchen — jedes Thema ist eigenständig und übersichtlich.</p>
+    <div class="motivate"><span class="spark">→</span><span><strong>Ein Gedanke vorab:</strong> Jede Leistung auf dieser Seite ist ein gesetzlich verankertes Recht, kein Almosen. Sie zu beantragen oder eine Beratungsstelle anzurufen kostet meist nur einen Anruf — und verpflichtet zu nichts.</span></div>
+    <div class="topic-grid">
+      <button type="button" class="topic-card" onclick="jump('pflegegrad')">
+        <span class="ic" style="background:var(--dust-grey)">1</span>
+        <h3>Der Pflegegrad</h3>
+        <p>Was er ist, welche fünf es gibt, wie Sie ihn beantragen.</p>
+      </button>
+      <button type="button" class="topic-card" onclick="jump('leistungen')">
+        <span class="ic" style="background:var(--bone)">2</span>
+        <h3>Pflegegeld &amp; Leistungen</h3>
+        <p>Pflegegeld, Pflegesachleistung und ihre Kombination.</p>
+      </button>
+      <button type="button" class="topic-card" onclick="jump('entlastungsbetrag')">
+        <span class="ic" style="background:var(--muted-teal)">3</span>
+        <h3>Entlastungsbetrag</h3>
+        <p>131&nbsp;€ monatlich für alle Pflegegrade — wofür einsetzbar.</p>
+      </button>
+      <button type="button" class="topic-card" onclick="jump('hilfsmittel')">
+        <span class="ic" style="background:var(--rosy-taupe)">4</span>
+        <h3>Pflegehilfsmittel</h3>
+        <p>Pflegebox, Hilfsmittel-Leihe und Zuschuss fürs Wohnumfeld.</p>
+      </button>
+      <button type="button" class="topic-card" onclick="jump('ersatzpflege')">
+        <span class="ic" style="background:var(--vibrant-coral)">5</span>
+        <h3>Verhinderungs- &amp; Kurzzeitpflege</h3>
+        <p>Ersatz, wenn Angehörige verhindert sind — gemeinsames Budget.</p>
+      </button>
+      <button type="button" class="topic-card" onclick="jump('zuhause')">
+        <span class="ic" style="background:var(--dust-grey)">6</span>
+        <h3>Zuhause organisieren</h3>
+        <p>Pflegedienst, Beratung, Kurse und Entlastung im Alltag.</p>
+      </button>
+      <button type="button" class="topic-card" onclick="jump('demenz')">
+        <span class="ic" style="background:var(--bone)">7</span>
+        <h3>Demenz und Pflegegrad</h3>
+        <p>Wie kognitive Einschränkungen in die Begutachtung einfließen.</p>
+      </button>
+      <button type="button" class="topic-card" onclick="jump('pflegedienst')">
+        <span class="ic" style="background:var(--muted-teal)">8</span>
+        <h3>Pflegedienst finden</h3>
+        <p>Den richtigen ambulanten Pflegedienst in Ihrer Nähe finden.</p>
+      </button>
+      <button type="button" class="topic-card" onclick="jump('versorgungsformen')">
+        <span class="ic" style="background:var(--rosy-taupe)">9</span>
+        <h3>Versorgungsformen</h3>
+        <p>Ambulant, teilstationär, vollstationär oder 24-Stunden-Betreuung — was passt?</p>
+      </button>
+      <button type="button" class="topic-card" onclick="jump('vorsorge')">
+        <span class="ic" style="background:var(--dust-grey)">10</span>
+        <h3>Vorsorge &amp; Vollmacht</h3>
+        <p>Patientenverfügung, Vorsorgevollmacht, Betreuungsverfügung — was wofür gilt.</p>
+      </button>
+      <button type="button" class="topic-card" onclick="jump('gdb')">
+        <span class="ic" style="background:var(--bone)">11</span>
+        <h3>Schwerbehindertenausweis</h3>
+        <p>Grad der Behinderung — unabhängig vom Pflegegrad, oft zusätzlich möglich.</p>
+      </button>
+      <button type="button" class="topic-card" onclick="jump('widerspruch-detail')">
+        <span class="ic" style="background:var(--muted-teal)">12</span>
+        <h3>Widerspruch im Detail</h3>
+        <p>Vom Widerspruch bis zur kostenfreien Klage vor dem Sozialgericht.</p>
+      </button>
+      <button type="button" class="topic-card" onclick="jump('steuer')">
+        <span class="ic" style="background:var(--rosy-taupe)">13</span>
+        <h3>Steuerliche Entlastung</h3>
+        <p>Pflegepauschbetrag, außergewöhnliche Belastungen, haushaltsnahe Dienstleistungen.</p>
+      </button>
+      <button type="button" class="topic-card" onclick="jump('rente')">
+        <span class="ic" style="background:var(--vibrant-coral)">14</span>
+        <h3>Rente für Pflegende</h3>
+        <p>Wie Pflegezeit in die eigene gesetzliche Rente einfließt.</p>
+      </button>
+      <button type="button" class="topic-card" onclick="jump('pflegezeit')">
+        <span class="ic" style="background:var(--dust-grey)">15</span>
+        <h3>Pflegezeit &amp; Beruf</h3>
+        <p>Job und Pflege vereinbaren — drei Freistellungsmodelle im Vergleich.</p>
+      </button>
+      <button type="button" class="topic-card" onclick="jump('krankenhaus')">
+        <span class="ic" style="background:var(--bone)">16</span>
+        <h3>Nach dem Krankenhaus</h3>
+        <p>Entlassmanagement und die ersten Schritte bei plötzlichem Pflegebedarf.</p>
+      </button>
+      <button type="button" class="topic-card" onclick="jump('hospiz')">
+        <span class="ic" style="background:var(--muted-teal)">17</span>
+        <h3>Hospiz &amp; Palliativversorgung</h3>
+        <p>Spezialisierte Begleitung, wenn Heilung nicht mehr im Vordergrund steht.</p>
+      </button>
+      <button type="button" class="topic-card" onclick="jump('reha')">
+        <span class="ic" style="background:var(--rosy-taupe)">18</span>
+        <h3>Reha vor Pflege</h3>
+        <p>Der gesetzliche Vorrang von Rehabilitation gegenüber dauerhafter Pflege.</p>
+      </button>
+      <button type="button" class="topic-card" onclick="jump('pflegewg')">
+        <span class="ic" style="background:var(--vibrant-coral)">19</span>
+        <h3>Pflege-WG</h3>
+        <p>Ambulant betreute Wohngruppen als Alternative zwischen Zuhause und Heim.</p>
+      </button>
+      <button type="button" class="topic-card" onclick="jump('dipa')">
+        <span class="ic" style="background:var(--dust-grey)">20</span>
+        <h3>Digitale Pflegeanwendungen</h3>
+        <p>Apps auf "Rezept" für Pflegebedürftige und Angehörige.</p>
+      </button>
+      <button type="button" class="topic-card" onclick="jump('angehoerige-staerken')">
+        <span class="ic" style="background:var(--bone)">21</span>
+        <h3>Wenn die Kraft nachlässt</h3>
+        <p>Anlaufstellen und Selbsthilfe für pflegende Angehörige selbst.</p>
+      </button>
+    </div>
+  </section>
+
+  <!-- 1 · PFLEGEGRAD -->
+  <section class="topic" id="pflegegrad">
+    <p class="eyebrow"><span class="icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg></span>Thema 1 · Pflegegrad</p>
+    <h2 class="title">Der Pflegegrad — einfach erklärt</h2>
+    <p class="lead">Der Pflegegrad entscheidet, welche Unterstützung von der Pflegeversicherung zusteht. Hier erfahren Sie, was er ist, welche fünf Grade es gibt und wie Sie ihn bekommen.</p>
+
+    <div class="toc">
+      <p>Auf dieser Seite</p>
+      <ol>
+        <li><span class="n">1</span><button type="button" class="toclink" onclick="jump('pg-was-ist')">Was ist ein Pflegegrad?</button></li>
+        <li><span class="n">2</span><button type="button" class="toclink" onclick="jump('pg-grade')">Die fünf Pflegegrade</button></li>
+        <li><span class="n">3</span><button type="button" class="toclink" onclick="jump('pg-begutachtung')">Wie wird er ermittelt?</button></li>
+        <li><span class="n">4</span><button type="button" class="toclink" onclick="jump('pg-beantragen')">Wie beantragt man ihn?</button></li>
+        <li><span class="n">5</span><button type="button" class="toclink" onclick="jump('pg-widerspruch')">Wenn der Bescheid nicht passt</button></li>
+        <li><span class="n">6</span><button type="button" class="toclink" onclick="jump('pg-faq')">Häufige Fragen</button></li>
+      </ol>
+    </div>
+
+    <section class="block" id="pg-was-ist">
+      <h3 style="font-size:1.3rem;margin-bottom:10px">Was ist ein Pflegegrad?</h3>
+      <p>Ein Pflegegrad beschreibt, wie selbständig jemand seinen Alltag noch bewältigen kann — und wie viel Unterstützung dafür nötig ist. Es gibt fünf Pflegegrade: von Pflegegrad 1 (geringe Beeinträchtigung) bis Pflegegrad 5 (schwerste Beeinträchtigung mit besonderen Anforderungen an die Pflege).</p>
+      <div class="grid cols-3" style="margin-top:20px">
+        <div class="card"><h3>Wer entscheidet?</h3><p class="muted">Ihre Pflegekasse — das ist die Pflegeversicherung bei Ihrer Krankenkasse.</p></div>
+        <div class="card"><h3>Wer begutachtet?</h3><p class="muted">Gesetzlich Versicherte: der Medizinische Dienst (MD). Privat Versicherte: die MEDICPROOF GmbH.</p></div>
+        <div class="card"><h3>Ab wann?</h3><p class="muted">Wenn die Beeinträchtigung voraussichtlich mindestens sechs Monate andauert (§ 14 SGB XI).</p></div>
+      </div>
+    </section>
+
+    <section class="block" id="pg-grade">
+      <h3 style="font-size:1.3rem;margin-bottom:10px">Die fünf Pflegegrade</h3>
+      <p>Der Gutachter vergibt Punkte für sechs Lebensbereiche. Die Gesamtpunktzahl (0–100) bestimmt den Pflegegrad.</p>
+      <div class="scale-wrap">
+        <div class="scale-bar" role="img" aria-hidden="true">
+          <span class="seg-0" style="flex:12.5"></span><span class="seg-1" style="flex:14.5"></span>
+          <span class="seg-2" style="flex:20.5"></span><span class="seg-3" style="flex:22.5"></span>
+          <span class="seg-4" style="flex:20"></span><span class="seg-5" style="flex:10"></span>
+        </div>
+        <div class="scale-ticks" aria-hidden="true"><span>0</span><span>12,5</span><span>27</span><span>47,5</span><span>70</span><span>90</span><span>100</span></div>
+        <p class="scale-caption">Die Farben der Zonen entsprechen der Reihenfolge der Markenfarben oben auf der Seite.</p>
+      </div>
+      <div class="grade-grid">
+        <div class="grade-card"><div class="grade-num" style="background:var(--dust-grey)">1</div><div>
+          <h3>Geringe Beeinträchtigung der Selbständigkeit</h3><div class="grade-points">12,5 – unter 27 Punkte</div>
+          <div class="grade-mini" aria-hidden="true"><span style="background:var(--dust-grey);flex:27"></span><span style="background:var(--line);flex:73"></span></div>
+          <p><strong>Im Alltag:</strong> Meist allein zurecht, gelegentlich Hilfe — z. B. beim Einkaufen oder bei Behördengängen.</p></div></div>
+        <div class="grade-card"><div class="grade-num" style="background:var(--bone)">2</div><div>
+          <h3>Erhebliche Beeinträchtigung der Selbständigkeit</h3><div class="grade-points">27 – unter 47,5 Punkte</div>
+          <div class="grade-mini" aria-hidden="true"><span style="background:var(--bone);flex:475"></span><span style="background:var(--line);flex:525"></span></div>
+          <p><strong>Im Alltag:</strong> Mehrmals täglich Unterstützung, z. B. bei Körperpflege oder Mobilität.</p></div></div>
+        <div class="grade-card"><div class="grade-num" style="background:var(--muted-teal)">3</div><div>
+          <h3>Schwere Beeinträchtigung der Selbständigkeit</h3><div class="grade-points">47,5 – unter 70 Punkte</div>
+          <div class="grade-mini" aria-hidden="true"><span style="background:var(--muted-teal);flex:70"></span><span style="background:var(--line);flex:30"></span></div>
+          <p><strong>Im Alltag:</strong> Hilfe bei den meisten Alltagsverrichtungen, häufig zu wechselnden Zeiten.</p></div></div>
+        <div class="grade-card"><div class="grade-num" style="background:var(--rosy-taupe)">4</div><div>
+          <h3>Schwerste Beeinträchtigung der Selbständigkeit</h3><div class="grade-points">70 – unter 90 Punkte</div>
+          <div class="grade-mini" aria-hidden="true"><span style="background:var(--rosy-taupe);flex:90"></span><span style="background:var(--line);flex:10"></span></div>
+          <p><strong>Im Alltag:</strong> Umfassende Unterstützung in fast allen Lebensbereichen, oft rund um die Uhr.</p></div></div>
+        <div class="grade-card"><div class="grade-num" style="background:var(--vibrant-coral)">5</div><div>
+          <h3>Schwerste Beeinträchtigung mit besonderen Anforderungen an die pflegerische Versorgung</h3><div class="grade-points">90 – 100 Punkte</div>
+          <div class="grade-mini" aria-hidden="true"><span style="background:var(--vibrant-coral);flex:100"></span></div>
+          <p><strong>Im Alltag:</strong> Außergewöhnlich hoher Pflegebedarf, z. B. durch Verlust der Steuerungsfähigkeit über Bewegungen.</p></div></div>
+      </div>
+      <p class="footnote">Besondere Bedarfskonstellation: In Ausnahmefällen kann Pflegegrad 5 auch unterhalb von 90 Punkten vergeben werden.</p>
+    </section>
+
+    <section class="block" id="pg-begutachtung">
+      <h3 style="font-size:1.3rem;margin-bottom:10px">Wie wird der Pflegegrad ermittelt?</h3>
+      <p>Ein Gutachter bewertet die Selbständigkeit nach dem Neuen Begutachtungsassessment (NBA) in sechs Modulen. Nicht die Diagnose zählt, sondern die Auswirkung auf den Alltag.</p>
+      <div class="module-list">
+        <div class="module-row"><span class="name">1 · Mobilität</span><span class="pct">10 %</span>
+          <span class="desc">Aufstehen, Gehen, Treppensteigen, Positionswechsel.</span>
+          <div class="module-track"><div class="module-fill" style="width:10%"></div></div></div>
+        <div class="module-row"><span class="name">2 + 3 · Kognitive/kommunikative Fähigkeiten &amp; Verhalten/psychische Lage</span><span class="pct">15 %*</span>
+          <span class="desc">Orientierung, Kommunikation — bzw. nächtliche Unruhe, Ängste, herausforderndes Verhalten.</span>
+          <div class="module-track"><div class="module-fill" style="width:15%"></div></div></div>
+        <div class="module-row"><span class="name">4 · Selbstversorgung</span><span class="pct">40 %</span>
+          <span class="desc">Waschen, Anziehen, Essen, Toilettengang — der stärkste Bereich.</span>
+          <div class="module-track"><div class="module-fill" style="width:100%"></div></div></div>
+        <div class="module-row"><span class="name">5 · Umgang mit krankheits-/therapiebedingten Anforderungen</span><span class="pct">20 %</span>
+          <span class="desc">Medikamente, Verbandswechsel, Arztbesuche, Therapien.</span>
+          <div class="module-track"><div class="module-fill" style="width:50%"></div></div></div>
+        <div class="module-row"><span class="name">6 · Alltagsleben &amp; soziale Kontakte</span><span class="pct">15 %</span>
+          <span class="desc">Tagesstruktur, Beschäftigung, soziale Kontakte, Schlafrhythmus.</span>
+          <div class="module-track"><div class="module-fill" style="width:37.5%"></div></div></div>
+      </div>
+      <p class="footnote">*Von Modul 2 und 3 fließt nur der höher gewichtete Wert in die Gesamtpunktzahl ein. Deshalb ergeben die Module zusammen genau 100&nbsp;%.</p>
+      <div class="callout"><strong>Gut zu wissen:</strong> Führen Sie vor dem Termin zwei bis drei Wochen ein Pflegetagebuch. Notieren Sie genau, wobei und wie oft Hilfe nötig ist.</div>
+    </section>
+
+    <section class="block" id="pg-beantragen">
+      <h3 style="font-size:1.3rem;margin-bottom:10px">Den Pflegegrad beantragen</h3>
+      <div class="step-list">
+        <div class="step"><div class="step-num">1</div><div><h3>Antrag stellen</h3><p>Ein Anruf oder eine kurze formlose Mitteilung an die Pflegekasse reicht. Leistungen gelten rückwirkend ab diesem Tag.</p></div></div>
+        <div class="step"><div class="step-num">2</div><div><h3>Formular ausfüllen</h3><p>Die Pflegekasse schickt die Unterlagen zu. Angehörige können das mit Vollmacht übernehmen.</p></div></div>
+        <div class="step"><div class="step-num">3</div><div><h3>Begutachtung</h3><p>MD oder MEDICPROOF besuchen die Person zu Hause; in Ausnahmefällen auch per Video.</p></div></div>
+        <div class="step"><div class="step-num">4</div><div><h3>Bescheid</h3><p>Die Frist beträgt in der Regel 25 Arbeitstage — in dringenden Fällen deutlich weniger.</p></div></div>
+      </div>
+    </section>
+
+    <section class="block" id="pg-widerspruch">
+      <h3 style="font-size:1.3rem;margin-bottom:10px">Wenn der Bescheid nicht passt</h3>
+      <p>Sie können innerhalb eines Monats nach Erhalt des Bescheids schriftlich Widerspruch einlegen. Legen Sie ärztliche Berichte und Ihr Pflegetagebuch bei. Bleibt auch der Widerspruch ohne Erfolg, steht der — für Versicherte kostenfreie — Weg vor das Sozialgericht offen.</p>
+      <div class="callout warn"><strong>Tipp:</strong> Ein Pflegestützpunkt in Ihrer Nähe berät kostenlos und unabhängig — auch beim Widerspruch.</div>
+    </section>
+
+    <section class="block" id="pg-faq">
+      <h3 style="font-size:1.3rem;margin-bottom:10px">Häufige Fragen</h3>
+      <div class="faq">
+        <details><summary>Wer kann einen Pflegegrad beantragen?</summary><p class="faq-a">Jede gesetzlich oder privat pflegeversicherte Person, unabhängig vom Alter — auch Kinder.</p></details>
+        <details><summary>Ab wann gelten die Leistungen?</summary><p class="faq-a">Rückwirkend ab dem Tag der Antragstellung — nicht erst ab dem Bescheid.</p></details>
+        <details><summary>Was, wenn sich der Zustand verschlechtert?</summary><p class="faq-a">Ein Antrag auf Höherstufung ist jederzeit möglich, genauso formlos wie der Erstantrag.</p></details>
+      </div>
+      <div class="motivate"><span class="spark">→</span><span><strong>Es lohnt sich:</strong> Ein Antrag kostet nichts und verpflichtet zu nichts. Viele warten zu lange, weil sie sich nicht "pflegebedürftig genug" fühlen — diese Einschätzung darf getrost der Gutachter übernehmen.</span></div>
+    </section>
+  </section>
+
+  <!-- 2 · LEISTUNGEN -->
+  <section class="topic" id="leistungen">
+    <p class="eyebrow"><span class="icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><text x="12" y="16.5" font-size="11" font-family="sans-serif" text-anchor="middle" fill="currentColor" stroke="none">€</text></svg></span>Thema 2 · Pflegegeld &amp; Leistungen</p>
+    <h2 class="title">Pflegegeld, Pflegesachleistung &amp; Kombination</h2>
+    <p class="lead">Ab Pflegegrad 2 gibt es zwei Leistungsformen: Geld für die Pflege durch Angehörige (Pflegegeld) oder Sachleistung für einen ambulanten Pflegedienst. Beide lassen sich auch kombinieren.</p>
+
+    <table class="data">
+      <thead><tr><th>Pflegegrad</th><th>Pflegegeld / Monat</th><th>Pflegesachleistung / Monat</th></tr></thead>
+      <tbody>
+        <tr class="muted-row"><td>Pflegegrad 1</td><td>kein Anspruch</td><td>kein Anspruch</td></tr>
+        <tr><td>Pflegegrad 2</td><td>347 €</td><td>796 €</td></tr>
+        <tr><td>Pflegegrad 3</td><td>599 €</td><td>1.497 €</td></tr>
+        <tr><td>Pflegegrad 4</td><td>800 €</td><td>1.859 €</td></tr>
+        <tr><td>Pflegegrad 5</td><td>990 €</td><td>2.299 €</td></tr>
+      </tbody>
+    </table>
+    <p class="footnote">Pflegegrad 1 hat keinen Anspruch auf Pflegegeld oder Pflegesachleistung — dafür aber auf den Entlastungsbetrag, Pflegehilfsmittel und Beratung (siehe die jeweiligen Themen).</p>
+
+    <div class="grid cols-2" style="margin-top:26px">
+      <div class="card"><h3>Pflegegeld (§ 37 SGB XI)</h3><p class="muted">Wird ausgezahlt, wenn Angehörige oder nahestehende Personen die Pflege übernehmen. Voraussetzung: regelmäßige Beratungseinsätze.</p></div>
+      <div class="card"><h3>Pflegesachleistung (§ 36 SGB XI)</h3><p class="muted">Wird direkt mit einem zugelassenen ambulanten Pflegedienst abgerechnet — das Geld geht nicht auf Ihr Konto.</p></div>
+    </div>
+    <div class="callout"><strong>Kombinationsleistung (§ 38 SGB XI):</strong> Sie müssen sich nicht entscheiden. Nutzen Sie z. B. 60&nbsp;% der Sachleistung für den Pflegedienst — die restlichen 40&nbsp;% des Pflegegeldes werden dann anteilig ausgezahlt.</div>
+    <div class="motivate"><span class="spark">→</span><span><strong>Es lohnt sich:</strong> Sie haben diese Leistungen über Jahre mitfinanziert. Sie in Anspruch zu nehmen ist kein Gefallen der Pflegekasse, sondern Ihr gutes Recht.</span></div>
+  </section>
+
+  <!-- 3 · ENTLASTUNGSBETRAG -->
+  <section class="topic" id="entlastungsbetrag">
+    <p class="eyebrow"><span class="icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></span>Thema 3 · Entlastungsbetrag</p>
+    <h2 class="title">Der Entlastungsbetrag</h2>
+    <p class="lead">Ein zweckgebundener Zuschuss für alle Pflegegrade — ohne vorherigen Antrag, einfach durch Belege.</p>
+    <div class="stat-card">
+      <div class="stat">131 €</div>
+      <div class="stat-label">monatlich, für Pflegegrade 1 bis 5 in häuslicher Pflege (§ 45b SGB XI)</div>
+    </div>
+    <div class="grid cols-2" style="margin-top:22px">
+      <div class="card"><h3>Wofür einsetzbar</h3><p class="muted">Tages- und Nachtpflege, Kurzzeitpflege, ambulante Pflegedienste (bei Pflegegrad 2–5 nicht für Selbstversorgung) und anerkannte Angebote zur Unterstützung im Alltag — z. B. Betreuungsgruppen oder Alltagsbegleitung.</p></div>
+      <div class="card"><h3>So funktioniert es</h3><p class="muted">Der Anspruch entsteht automatisch, sobald die Voraussetzungen vorliegen. Reichen Sie Belege bei der Pflegekasse ein, um das Geld erstattet zu bekommen.</p></div>
+    </div>
+    <div class="callout"><strong>Nicht verbraucht?</strong> Ungenutzte Beträge eines Kalenderjahres können bis zum Ende des ersten Halbjahrs des Folgejahres übertragen werden — bis zu 1.572&nbsp;€ im besten Fall ansparbar.</div>
+    <div class="motivate"><span class="spark">→</span><span><strong>Es lohnt sich:</strong> Ungenutzt verfällt der Betrag einfach — er hilft niemandem, wenn er liegen bleibt. Auch eine einzelne Stunde Alltagsbegleitung im Monat ist den kleinen Aufwand wert.</span></div>
+  </section>
+
+  <!-- 4 · HILFSMITTEL -->
+  <section class="topic" id="hilfsmittel">
+    <p class="eyebrow"><span class="icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></span>Thema 4 · Pflegehilfsmittel</p>
+    <h2 class="title">Pflegehilfsmittel &amp; Wohnumfeld</h2>
+    <p class="lead">Drei Leistungen helfen, den Alltag und die Wohnung pflegegerecht zu gestalten (§ 40 SGB XI) — hier erfahren Sie, wie Sie sie konkret bekommen: was Sie brauchen und wo Sie sie beziehen.</p>
+
+    <div class="toc">
+      <p>Auf dieser Seite</p>
+      <ol>
+        <li><span class="n">1</span><button type="button" class="toclink" onclick="jump('hm-ueberblick')">Die drei Leistungen im Überblick</button></li>
+        <li><span class="n">2</span><button type="button" class="toclink" onclick="jump('hm-verbrauch')">Verbrauchsmittel (Pflegebox) beantragen</button></li>
+        <li><span class="n">3</span><button type="button" class="toclink" onclick="jump('hm-technik')">Technische Pflegehilfsmittel beantragen</button></li>
+        <li><span class="n">4</span><button type="button" class="toclink" onclick="jump('hm-wohnumfeld')">Wohnumfeld-Zuschuss beantragen</button></li>
+      </ol>
+    </div>
+
+    <section class="block" id="hm-ueberblick">
+      <h3 style="font-size:1.3rem;margin-bottom:10px">Die drei Leistungen im Überblick</h3>
+      <div class="grid cols-3">
+        <div class="card"><h3>Verbrauchsmittel</h3><div class="grade-points">bis 42 € / Monat</div><p class="muted">Einmalhandschuhe, Bettschutzeinlagen, Desinfektionsmittel, Schutzschürzen — oft als monatliche "Pflegebox" geliefert.</p></div>
+        <div class="card"><h3>Technische Hilfsmittel</h3><div class="grade-points">meist Leihgabe</div><p class="muted">Pflegebett, Rollator, Toilettenstuhl u. a. Zuzahlung: 10&nbsp;%, höchstens 25&nbsp;€ je Hilfsmittel.</p></div>
+        <div class="card"><h3>Wohnumfeld-Zuschuss</h3><div class="grade-points">bis 4.180 € je Maßnahme</div><p class="muted">Treppenlift, barrierefreies Bad, Türverbreiterung. Bei mehreren Pflegebedürftigen in einer Wohnung: bis zu 16.720&nbsp;€ gesamt.</p></div>
+      </div>
+      <div class="callout"><strong>Wichtig — immer bei der eigenen Pflegekasse erfragen:</strong> Erfragen Sie Kooperations- bzw. Vertragspartner für Verbrauchsmittel und technische Hilfsmittel immer direkt bei Ihrer eigenen Pflegekasse (Ihrer "Gesundheitskasse", bei der Sie versichert sind). Jede Pflegekasse hat eigene Verträge — eine Empfehlung für eine andere Kasse gilt nicht automatisch auch für Sie.</div>
+      <div class="callout">Über einen Antrag muss die Pflegekasse zügig entscheiden: in der Regel innerhalb von 3 Wochen, bzw. 5 Wochen, wenn eine Pflegefachperson oder der Medizinische Dienst beteiligt wird.</div>
+    </section>
+
+    <section class="block" id="hm-verbrauch">
+      <h3 style="font-size:1.3rem;margin-bottom:10px">Verbrauchsmittel (Pflegebox) beantragen</h3>
+      <p>Verbrauchsmittel sind Dinge, die regelmäßig aufgebraucht werden: Einmalhandschuhe, Bettschutzeinlagen, Desinfektionsmittel, Schutzschürzen, Mundschutz. Sie werden meist gebündelt als monatliche "Pflegebox" geliefert.</p>
+      <div class="step-list">
+        <div class="step"><div class="step-num">1</div><div><h3>Was Sie brauchen</h3><p>Nur den Pflegegrad-Bescheid — bei Verbrauchsmitteln ist in aller Regel <strong>keine</strong> ärztliche Verordnung nötig.</p></div></div>
+        <div class="step"><div class="step-num">2</div><div><h3>Antrag stellen</h3><p>Ein formloser Antrag bei Ihrer Pflegekasse reicht, oft genügt ein Anruf. Manche Kassen haben ein eigenes Formular dafür.</p></div></div>
+        <div class="step"><div class="step-num">3</div><div><h3>Anbieter wählen</h3><p>Wählen Sie einen Vertragspartner der Pflegekasse — meist ein Sanitätshaus, eine Apotheke oder ein spezialisierter Pflegehilfsmittel-Lieferant. Ihre Pflegekasse nennt Ihnen auf Anfrage ihre Vertragspartner.</p></div></div>
+        <div class="step"><div class="step-num">4</div><div><h3>Monatliche Lieferung</h3><p>Die Box kommt direkt zu Ihnen nach Hause. Die Pflegekasse rechnet bis 42&nbsp;€ im Monat direkt mit dem Anbieter ab — Sie zahlen nichts vor.</p></div></div>
+      </div>
+    </section>
+
+    <section class="block" id="hm-technik">
+      <h3 style="font-size:1.3rem;margin-bottom:10px">Technische Pflegehilfsmittel beantragen</h3>
+      <p>Dazu zählen z. B. Pflegebett, Rollator, Toilettenstuhl, Lifter oder Anti-Dekubitus-Matratze. Seit der jüngsten Reform gibt es zwei gleichwertige Wege zum Hilfsmittel:</p>
+      <div class="grid cols-2" style="margin-top:18px">
+        <div class="card"><h3>Weg 1 — Empfehlung der Pflegefachperson</h3><p class="muted">Ihr Pflegedienst oder die Pflegefachperson beim Beratungseinsatz (§ 37 Abs. 3) kann das Hilfsmittel direkt empfehlen. Die Notwendigkeit gilt dann automatisch als nachgewiesen — <strong>keine</strong> ärztliche Verordnung nötig. Die Empfehlung darf bei Antragstellung nicht älter als zwei Wochen sein.</p></div>
+        <div class="card"><h3>Weg 2 — Ärztliche Verordnung</h3><p class="muted">Der klassische Weg: Hausarzt oder Facharzt stellt eine Verordnung aus. Beide Wege führen zum gleichen Ziel — wählen Sie, was in Ihrer Situation einfacher ist.</p></div>
+      </div>
+      <div class="step-list" style="margin-top:18px">
+        <div class="step"><div class="step-num">1</div><div><h3>Verordnung oder Empfehlung einholen</h3><p>Arzt oder Pflegefachperson stellt sie aus — das ist alles, was Sie selbst besorgen müssen.</p></div></div>
+        <div class="step"><div class="step-num">2</div><div><h3>Beim Sanitätshaus abgeben</h3><p>Ein Sanitätshaus oder Homecare-Anbieter mit Versorgungsvertrag (§ 78 SGB XI) übernimmt ab hier den Rest: Prüfung im Pflegehilfsmittelverzeichnis, Antragstellung und Abrechnung direkt mit Ihrer Pflegekasse.</p></div></div>
+        <div class="step"><div class="step-num">3</div><div><h3>Lieferung oder Abholung</h3><p>Sie erhalten das Hilfsmittel geliefert oder zur Abholung bereitgestellt — ohne dass Sie selbst weiter etwas beantragen müssen.</p></div></div>
+      </div>
+      <p class="footnote">Rechtlich hat die Pflegekasse bis zu 3 bzw. 5 Wochen Zeit für ihre Entscheidung (§ 40 Abs. 7 SGB XI). Bei gelisteten Hilfsmitteln mit bestehendem Versorgungsvertrag übernimmt das Sanitätshaus diesen Schritt für Sie — eigene Kostenvoranschläge oder Anträge wie bei der Wohnraumanpassung sind hier in der Regel nicht nötig.</p>
+      <div class="callout"><strong>Kaufen oder leihen?</strong> Die Pflegekasse soll technische Hilfsmittel vorrangig <strong>leihweise</strong> überlassen — das spart Kosten und das Hilfsmittel geht bei Besserung zurück. Lehnen Sie die Leihe ohne triftigen Grund ab, tragen Sie die vollen Kosten selbst.</div>
+      <p class="footnote">Zuzahlung: 10&nbsp;%, höchstens 25&nbsp;€ je Hilfsmittel (ab 18 Jahren). Wer die gesetzliche Belastungsgrenze nach § 62 SGB V erreicht hat, kann sich von weiteren Zuzahlungen befreien lassen.</p>
+    </section>
+
+    <section class="block" id="hm-wohnumfeld">
+      <h3 style="font-size:1.3rem;margin-bottom:10px">Wohnumfeld-Zuschuss beantragen</h3>
+      <p>Für bauliche Veränderungen wie Treppenlift, barrierefreies Bad, Türverbreiterung oder Rampen gibt es einen Zuschuss von bis zu 4.180&nbsp;€ je Maßnahme.</p>
+      <div class="step-list">
+        <div class="step"><div class="step-num">1</div><div><h3>Beratung einholen</h3><p>Ein Pflegeberater oder Pflegestützpunkt prüft kostenlos, was sinnvoll und förderfähig ist — meist lohnt sich dieser Schritt vor der Antragstellung.</p></div></div>
+        <div class="step"><div class="step-num">2</div><div><h3>Antrag stellen</h3><p>Ein formloser Antrag bei der Pflegekasse genügt zum Start.</p></div></div>
+        <div class="step"><div class="step-num">3</div><div><h3>Kostenvoranschlag einholen</h3><p>Eine Fachfirma oder ein Handwerksbetrieb erstellt einen Kostenvoranschlag, den Sie bei der Pflegekasse einreichen.</p></div></div>
+        <div class="step"><div class="step-num">4</div><div><h3>Durchführen &amp; abrechnen</h3><p>Nach Genehmigung beauftragen Sie die Maßnahme; die Rechnung reichen Sie zur Erstattung bis 4.180&nbsp;€ ein.</p></div></div>
+      </div>
+      <p class="footnote">Leben mehrere Pflegebedürftige in derselben Wohnung, gilt der Zuschuss je Person — insgesamt höchstens 16.720&nbsp;€ für die gemeinsame Maßnahme.</p>
+      <div class="motivate"><span class="spark">→</span><span><strong>Es lohnt sich:</strong> Viele scheuen den Aufwand für 42 € im Monat oder einen Antrag fürs Treppensteigen — dabei ist der erste Schritt meist nur ein Telefonat mit dem Sanitätshaus oder der Pflegekasse.</span></div>
+    </section>
+  </section>
+
+
+  <!-- 5 · ERSATZPFLEGE -->
+  <section class="topic" id="ersatzpflege">
+    <p class="eyebrow"><span class="icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="16" rx="2"/><line x1="4" y1="9" x2="20" y2="9"/><line x1="8" y1="3" x2="8" y2="7"/><line x1="16" y1="3" x2="16" y2="7"/></svg></span>Thema 5 · Verhinderungs- &amp; Kurzzeitpflege</p>
+    <h2 class="title">Wenn die Pflegeperson eine Pause braucht</h2>
+    <p class="lead">Zwei Leistungen für Erholung und Krisenzeiten — seit der jüngsten Reform aus einem gemeinsamen Budget.</p>
+    <div class="grid cols-2" style="margin-top:22px">
+      <div class="card"><h3>Verhinderungspflege (§ 39)</h3><p class="muted">Ersatzpflege, wenn die pflegende Person Urlaub macht, krank ist oder anderweitig verhindert ist. Bis zu 8 Wochen je Kalenderjahr.</p></div>
+      <div class="card"><h3>Kurzzeitpflege (§ 42)</h3><p class="muted">Vorübergehende vollstationäre Pflege, z. B. nach einem Krankenhausaufenthalt oder in einer Krisensituation. Bis zu 8 Wochen je Kalenderjahr.</p></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat">3.539 €</div>
+      <div class="stat-label">Gemeinsamer Jahresbetrag für beide Leistungen zusammen, ab Pflegegrad 2 (§ 42a SGB XI, seit 1. Juli 2025)</div>
+    </div>
+    <p class="footnote">Vor der Reform gab es zwei getrennte Töpfe. Seit dem Gemeinsamen Jahresbetrag entscheiden Sie selbst, wie Sie die 3.539&nbsp;€ zwischen Verhinderungs- und Kurzzeitpflege aufteilen.</p>
+    <div class="motivate"><span class="spark">→</span><span><strong>Es lohnt sich:</strong> Eine Pause zu nehmen ist kein Versagen, sondern Voraussetzung dafür, die Pflege auf Dauer durchzuhalten — das Budget ist genau dafür da.</span></div>
+  </section>
+
+  <!-- 6 · ZUHAUSE -->
+  <section class="topic" id="zuhause">
+    <p class="eyebrow"><span class="icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg></span>Thema 6 · Zuhause organisieren</p>
+    <h2 class="title">Pflege zu Hause organisieren</h2>
+    <p class="lead">Sechs Bausteine, die den Alltag tragen — meist lassen sie sich kombinieren.</p>
+    <div class="grid cols-2" style="margin-top:24px">
+      <div class="card"><h3>Ambulanter Pflegedienst</h3><p class="muted">Übernimmt Körperpflege, Betreuung oder Haushalt — abgerechnet über die Pflegesachleistung.</p></div>
+      <div class="card"><h3>Beratungseinsätze (§ 37 Abs. 3)</h3><p class="muted">Pflicht für Pflegegeld-Bezieher der Grade 2–5: halbjährlich, ab Grad 4 auch vierteljährlich möglich. Bei Grad 1 freiwillig.</p></div>
+      <div class="card"><h3>Pflegekurse für Angehörige (§ 45)</h3><p class="muted">Kostenlose Kurse der Pflegekassen — auch bei Ihnen zu Hause.</p></div>
+      <div class="card"><h3>Tages- &amp; Nachtpflege (§ 41)</h3><p class="muted">Stundenweise Betreuung in einer Einrichtung, zusätzlich zu Pflegegeld oder Sachleistung — ohne Anrechnung darauf.</p></div>
+      <div class="card"><h3>Leistungen kombinieren (§ 38)</h3><p class="muted">Pflegegeld und Sachleistung lassen sich anteilig mischen — siehe Thema "Pflegegeld &amp; Leistungen".</p></div>
+      <div class="card"><h3>Pflegeberatung &amp; Pflegestützpunkt (§ 7a)</h3><p class="muted">Kostenlose, unabhängige Beratung — auch mit individuellem Versorgungsplan.</p></div>
+    </div>
+    <div class="motivate"><span class="spark">→</span><span><strong>Es lohnt sich:</strong> Sie müssen nicht alles allein schaffen. Jeder dieser Bausteine ist dafür gedacht, Verantwortung zu teilen — nicht, sie abzugeben.</span></div>
+  </section>
+
+  <!-- 7 · DEMENZ -->
+  <section class="topic" id="demenz">
+    <p class="eyebrow"><span class="icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16"/><circle cx="12" cy="7.7" r=".6" fill="currentColor" stroke="none"/></svg></span>Thema 7 · Demenz und Pflegegrad</p>
+    <h2 class="title">Wie Demenz in die Begutachtung einfließt</h2>
+    <p class="lead">Seit 2017 zählt nicht mehr nur der Zeitaufwand für körperbezogene Pflege — das hat die Einstufung bei Demenz grundlegend verbessert.</p>
+    <div class="callout"><strong>Vorher/Nachher:</strong> Das alte Pflegestufensystem benachteiligte Menschen mit Demenz, weil es fast nur körperliche Pflegezeit maß. Das heutige Begutachtungsverfahren (NBA) bewertet Modul 2 (kognitive/kommunikative Fähigkeiten) und Modul 3 (Verhalten/psychische Problemlagen) gleichwertig zu körperlichen Einschränkungen.</div>
+    <div class="grid cols-2" style="margin-top:22px">
+      <div class="card"><h3>Was wird erfasst?</h3><p class="muted">Orientierung, Entscheidungen treffen, Kommunikation — sowie nächtliche Unruhe, Ängste, Wahnvorstellungen oder herausforderndes Verhalten.</p></div>
+      <div class="card"><h3>Praktischer Tipp</h3><p class="muted">Notieren Sie im Pflegetagebuch gezielt Orientierungsprobleme und Verhaltensauffälligkeiten — nicht nur körperliche Hilfe.</p></div>
+    </div>
+    <p style="margin-top:20px">Besonders hilfreich bei Demenz: niedrigschwellige Betreuungsgruppen und Alltagsbegleitung, finanzierbar über den Entlastungsbetrag (Thema 3). Fachliche, unabhängige Information bietet die <a href="https://www.deutsche-alzheimer.de" rel="noopener">Deutsche Alzheimer Gesellschaft</a>.</p>
+    <div class="callout"><strong>Alzheimer-Telefon:</strong><br><a class="tel" href="tel:+4930259379514"><span class="icon"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>030 – 259 37 95 14</a><br><span style="font-size:14px">Mo–Do 9–18 Uhr, Fr 9–15 Uhr, kostenlos und auf Wunsch anonym. Geschulte Berater nehmen sich Zeit für Fragen zu Demenz und Pflegealltag.</span></div>
+    <div class="motivate"><span class="spark">→</span><span><strong>Es lohnt sich:</strong> Eine Diagnose früh ernst zu nehmen heißt nicht aufzugeben — sie öffnet den Zugang zu Unterstützung, die sonst ungenutzt bleibt. Ein Anruf beim Alzheimer-Telefon verpflichtet zu nichts.</span></div>
+  </section>
+
+  <!-- 8 · PFLEGEDIENST FINDEN -->
+  <section class="topic" id="pflegedienst">
+    <p class="eyebrow"><span class="icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg></span>Thema 8 · Pflegedienst finden</p>
+    <h2 class="title">Den richtigen ambulanten Pflegedienst finden</h2>
+    <p class="lead">Ein ambulanter Pflegedienst übernimmt Körperpflege, Behandlungspflege oder hauswirtschaftliche Versorgung zu Hause. So finden Sie einen passenden Anbieter in Ihrer Nähe.</p>
+
+    <div class="toc">
+      <p>Auf dieser Seite</p>
+      <ol>
+        <li><span class="n">1</span><button type="button" class="toclink" onclick="jump('pd-finden')">Wo finde ich Pflegedienste in meiner Nähe?</button></li>
+        <li><span class="n">2</span><button type="button" class="toclink" onclick="jump('pd-tun')">Was muss ich tun?</button></li>
+        <li><span class="n">3</span><button type="button" class="toclink" onclick="jump('pd-wichtig')">Was ist wichtig?</button></li>
+      </ol>
+    </div>
+
+    <section class="block" id="pd-finden">
+      <h3 style="font-size:1.3rem;margin-bottom:10px">Wo finde ich Pflegedienste in meiner Nähe?</h3>
+      <div class="grid cols-3">
+        <div class="card"><h3>Pflegestützpunkt</h3><p class="muted">Kostenlose, unabhängige Beratung vor Ort — kennt die Anbieter in Ihrer Region und deren Schwerpunkte.</p></div>
+        <div class="card"><h3>Eigene Pflegekasse</h3><p class="muted">Führt ein Verzeichnis der in Ihrer Region zugelassenen Pflegedienste und muss Ihnen dazu Auskunft geben (§ 7a SGB XI).</p></div>
+        <div class="card"><h3>vdek-Pflegelotse</h3><p class="muted">Offizielles, kostenloses Suchportal der Ersatzkassen-Verbände unter <a href="https://www.pflegelotse.de" rel="noopener">pflegelotse.de</a> — mit Leistungen, Preisen und Qualitätsergebnissen je Anbieter.</p></div>
+      </div>
+    </section>
+
+    <section class="block" id="pd-tun">
+      <h3 style="font-size:1.3rem;margin-bottom:10px">Was muss ich tun?</h3>
+      <div class="step-list">
+        <div class="step"><div class="step-num">1</div><div><h3>Bedarf klären</h3><p>Welche Unterstützung wird benötigt — Körperpflege, medizinische Behandlungspflege (z. B. Verbände, Medikamente) und/oder Haushalt?</p></div></div>
+        <div class="step"><div class="step-num">2</div><div><h3>Mehrere Anbieter anfragen</h3><p>Das Erstgespräch ist meist kostenlos. Vergleichen Sie mindestens zwei bis drei Pflegedienste, bevor Sie sich entscheiden.</p></div></div>
+        <div class="step"><div class="step-num">3</div><div><h3>Zulassung prüfen</h3><p>Der Pflegedienst muss einen Versorgungsvertrag mit den Pflegekassen haben (§ 72 SGB XI) — nur dann rechnet er direkt mit Ihrer Pflegekasse ab.</p></div></div>
+        <div class="step"><div class="step-num">4</div><div><h3>Pflegevertrag abschließen</h3><p>Der Vertrag muss Art, Inhalt und Umfang jeder Leistung sowie die jeweiligen Preise enthalten — und Sie vorab schriftlich über die voraussichtlichen Kosten informieren (§ 120 SGB XI).</p></div></div>
+      </div>
+      <div class="callout">Der Pflegevertrag kann jederzeit ohne Kündigungsfrist gekündigt werden (§ 120 Abs. 2 SGB XI) — Sie sind also nicht langfristig gebunden, wenn ein Pflegedienst nicht passt.</div>
+    </section>
+
+    <section class="block" id="pd-wichtig">
+      <h3 style="font-size:1.3rem;margin-bottom:10px">Was ist wichtig?</h3>
+      <ul class="a11y" style="margin-top:8px;list-style:none;padding:0">
+        <li style="display:flex;gap:12px;font-size:15.5px;background:var(--glass);border:1px solid var(--glass-border);border-radius:14px;padding:14px 16px;box-shadow:var(--shadow)"><span style="color:var(--teal-700);font-weight:700;flex:0 0 auto">✓</span><span><b>Transparenzbericht/Qualitätsbericht:</b> öffentlich einsehbare Prüfergebnisse des Medizinischen Dienstes — beim vdek-Pflegelotse oder direkt beim Anbieter erhältlich.</span></li>
+        <li style="display:flex;gap:12px;font-size:15.5px;background:var(--glass);border:1px solid var(--glass-border);border-radius:14px;padding:14px 16px;margin-top:10px;box-shadow:var(--shadow)"><span style="color:var(--teal-700);font-weight:700;flex:0 0 auto">✓</span><span><b>Erreichbarkeit &amp; Notdienst:</b> Wer ist abends, nachts oder am Wochenende erreichbar?</span></li>
+        <li style="display:flex;gap:12px;font-size:15.5px;background:var(--glass);border:1px solid var(--glass-border);border-radius:14px;padding:14px 16px;margin-top:10px;box-shadow:var(--shadow)"><span style="color:var(--teal-700);font-weight:700;flex:0 0 auto">✓</span><span><b>Feste Bezugspflegekraft:</b> möglichst dieselben ein bis zwei Personen statt wechselndem Personal.</span></li>
+        <li style="display:flex;gap:12px;font-size:15.5px;background:var(--glass);border:1px solid var(--glass-border);border-radius:14px;padding:14px 16px;margin-top:10px;box-shadow:var(--shadow)"><span style="color:var(--teal-700);font-weight:700;flex:0 0 auto">✓</span><span><b>Leistungsumfang genau klären:</b> was ist mit der Sachleistung abgedeckt, was kostet zusätzlich?</span></li>
+        <li style="display:flex;gap:12px;font-size:15.5px;background:var(--glass);border:1px solid var(--glass-border);border-radius:14px;padding:14px 16px;margin-top:10px;box-shadow:var(--shadow)"><span style="color:var(--teal-700);font-weight:700;flex:0 0 auto">✓</span><span><b>Persönlicher Eindruck:</b> Wirkt das Team beim Erstgespräch zugewandt und nimmt sich Zeit für Fragen?</span></li>
+      </ul>
+      <div class="motivate"><span class="spark">→</span><span><strong>Es lohnt sich:</strong> Ein Erstgespräch zu vereinbaren bindet Sie zu nichts — und ein passender Pflegedienst kann der Unterschied zwischen Überforderung und einem tragbaren Alltag sein.</span></div>
+    </section>
+  </section>
+
+  <!-- 9 · VERSORGUNGSFORMEN -->
+  <section class="topic" id="versorgungsformen">
+    <p class="eyebrow"><span class="icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>Thema 9 · Versorgungsformen</p>
+    <h2 class="title">Welche Versorgungsform passt?</h2>
+    <p class="lead">Pflege zu Hause, teilstationär, vollstationär oder mit einer Betreuungskraft im Haushalt — die Modelle lassen sich auch kombinieren. Ein Überblick.</p>
+
+    <div class="grid cols-2" style="margin-top:24px">
+      <div class="card">
+        <h3>Ambulante Pflege (zu Hause)</h3>
+        <p class="muted">Pflegedienst und/oder Angehörige versorgen die Person in der eigenen Wohnung — finanziert über Pflegegeld, Pflegesachleistung oder die Kombinationsleistung (Thema 2).</p>
+      </div>
+      <div class="card">
+        <h3>Kombination: Pflegedienst + Tagespflege</h3>
+        <p class="muted">Tages- oder Nachtpflege ergänzt die häusliche Versorgung stundenweise, ohne auf Pflegegeld oder Sachleistung angerechnet zu werden (§ 41 SGB XI). Leistungsbetrag bis 1.685&nbsp;€/Monat (Pflegegrad 4), je nach Grad.</p>
+      </div>
+      <div class="card">
+        <h3>Vollstationäre Pflege (Langzeitpflege)</h3>
+        <p class="muted">Dauerhafter Umzug in eine Pflegeeinrichtung, wenn häusliche oder teilstationäre Pflege nicht mehr ausreicht (§ 43 SGB XI). Die Pflegekasse zahlt einen festen Betrag zu den pflegebedingten Kosten; der Eigenanteil sinkt gestaffelt mit der Wohndauer im Heim (§ 43c SGB XI).</p>
+      </div>
+      <div class="card">
+        <h3>24-Stunden-Betreuung</h3>
+        <p class="muted">Eine Betreuungskraft lebt im Haushalt der pflegebedürftigen Person. Rechtlich anspruchsvoll — Details unten.</p>
+      </div>
+    </div>
+
+    <h3 style="font-size:1.3rem;margin:32px 0 10px">Vollstationäre Pflege — Leistungsbeträge je Pflegegrad</h3>
+    <table class="data">
+      <thead><tr><th>Pflegegrad</th><th>Leistungsbetrag / Monat</th></tr></thead>
+      <tbody>
+        <tr><td>Pflegegrad 1</td><td>131 € (Zuschuss)</td></tr>
+        <tr><td>Pflegegrad 2</td><td>805 €</td></tr>
+        <tr><td>Pflegegrad 3</td><td>1.319 €</td></tr>
+        <tr><td>Pflegegrad 4</td><td>1.855 €</td></tr>
+        <tr><td>Pflegegrad 5</td><td>2.096 €</td></tr>
+      </tbody>
+    </table>
+    <p class="footnote">Diese Beträge decken die pflegebedingten Kosten — Unterkunft, Verpflegung und Investitionskosten zahlen Pflegebedürftige grundsätzlich selbst (Eigenanteil), abgemildert durch den Zuschlag nach § 43c SGB XI.</p>
+
+    <h3 style="font-size:1.3rem;margin:32px 0 10px">24-Stunden-Betreuung — was rechtlich gilt</h3>
+    <div class="callout warn"><strong>Wichtig:</strong> Eine echte Rund-um-die-Uhr-Betreuung durch eine einzige Person ist rechtlich nicht möglich. Das Arbeitszeitgesetz begrenzt die werktägliche Arbeitszeit im Schnitt auf 8 Stunden und die Wochenarbeitszeit auf 48 Stunden.</div>
+    <div class="grid cols-3" style="margin-top:18px">
+      <div class="card"><h3>Direktanstellung</h3><p class="muted">Sie werden selbst Arbeitgeber, mit voller Sozialversicherungspflicht. Rechtlich am sichersten, aber mit hohem Verwaltungsaufwand und meist am teuersten.</p></div>
+      <div class="card"><h3>Entsendemodell</h3><p class="muted">Eine ausländische Agentur entsendet ihre Angestellte in den Haushalt. Die Arbeitgeberpflichten liegen bei der Agentur; deutsches Arbeitsrecht gilt trotzdem.</p></div>
+      <div class="card"><h3>Selbständige Betreuungskraft</h3><p class="muted">Rechtlich stark umstritten — mehrere Gerichte (u. a. OLG Bamberg, OLG München) werteten dies als unzulässige Scheinselbständigkeit. Verbraucherzentralen raten davon ab.</p></div>
+    </div>
+    <p class="footnote">Kosten für eine Vollzeitkraft liegen laut Verbraucherzentrale NRW meist zwischen 2.500 und 3.500&nbsp;€ monatlich. EU-Bürger können ohne besondere Arbeitserlaubnis beschäftigt werden (Arbeitnehmerfreizügigkeit). Ausführliche, unabhängige Informationen bietet die <a href="https://www.verbraucherzentrale.de/wissen/gesundheit-pflege/pflege-zu-hause/auslaendische-betreuungskraefte-wie-geht-das-legal-10601" rel="noopener">Verbraucherzentrale</a>.</p>
+    <div class="callout">Empfehlung: Verteilen Sie die Betreuung im "Pflegemix" auf mehrere Schultern — z. B. Betreuungskraft plus ambulanter Pflegedienst plus Tagespflege — statt alles auf eine Person zu konzentrieren.</div>
+    <div class="motivate"><span class="spark">→</span><span><strong>Es lohnt sich:</strong> Es gibt nicht die eine richtige Lösung — und einen Versorgungsweg später zu wechseln ist kein Scheitern, sondern ein normaler Teil der Pflegezeit.</span></div>
+  </section>
+
+  <!-- 10 · VORSORGE -->
+  <section class="topic" id="vorsorge">
+    <p class="eyebrow"><span class="icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 5-3.5 8-7 9-3.5-1-7-4-7-9V6l7-3z"/></svg></span>Thema 10 · Vorsorge &amp; Vollmacht</p>
+    <h2 class="title">Patientenverfügung, Vorsorgevollmacht &amp; Betreuungsverfügung</h2>
+    <p class="lead">Drei unterschiedliche Dokumente, oft verwechselt — aber für den Ernstfall entscheidend, wenn jemand nicht mehr selbst entscheiden kann.</p>
+    <div class="grid cols-3" style="margin-top:24px">
+      <div class="card"><h3>Patientenverfügung</h3><p class="muted">Legt fest, welche medizinischen Maßnahmen gewünscht sind oder abgelehnt werden — für den Fall der eigenen Einwilligungsunfähigkeit.</p></div>
+      <div class="card"><h3>Vorsorgevollmacht</h3><p class="muted">Bevollmächtigt eine Vertrauensperson für bestimmte oder alle Angelegenheiten. Diese Person wird vom Gericht nicht überwacht.</p></div>
+      <div class="card"><h3>Betreuungsverfügung</h3><p class="muted">Äußert Wünsche zur Person des Betreuers, falls das Betreuungsgericht einen Betreuer bestellen muss. Der Betreuer wird gerichtlich kontrolliert.</p></div>
+    </div>
+    <div class="callout warn"><strong>Wichtig:</strong> Ehepartner haben in Deutschland kein automatisches Vertretungsrecht in größeren rechtlichen oder finanziellen Angelegenheiten. Seit 2023 gibt es ein begrenztes Ehegatten-Notvertretungsrecht — aber nur für medizinische Entscheidungen und längstens sechs Monate. Ohne Vorsorgevollmacht bestellt sonst das Betreuungsgericht einen Betreuer.</div>
+    <div class="callout">Kostenlose Formulare und die Broschüren "Betreuungsrecht" und "Patientenverfügung" bietet das Bundesministerium der Justiz. Registrieren lässt sich jedes der drei Dokumente im Zentralen Vorsorgeregister der Bundesnotarkammer — damit sie im Ernstfall auffindbar sind.</div>
+    <div class="motivate"><span class="spark">→</span><span><strong>Es lohnt sich:</strong> Diese Dokumente jetzt zu regeln, solange alles gut ist, ist ein Geschenk an die eigene Familie später. Niemand bereut, es frühzeitig erledigt zu haben — viele bereuen, es aufgeschoben zu haben.</span></div>
+  </section>
+
+  <!-- 11 · SCHWERBEHINDERTENAUSWEIS -->
+  <section class="topic" id="gdb">
+    <p class="eyebrow"><span class="icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="8" cy="11" r="2"/><line x1="13" y1="9" x2="19" y2="9"/><line x1="13" y1="13" x2="19" y2="13"/></svg></span>Thema 11 · Schwerbehindertenausweis &amp; GdB</p>
+    <h2 class="title">Schwerbehindertenausweis &amp; Grad der Behinderung</h2>
+    <p class="lead">Ein eigenständiges Verfahren, unabhängig vom Pflegegrad — viele Pflegebedürftige haben Anspruch, ohne es zu wissen.</p>
+    <div class="stat-card">
+      <div class="stat">GdB 50</div>
+      <div class="stat-label">ab diesem Grad der Behinderung besteht Anspruch auf den Schwerbehindertenausweis (§ 152 SGB IX)</div>
+    </div>
+    <div class="grid cols-2" style="margin-top:22px">
+      <div class="card"><h3>Wie wird der GdB festgestellt?</h3><p class="muted">Auf schriftlichen Antrag beim zuständigen Versorgungsamt, anhand ärztlicher Unterlagen. Bewertet wird in 10er-Schritten von 20 bis 100 — maßgeblich ist die Gesamtwirkung auf die Teilhabe, nicht die einzelne Diagnose.</p></div>
+      <div class="card"><h3>Unterschied zum Pflegegrad</h3><p class="muted">Der GdB misst die Beeinträchtigung der Teilhabe am Leben, der Pflegegrad den Hilfebedarf im Alltag. Beide Verfahren sind unabhängig — keines führt automatisch zum anderen, beide sind aber oft zusätzlich möglich.</p></div>
+    </div>
+    <div class="callout">Schon ab GdB 20 gibt es einen steuerlichen Behinderten-Pauschbetrag; ab GdB 50 zusätzlich Kündigungsschutz, Zusatzurlaub und je nach Merkzeichen Parkausweis (aG) oder ÖPNV-Vergünstigung (G). Das Versorgungsamt Ihrer Region finden Sie über die Übersicht von REHADAT.</div>
+    <div class="motivate"><span class="spark">→</span><span><strong>Es lohnt sich:</strong> Der Antrag ist unverbindlich und kostenlos. Viele lassen Vorteile ungenutzt, weil sie sich für "nicht schwerbehindert genug" halten — das entscheidet das Versorgungsamt, nicht Sie selbst vorab.</span></div>
+  </section>
+
+  <!-- 12 · WIDERSPRUCH IM DETAIL -->
+  <section class="topic" id="widerspruch-detail">
+    <p class="eyebrow"><span class="icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg></span>Thema 12 · Widerspruch im Detail</p>
+    <h2 class="title">Vom Widerspruch zur Klage vor dem Sozialgericht</h2>
+    <p class="lead">Nicht nur beim Pflegegrad: Gegen jeden ablehnenden Bescheid der Pflegekasse lässt sich vorgehen.</p>
+    <div class="step-list">
+      <div class="step"><div class="step-num">1</div><div><h3>Widerspruch einlegen</h3><p>Schriftlich, innerhalb eines Monats nach Erhalt des Bescheids — eine kurze Begründung reicht zunächst, Nachreichen ist möglich.</p></div></div>
+      <div class="step"><div class="step-num">2</div><div><h3>Belege nachreichen</h3><p>Ärztliche Berichte, Pflegetagebuch, ggf. ein Gegengutachten stärken den Widerspruch.</p></div></div>
+      <div class="step"><div class="step-num">3</div><div><h3>Prüfung durch die Pflegekasse</h3><p>Oft wird ein erneutes MD-Gutachten veranlasst. Am Ende steht ein Widerspruchsbescheid.</p></div></div>
+      <div class="step"><div class="step-num">4</div><div><h3>Klage vor dem Sozialgericht</h3><p>Bleibt der Widerspruch erfolglos, kann innerhalb eines Monats Klage erhoben werden.</p></div></div>
+    </div>
+    <div class="callout">Das Verfahren vor dem Sozialgericht ist für Versicherte gerichtskostenfrei, eine Anwaltspflicht besteht in erster Instanz nicht (§ 183, § 73 SGG). Ein Pflegestützpunkt unterstützt kostenlos bei Begründung und Unterlagen.</div>
+    <div class="motivate"><span class="spark">→</span><span><strong>Es lohnt sich:</strong> Ein Widerspruch ist keine Bezichtigung, sondern ein normaler, gesetzlich vorgesehener Verfahrensschritt — und er hat häufiger Erfolg, als viele denken.</span></div>
+  </section>
+
+  <!-- 13 · STEUERLICHE ENTLASTUNG -->
+  <section class="topic" id="steuer">
+    <p class="eyebrow"><span class="icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><text x="12" y="16.5" font-size="11" font-family="sans-serif" text-anchor="middle" fill="currentColor" stroke="none">€</text></svg></span>Thema 13 · Steuerliche Entlastung</p>
+    <h2 class="title">Steuerliche Entlastungen für Pflegende</h2>
+    <p class="lead">Drei Wege, Pflegeaufwand steuerlich geltend zu machen.</p>
+    <table class="data">
+      <thead><tr><th>Pflegegrad der gepflegten Person</th><th>Pflege-Pauschbetrag / Jahr</th></tr></thead>
+      <tbody>
+        <tr><td>Pflegegrad 2</td><td>600 €</td></tr>
+        <tr><td>Pflegegrad 3</td><td>1.100 €</td></tr>
+        <tr><td>Pflegegrad 4 oder 5</td><td>1.800 €</td></tr>
+      </tbody>
+    </table>
+    <p class="footnote">Gilt auch bei Merkzeichen "H" (hilflos) im Schwerbehindertenausweis, unabhängig vom Pflegegrad. Voraussetzung: unentgeltliche, persönliche Pflege im EU/EWR-Haushalt, mindestens 10&nbsp;% des gesamten Pflegeaufwands. Pflegen mehrere Personen gemeinsam, wird der Betrag geteilt.</p>
+    <div class="grid cols-2" style="margin-top:22px">
+      <div class="card"><h3>Außergewöhnliche Belastungen (§ 33 EStG)</h3><p class="muted">Tatsächliche Pflegekosten als Alternative zum Pauschbetrag — abzüglich einer zumutbaren Eigenbelastung, die vom Einkommen abhängt.</p></div>
+      <div class="card"><h3>Haushaltsnahe Dienstleistungen (§ 35a EStG)</h3><p class="muted">20&nbsp;% der Kosten für Pflege- und Betreuungsleistungen direkt von der Steuerschuld abziehbar, innerhalb gesetzlicher Höchstgrenzen.</p></div>
+    </div>
+    <div class="callout"><strong>Wichtige Klarstellung:</strong> Wenn die pflegebedürftige Person ihr Pflegegeld an Sie weiterleitet, gilt das nicht als Bezahlung Ihrer Pflegeleistung — der Pflege-Pauschbetrag bleibt trotzdem möglich.</div>
+    <div class="motivate"><span class="spark">→</span><span><strong>Es lohnt sich:</strong> Diese Beträge holt sich niemand automatisch — nur wer sie in der Steuererklärung angibt, bekommt sie auch. Der Eintrag kostet wenige Minuten.</span></div>
+  </section>
+
+  <!-- 14 · RENTE FÜR PFLEGENDE -->
+  <section class="topic" id="rente">
+    <p class="eyebrow"><span class="icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><text x="12" y="16.5" font-size="11" font-family="sans-serif" text-anchor="middle" fill="currentColor" stroke="none">€</text></svg></span>Thema 14 · Rente für Pflegende</p>
+    <h2 class="title">Rente für pflegende Angehörige</h2>
+    <p class="lead">Wenig bekannt, aber bares Geld wert: Die Pflegekasse zahlt unter bestimmten Voraussetzungen Rentenversicherungsbeiträge für die Pflegeperson.</p>
+    <div class="grid cols-3" style="margin-top:24px">
+      <div class="card"><h3>Pflegegrad der gepflegten Person</h3><p class="muted">Mindestens Pflegegrad 2.</p></div>
+      <div class="card"><h3>Zeitlicher Umfang</h3><p class="muted">Mindestens 10 Stunden wöchentlich, verteilt auf mindestens 2 Tage.</p></div>
+      <div class="card"><h3>Eigene Erwerbstätigkeit</h3><p class="muted">Nicht mehr als 30 Stunden wöchentlich nebenher erwerbstätig.</p></div>
+    </div>
+    <div class="callout">Der zeitliche Umfang wird vom Medizinischen Dienst oder einem von der Pflegekasse beauftragten Gutachter festgestellt — meist im Rahmen der ohnehin nötigen Begutachtung. Liegen die Voraussetzungen vor, zahlt die Pflegekasse automatisch an die Rentenversicherung (§ 44 SGB XI).</div>
+    <div class="motivate"><span class="spark">→</span><span><strong>Es lohnt sich:</strong> Diese Absicherung kostet Sie nichts. Sprechen Sie den zeitlichen Umfang Ihrer Pflege beim Begutachtungstermin aktiv an, statt zu warten, dass jemand danach fragt.</span></div>
+  </section>
+
+  <!-- 15 · PFLEGEZEIT & BERUF -->
+  <section class="topic" id="pflegezeit">
+    <p class="eyebrow"><span class="icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></span>Thema 15 · Pflegezeit &amp; Beruf</p>
+    <h2 class="title">Pflegezeit &amp; Familienpflegezeit</h2>
+    <p class="lead">Drei Freistellungsmodelle, um Job und Pflege zu vereinbaren.</p>
+    <div class="grid cols-2" style="margin-top:22px">
+      <div class="card"><h3>Kurzzeitige Arbeitsverhinderung</h3><p class="muted">Bis 10 Arbeitstage je akutem Pflegefall, in jedem Betrieb. Pflegeunterstützungsgeld als Lohnersatz (rund 90&nbsp;% des Nettos, gedeckelt).</p></div>
+      <div class="card"><h3>Pflegezeit</h3><p class="muted">Bis 6 Monate volle oder teilweise Freistellung, in Betrieben mit i. d. R. mehr als 15 Beschäftigten. Unbezahlt, aber zinsloses Darlehen über das BAFzA möglich.</p></div>
+      <div class="card"><h3>Familienpflegezeit</h3><p class="muted">Bis 24 Monate Teilzeit mit mindestens 15 Std./Woche, in Betrieben mit i. d. R. mehr als 25 Beschäftigten. Ebenfalls Darlehen über das BAFzA möglich.</p></div>
+      <div class="card"><h3>Kündigungsschutz</h3><p class="muted">Gilt ab der Ankündigung — spätestens 12 Wochen vor Beginn — bis zum Ende der jeweiligen Freistellung.</p></div>
+    </div>
+    <div class="motivate"><span class="spark">→</span><span><strong>Es lohnt sich:</strong> Diese Freistellungen existieren genau für den Moment, in dem Job und Pflege sich nicht mehr vereinbaren lassen. Sie zu nutzen ist kein Karriererisiko — dafür gibt es den Kündigungsschutz.</span></div>
+  </section>
+
+  <!-- 16 · NACH DEM KRANKENHAUS -->
+  <section class="topic" id="krankenhaus">
+    <p class="eyebrow"><span class="icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></span>Thema 16 · Nach dem Krankenhaus</p>
+    <h2 class="title">Der Übergang nach dem Krankenhaus</h2>
+    <p class="lead">Einer der häufigsten Auslöser für plötzlichen Pflegebedarf — das Krankenhaus muss die Anschlussversorgung aktiv mitorganisieren.</p>
+    <div class="step-list">
+      <div class="step"><div class="step-num">1</div><div><h3>Sozialdienst früh einbeziehen</h3><p>Schon während des Aufenthalts ansprechbar — organisiert die Anschlussversorgung mit.</p></div></div>
+      <div class="step"><div class="step-num">2</div><div><h3>Entlassmanagement</h3><p>Das Krankenhaus kann am Entlasstag direkt Hilfsmittel oder häusliche Krankenpflege für die ersten Tage verordnen, ohne extra Arztbesuch.</p></div></div>
+      <div class="step"><div class="step-num">3</div><div><h3>Übergangspflege im Krankenhaus</h3><p>Ist die Anschlussversorgung noch nicht organisiert, sind bis zu 10 weitere Tage im Krankenhaus möglich (§ 39e SGB V) — ärztlich verordnet, kein Pflichtangebot jeder Klinik.</p></div></div>
+    </div>
+    <div class="callout">Alternativ greift häufig die Eil-Kurzzeitpflege direkt im Anschluss (siehe Thema 5) — mit verkürzter Entscheidungsfrist der Pflegekasse.</div>
+    <div class="motivate"><span class="spark">→</span><span><strong>Es lohnt sich:</strong> Fragen Sie aktiv nach dem Sozialdienst — er ist genau für diese Situation da, wird aber oft erst auf Nachfrage tätig.</span></div>
+  </section>
+
+  <!-- 17 · HOSPIZ & PALLIATIV -->
+  <section class="topic" id="hospiz">
+    <p class="eyebrow"><span class="icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></span>Thema 17 · Hospiz &amp; Palliativversorgung</p>
+    <h2 class="title">Hospiz- &amp; Palliativversorgung</h2>
+    <p class="lead">Wenn Heilung nicht mehr im Vordergrund steht — drei Formen der Begleitung, die sich kombinieren lassen.</p>
+    <div class="grid cols-3" style="margin-top:24px">
+      <div class="card"><h3>SAPV</h3><p class="muted">Spezialisierte ambulante Palliativversorgung: ein Team aus Ärzten und Pflegekräften mit 24-Stunden-Rufbereitschaft, ärztlich verordnet. Ergänzt die häusliche Pflege.</p></div>
+      <div class="card"><h3>Ambulanter Hospizdienst</h3><p class="muted">Psychosoziale Begleitung von Betroffenen und Angehörigen, oft ehrenamtlich getragen mit hauptamtlicher Koordination.</p></div>
+      <div class="card"><h3>Stationäres Hospiz</h3><p class="muted">Wenn die Versorgung zu Hause oder ambulant nicht mehr ausreicht — etwa bei aufwendiger Schmerztherapie.</p></div>
+    </div>
+    <p class="footnote">SAPV ist eine Leistung der Krankenversicherung (§ 37b SGB V), nicht der Pflegeversicherung — sie steht unabhängig vom Pflegegrad zur Verfügung.</p>
+    <div class="motivate"><span class="spark">→</span><span><strong>Es lohnt sich:</strong> Diese Begleitung früh anzunehmen heißt nicht, aufzugeben — sie schafft oft mehr gute, schmerzfreie Zeit, nicht weniger.</span></div>
+  </section>
+
+  <!-- 18 · REHA VOR PFLEGE -->
+  <section class="topic" id="reha">
+    <p class="eyebrow"><span class="icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg></span>Thema 18 · Reha vor Pflege</p>
+    <h2 class="title">Reha vor Pflege</h2>
+    <p class="lead">Ein gesetzlicher Grundsatz, der oft übersehen wird: Rehabilitation hat Vorrang vor dauerhafter Pflege.</p>
+    <div class="grid cols-2" style="margin-top:22px">
+      <div class="card"><h3>Pflicht zur Prüfung</h3><p class="muted">Die Pflegekasse muss bei jedem Antrag und bei jeder Nachuntersuchung prüfen, ob Rehabilitation geeignet ist, die Pflegebedürftigkeit zu überwinden, zu mindern oder ihre Verschlimmerung zu verhüten.</p></div>
+      <div class="card"><h3>Information an alle Beteiligten</h3><p class="muted">Stellt der Gutachter Reha-Bedarf fest, muss die Pflegekasse Sie unverzüglich informieren und — mit Ihrer Einwilligung — eine Mitteilung an den zuständigen Reha-Träger weiterleiten.</p></div>
+    </div>
+    <div class="callout">Besonders relevant nach einem Krankenhausaufenthalt: geriatrische Reha kann oft verhindern, dass aus einer vorübergehenden Schwäche ein dauerhaft hoher Pflegegrad wird (§ 5, § 31 SGB XI).</div>
+    <div class="motivate"><span class="spark">→</span><span><strong>Es lohnt sich:</strong> Warten Sie nicht, bis die Pflegekasse von selbst prüft — fragen Sie aktiv nach einer Reha. Den Anstoß dürfen Sie auch selbst geben.</span></div>
+  </section>
+
+  <!-- 19 · PFLEGE-WG -->
+  <section class="topic" id="pflegewg">
+    <p class="eyebrow"><span class="icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M15 14.3c2.3.3 4 2.3 4 5.7"/></svg></span>Thema 19 · Pflege-WG</p>
+    <h2 class="title">Ambulant betreute Wohngemeinschaften</h2>
+    <p class="lead">Eine Alternative zwischen Zuhause und vollstationärer Pflege: mehrere Pflegebedürftige teilen sich Wohnung und Versorgung.</p>
+    <div class="stat-card">
+      <div class="stat">224 €</div>
+      <div class="stat-label">Wohngruppenzuschlag pro Monat und Person (§ 45f SGB XI), zusätzlich zu Pflegegeld oder Pflegesachleistung</div>
+    </div>
+    <div class="grid cols-2" style="margin-top:22px">
+      <div class="card"><h3>Voraussetzungen</h3><p class="muted">Mindestens 3, höchstens 12 Bewohner in einer gemeinsamen Wohnung mit gemeinsam genutzter Küche und Sanitärbereich; mindestens 3 davon mit Pflegegrad 1 bis 5.</p></div>
+      <div class="card"><h3>Anschubfinanzierung</h3><p class="muted">Bis 2.500 € pro Person, insgesamt höchstens 10.000 € pro Wohngruppe, für die barrierearme Umgestaltung der gemeinsamen Wohnung (§ 45g SGB XI).</p></div>
+    </div>
+    <div class="motivate"><span class="spark">→</span><span><strong>Es lohnt sich:</strong> Sich für eine Pflege-WG zu interessieren ist kein Zeichen, dass die eigene Pflege "gescheitert" ist — für viele Familien ist es genau der Mittelweg, den sie gesucht haben.</span></div>
+  </section>
+
+  <!-- 20 · DiPA -->
+  <section class="topic" id="dipa">
+    <p class="eyebrow"><span class="icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="2"/><line x1="11" y1="18" x2="13" y2="18"/></svg></span>Thema 20 · Digitale Pflegeanwendungen</p>
+    <h2 class="title">Digitale Pflegeanwendungen (DiPA)</h2>
+    <p class="lead">Apps und Webanwendungen, die Selbständigkeit erhalten oder eine Verschlimmerung der Pflegebedürftigkeit verzögern sollen — von der Pflegekasse mitfinanziert.</p>
+    <div class="stat-card">
+      <div class="stat">40 € + 30 €</div>
+      <div class="stat-label">monatlich: bis 40 € für die DiPA selbst (§ 40a SGB XI) plus bis 30 € für Unterstützung bei der Nutzung durch einen Pflegedienst (§ 39a SGB XI)</div>
+    </div>
+    <div class="grid cols-2" style="margin-top:22px">
+      <div class="card"><h3>Für wen?</h3><p class="muted">Für Pflegebedürftige direkt — und für Anwendungen, die pflegende Angehörige oder ehrenamtlich Pflegende bei Betreuung oder Haushaltsführung unterstützen.</p></div>
+      <div class="card"><h3>Zulassung</h3><p class="muted">Geprüft und gelistet im offiziellen Verzeichnis des Bundesinstituts für Arzneimittel und Medizinprodukte (BfArM) nach § 78a SGB XI — ähnlich dem bekannteren DiGA-Verfahren bei Gesundheits-Apps.</p></div>
+    </div>
+    <div class="callout warn"><strong>Ehrlich gesagt:</strong> Der Anspruch besteht bereits gesetzlich, das BfArM-Verzeichnis ist jedoch noch im Aufbau — bislang sind noch keine Anwendungen offiziell gelistet. Die praktische Verfügbarkeit wächst erst nach und nach.</div>
+    <div class="motivate"><span class="spark">→</span><span><strong>Es lohnt sich:</strong> Auch wenn das Angebot noch wächst — fragen Sie aktiv bei Ihrer Pflegekasse danach, statt zu warten, bis jemand anders darauf hinweist.</span></div>
+  </section>
+
+  <!-- 21 · WENN DIE KRAFT NACHLÄSST -->
+  <section class="topic" id="angehoerige-staerken">
+    <p class="eyebrow"><span class="icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></span>Thema 21 · Für pflegende Angehörige</p>
+    <h2 class="title">Wenn die Kraft nachlässt</h2>
+    <p class="lead">Pflegende Angehörige geraten oft selbst an ihre Grenzen — und übersehen dabei, dass es auch für sie Unterstützung gibt. Ein Anruf reicht.</p>
+    <div class="grid cols-2" style="margin-top:24px">
+      <div class="card"><h3>Pflegetelefon</h3><p class="muted" style="margin-bottom:10px">Das Bürgertelefon Pflege des Bundesministeriums für Gesundheit berät kostenlos und unabhängig, auch zu persönlichen Belastungssituationen.</p><a class="tel" href="tel:+4930340606602"><span class="icon"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>(030) 340 60 66-02</a><p class="muted" style="margin-top:8px;font-size:13.5px">Mo–Mi 8–16 Uhr, Do 8–18 Uhr, Fr 8–12 Uhr</p></div>
+      <div class="card"><h3>Selbsthilfegruppen (NAKOS)</h3><p class="muted" style="margin-bottom:10px">Die Nationale Kontakt- und Informationsstelle für Selbsthilfegruppen führt eine bundesweite, kostenlose Datenbank und berät auch telefonisch.</p><a class="tel" href="tel:+493031018960"><span class="icon"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>030 – 31 01 89 60</a><p class="muted" style="margin-top:8px;font-size:13.5px">Di, Mi, Fr 10–14 Uhr, Do 14–17 Uhr</p></div>
+      <div class="card"><h3>Pflegekurse vertiefen</h3><p class="muted">Kostenlose Kurse der Pflegekassen (§ 45 SGB XI, siehe Thema 6) lassen sich auch gezielt zu einzelnen Themen wiederholen — etwa Heben und Lagern oder Kommunikation bei Demenz.</p></div>
+      <div class="card"><h3>Pflegestützpunkt</h3><p class="muted">Bietet nicht nur Antragshilfe, sondern auch Gespräche, wenn die Pflegesituation insgesamt zu viel wird (siehe Thema 8).</p></div>
+    </div>
+    <div class="callout warn"><strong>Wenn gerade alles zu viel wird:</strong> Die TelefonSeelsorge ist täglich rund um die Uhr erreichbar, kostenlos und anonym — nicht nur in akuten Krisen, auch wenn Erschöpfung, Überforderung oder Einsamkeit einfach mal ausgesprochen werden müssen.
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
+        <a class="tel" href="tel:+498001110111"><span class="icon"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>0800 111 0 111</a>
+        <a class="tel" href="tel:+498001110222"><span class="icon"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>0800 111 0 222</a>
+        <a class="tel" href="tel:116123"><span class="icon"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>116 123</a>
+      </div>
+    </div>
+    <div class="motivate"><span class="spark">→</span><span><strong>Es lohnt sich:</strong> Es ist kein Zeichen von Schwäche, frühzeitig Hilfe für sich selbst zu suchen — sondern die Voraussetzung dafür, für einen anderen Menschen überhaupt da sein zu können. Die meisten Angebote hier sind kostenlos, anonym möglich und unabhängig von der Pflegekasse erreichbar.</span></div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="disclaimer">Diese Seite bietet allgemeine Informationen und ersetzt keine individuelle Sozial- oder Rechtsberatung. Für eine verbindliche Einschätzung wenden Sie sich an Ihre Pflegekasse oder einen Pflegestützpunkt in Ihrer Nähe.</div>
+  <div class="sources">Hilfetelefone: Bürgertelefon Pflege (030) 340 60 66-02 · Alzheimer-Telefon 030 – 259 37 95 14 · NAKOS 030 – 31 01 89 60 · TelefonSeelsorge 0800 111 0 111 / 116 123.</div>
+  <div class="sources">Rechtsgrundlagen: <a href="https://www.gesetze-im-internet.de/sgb_11/__15.html" rel="noopener">§ 15</a>, <a href="https://dejure.org/gesetze/SGB_XI/31.html" rel="noopener">§ 31</a>, <a href="https://dejure.org/gesetze/SGB_XI/36.html" rel="noopener">§ 36</a>, <a href="https://dejure.org/gesetze/SGB_XI/37.html" rel="noopener">§ 37</a>, <a href="https://dejure.org/gesetze/SGB_XI/39.html" rel="noopener">§ 39</a>, <a href="https://dejure.org/gesetze/SGB_XI/41.html" rel="noopener">§ 41</a>, <a href="https://www.gesetze-im-internet.de/sgb_11/__40.html" rel="noopener">§ 40</a>, <a href="https://www.buzer.de/40a_SGB_11.htm" rel="noopener">§ 40a/40b</a>, <a href="https://dejure.org/gesetze/SGB_XI/42a.html" rel="noopener">§ 42a</a>, <a href="https://dejure.org/gesetze/SGB_XI/43.html" rel="noopener">§ 43</a>, <a href="https://dejure.org/gesetze/SGB_XI/44.html" rel="noopener">§ 44</a>, <a href="https://dejure.org/gesetze/SGB_XI/45b.html" rel="noopener">§ 45b</a>, <a href="https://dejure.org/gesetze/SGB_XI/45e.html" rel="noopener">§ 45f/45g</a>, <a href="https://dejure.org/gesetze/SGB_XI/72.html" rel="noopener">§ 72</a>, <a href="https://dejure.org/gesetze/SGB_XI/78.html" rel="noopener">§ 78</a>, <a href="https://dejure.org/gesetze/SGB_XI/120.html" rel="noopener">§ 120</a> SGB XI; <a href="https://dejure.org/gesetze/SGB_V/37b.html" rel="noopener">§ 37b</a>, <a href="https://dejure.org/gesetze/SGB_V/39e.html" rel="noopener">§ 39e</a> SGB V; <a href="https://www.gesetze-im-internet.de/estg/__33b.html" rel="noopener">§ 33b EStG</a>; PflegeZG, FPfZG; SGB IX; BGB (Betreuungsrecht); <a href="https://www.pflegelotse.de" rel="noopener">vdek-Pflegelotse</a>; <a href="https://www.verbraucherzentrale.de/wissen/gesundheit-pflege/pflege-zu-hause/auslaendische-betreuungskraefte-wie-geht-das-legal-10601" rel="noopener">Verbraucherzentrale</a>. Beträge gemäß Gesetz zur Befugniserweiterung und Entbürokratisierung in der Pflege (BGBl. I Nr. 371/2025), in Kraft seit 01.01.2026.</div>
+  <svg class="mark-mini" width="20" height="20" viewBox="0 0 64 64" aria-hidden="true">
+    <g fill="none" stroke="#95a78d" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M16 15 L28 28"/><path d="M48 15 L36 28"/><path d="M32 38 L32 52"/>
+    </g><circle cx="32" cy="32" r="6.5" fill="#f87666"/>
+  </svg>
+  YNA Digital — Yield Native Applications · Ratgeber Pflege · Stand: Juni 2026.
+</footer>
+<script>
+  function jump(id){
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.scrollIntoView({behavior:'smooth', block:'start'});
+    if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex','-1');
+    el.focus({preventScroll:true});
+  }
+</script>
+</body>
+</html>
