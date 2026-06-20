@@ -340,6 +340,15 @@
     <li><button type="button" class="tab" onclick="jump('pflegewg')">Pflege-WG</button></li>
     <li><button type="button" class="tab" onclick="jump('dipa')">Digitale Pflegeanwendungen</button></li>
     <li><button type="button" class="tab" onclick="jump('angehoerige-staerken')">Wenn die Kraft nachlässt</button></li>
+    <li><button type="button" class="tab" onclick="jump('elternunterhalt')">Elternunterhalt</button></li>
+    <li><button type="button" class="tab" onclick="jump('hilfe-zur-pflege')">Hilfe zur Pflege</button></li>
+    <li><button type="button" class="tab" onclick="jump('schonvermoegen')">Schonvermögen</button></li>
+    <li><button type="button" class="tab" onclick="jump('pflegezusatz')">Pflegezusatzversicherung</button></li>
+    <li><button type="button" class="tab" onclick="jump('pflege-kinder')">Pflege bei Kindern</button></li>
+    <li><button type="button" class="tab" onclick="jump('umzug-pflegeheim')">Umzug ins Pflegeheim</button></li>
+    <li><button type="button" class="tab" onclick="jump('mobilitaet')">Mobilität &amp; Teilhabe</button></li>
+    <li><button type="button" class="tab" onclick="jump('hausnotruf')">Hausnotruf</button></li>
+    <li><button type="button" class="tab" onclick="jump('wohnraum')">Wohnraum gestalten</button></li>
   </ul>
 </header>
 
@@ -456,6 +465,51 @@
         <span class="ic" style="background:var(--bone)">21</span>
         <h3>Wenn die Kraft nachlässt</h3>
         <p>Anlaufstellen und Selbsthilfe für pflegende Angehörige selbst.</p>
+      </button>
+      <button type="button" class="topic-card" onclick="jump('elternunterhalt')">
+        <span class="ic" style="background:var(--dust-grey)">22</span>
+        <h3>Elternunterhalt</h3>
+        <p>Wann Kinder wirklich zahlen müssen — und wann nicht.</p>
+      </button>
+      <button type="button" class="topic-card" onclick="jump('hilfe-zur-pflege')">
+        <span class="ic" style="background:var(--bone)">23</span>
+        <h3>Hilfe zur Pflege</h3>
+        <p>Wenn Rente, Versicherung und Vermögen nicht reichen, springt das Sozialamt ein.</p>
+      </button>
+      <button type="button" class="topic-card" onclick="jump('schonvermoegen')">
+        <span class="ic" style="background:var(--muted-teal)">24</span>
+        <h3>Schonvermögen</h3>
+        <p>Was geschützt bleibt, bevor das Sozialamt auf Vermögen zugreift.</p>
+      </button>
+      <button type="button" class="topic-card" onclick="jump('pflegezusatz')">
+        <span class="ic" style="background:var(--rosy-taupe)">25</span>
+        <h3>Pflegezusatzversicherung</h3>
+        <p>Pflege-Bahr und private Vorsorge gegen die Pflegelücke.</p>
+      </button>
+      <button type="button" class="topic-card" onclick="jump('pflege-kinder')">
+        <span class="ic" style="background:var(--vibrant-coral)">26</span>
+        <h3>Pflege bei Kindern</h3>
+        <p>Besondere Maßstäbe bei der Begutachtung von Kindern und Jugendlichen.</p>
+      </button>
+      <button type="button" class="topic-card" onclick="jump('umzug-pflegeheim')">
+        <span class="ic" style="background:var(--dust-grey)">27</span>
+        <h3>Umzug ins Pflegeheim</h3>
+        <p>Die eigene Wohnung auflösen — ohne gesetzliches Sonderkündigungsrecht.</p>
+      </button>
+      <button type="button" class="topic-card" onclick="jump('mobilitaet')">
+        <span class="ic" style="background:var(--bone)">28</span>
+        <h3>Mobilität &amp; Teilhabe</h3>
+        <p>Parkausweis, ÖPNV-Wertmarke und Begleitperson mit Merkzeichen.</p>
+      </button>
+      <button type="button" class="topic-card" onclick="jump('hausnotruf')">
+        <span class="ic" style="background:var(--muted-teal)">29</span>
+        <h3>Hausnotruf</h3>
+        <p>25,50 € Zuschuss im Monat — wie Sie ihn bekommen und was er bringt.</p>
+      </button>
+      <button type="button" class="topic-card" onclick="jump('wohnraum')">
+        <span class="ic" style="background:var(--rosy-taupe)">30</span>
+        <h3>Wohnraum gestalten</h3>
+        <p>Pflegegerecht umbauen, ohne dass es nach Klinik aussieht.</p>
       </button>
     </div>
   </section>
@@ -852,6 +906,7 @@
       <div class="card"><h3>Betreuungsverfügung</h3><p class="muted">Äußert Wünsche zur Person des Betreuers, falls das Betreuungsgericht einen Betreuer bestellen muss. Der Betreuer wird gerichtlich kontrolliert.</p></div>
     </div>
     <div class="callout warn"><strong>Wichtig:</strong> Ehepartner haben in Deutschland kein automatisches Vertretungsrecht in größeren rechtlichen oder finanziellen Angelegenheiten. Seit 2023 gibt es ein begrenztes Ehegatten-Notvertretungsrecht — aber nur für medizinische Entscheidungen und längstens sechs Monate. Ohne Vorsorgevollmacht bestellt sonst das Betreuungsgericht einen Betreuer.</div>
+    <div class="callout"><strong>Ergänzung: Bankvollmacht.</strong> Viele Banken akzeptieren eine allgemeine Vorsorgevollmacht in der Praxis nicht ohne Weiteres — fragen Sie gezielt nach dem bankeigenen Vollmachtsformular ("Konto-/Bankvollmacht"). Sonst bleiben Konten im Ernstfall trotz bestehender Vorsorgevollmacht blockiert.</div>
     <div class="callout">Kostenlose Formulare und die Broschüren "Betreuungsrecht" und "Patientenverfügung" bietet das Bundesministerium der Justiz. Registrieren lässt sich jedes der drei Dokumente im Zentralen Vorsorgeregister der Bundesnotarkammer — damit sie im Ernstfall auffindbar sind.
       <button type="button" class="contact-btn" onclick="openContact('vorsorgeregister')"><span class="icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="11" r="1.8"/><line x1="13" y1="9.5" x2="18" y2="9.5"/><line x1="13" y1="13" x2="18" y2="13"/></svg></span>Kontakt zum Vorsorgeregister</button>
     </div>
@@ -1036,12 +1091,192 @@
     <div class="motivate"><span class="spark">→</span><span><strong>Es lohnt sich:</strong> Es ist kein Zeichen von Schwäche, frühzeitig Hilfe für sich selbst zu suchen — sondern die Voraussetzung dafür, für einen anderen Menschen überhaupt da sein zu können. Die meisten Angebote hier sind kostenlos, anonym möglich und unabhängig von der Pflegekasse erreichbar.</span></div>
   </section>
 
+  <!-- 22 · ELTERNUNTERHALT -->
+  <section class="topic" id="elternunterhalt">
+    <p class="eyebrow"><span class="icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><text x="12" y="16.5" font-size="11" font-family="sans-serif" text-anchor="middle" fill="currentColor" stroke="none">€</text></svg></span>Thema 22 · Elternunterhalt</p>
+    <h2 class="title">Elternunterhalt — wann müssen Kinder zahlen?</h2>
+    <p class="lead">Eine der größten unnötigen Sorgen in Familien — die meisten Kinder zahlen heute gar nichts.</p>
+    <div class="stat-card">
+      <div class="stat">100.000 €</div>
+      <div class="stat-label">Jahresbruttoeinkommen-Grenze pro Kind — erst darüber darf das Sozialamt überhaupt prüfen (§ 94 Abs. 1a SGB XII)</div>
+    </div>
+    <div class="grid cols-2" style="margin-top:22px">
+      <div class="card"><h3>Pro Kind einzeln</h3><p class="muted">Die Grenze gilt für jedes Kind individuell — Einkommen von Geschwistern wird nicht zusammengerechnet.</p></div>
+      <div class="card"><h3>Beweislast bei der Behörde</h3><p class="muted">Das Gesetz vermutet, dass Ihr Einkommen unter der Grenze liegt. Das Sozialamt muss konkrete Anhaltspunkte für ein höheres Einkommen haben, bevor es Auskunft verlangen darf — nicht Sie müssen es beweisen.</p></div>
+    </div>
+    <div class="callout">Liegt Ihr Einkommen erkennbar unter der Grenze, reicht in der Regel die Vorlage des aktuellen Einkommensteuerbescheids. Ein pauschales Anschreiben an alle Kinder ohne konkrete Anhaltspunkte ist nicht zulässig.</div>
+    <p class="footnote">Rechtsgrundlage: § 94 Abs. 1a SGB XII, eingeführt durch das Angehörigen-Entlastungsgesetz (seit 1.1.2020). Die grundsätzliche zivilrechtliche Unterhaltspflicht (§ 1601 BGB) bleibt zwar bestehen, wirkt sich aber unterhalb der Grenze praktisch nicht aus. Hinweis: Eine Abschaffung der Grenze wird politisch diskutiert — die aktuelle Rechtslage gilt unverändert.</p>
+    <div class="motivate"><span class="spark">→</span><span><strong>Es lohnt sich:</strong> Lassen Sie sich von der Sorge um Elternunterhalt nicht vorschnell beunruhigen — prüfen Sie die eigene Einkommenssituation nüchtern, bevor Sie überstürzt reagieren oder sich beraten lassen.</span></div>
+  </section>
+
+  <!-- 23 · HILFE ZUR PFLEGE -->
+  <section class="topic" id="hilfe-zur-pflege">
+    <p class="eyebrow"><span class="icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><text x="12" y="16.5" font-size="11" font-family="sans-serif" text-anchor="middle" fill="currentColor" stroke="none">€</text></svg></span>Thema 23 · Hilfe zur Pflege</p>
+    <h2 class="title">Hilfe zur Pflege (Sozialhilfe)</h2>
+    <p class="lead">Wenn Rente, Pflegeversicherung und eigenes Vermögen die Pflegekosten nicht decken, springt das Sozialamt ein.</p>
+    <div class="step-list">
+      <div class="step"><div class="step-num">1</div><div><h3>Nachrangigkeit prüfen</h3><p>Hilfe zur Pflege gibt es nur, wenn Pflegeversicherung, Einkommen und Vermögen nicht ausreichen — sie ergänzt, ersetzt nicht.</p></div></div>
+      <div class="step"><div class="step-num">2</div><div><h3>Antrag beim Sozialamt</h3><p>Zuständig ist das örtliche Sozialamt, nicht die Pflegekasse. Der bereits festgestellte Pflegegrad wird unverändert übernommen.</p></div></div>
+      <div class="step"><div class="step-num">3</div><div><h3>Einkommen &amp; Vermögen offenlegen</h3><p>Das Sozialamt prüft Einkommen und Vermögen von Antragsteller und Ehe-/Lebenspartner (siehe Thema 24 zum Schonvermögen).</p></div></div>
+      <div class="step"><div class="step-num">4</div><div><h3>Übernahme der ungedeckten Kosten</h3><p>Das Amt übernimmt die Differenz — bei häuslicher, teilstationärer oder vollstationärer Pflege.</p></div></div>
+    </div>
+    <div class="callout warn"><strong>Wichtig:</strong> Hilfe zur Pflege wird nicht rückwirkend gezahlt — erst ab Antragstellung. Stellen Sie den Antrag so früh wie möglich, auch wenn noch nicht alle Unterlagen vollständig sind.</div>
+    <p class="footnote">Grundsätzlich besteht Anspruch ab Pflegegrad 2; bei Pflegegrad 1 ist über § 66 SGB XII zumindest der Entlastungsbetrag erfasst.</p>
+    <div class="motivate"><span class="spark">→</span><span><strong>Es lohnt sich:</strong> Ein Antrag beim Sozialamt ist kein Stigma — die Hilfe zur Pflege ist eine reguläre, gesetzlich verankerte Sozialleistung, genau für diese Situation gedacht.</span></div>
+  </section>
+
+  <!-- 24 · SCHONVERMÖGEN -->
+  <section class="topic" id="schonvermoegen">
+    <p class="eyebrow"><span class="icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><text x="12" y="16.5" font-size="11" font-family="sans-serif" text-anchor="middle" fill="currentColor" stroke="none">€</text></svg></span>Thema 24 · Schonvermögen</p>
+    <h2 class="title">Schonvermögen — was geschützt bleibt</h2>
+    <p class="lead">Bevor das Sozialamt zahlt, wird Vermögen geprüft — aber nicht alles davon.</p>
+    <div class="stat-card">
+      <div class="stat">10.000 € / 20.000 €</div>
+      <div class="stat-label">Schonvermögen für Einzelpersonen bzw. für Ehe- und Lebenspartner gemeinsam (§ 90 SGB XII i. V. m. Durchführungsverordnung)</div>
+    </div>
+    <div class="grid cols-2" style="margin-top:22px">
+      <div class="card"><h3>Selbstbewohnte Immobilie</h3><p class="muted">Ein angemessenes, selbstbewohntes Haus oder eine Eigentumswohnung bleibt in der Regel geschützt — die Angemessenheit richtet sich nach Größe und Personenzahl.</p></div>
+      <div class="card"><h3>Altersvorsorge</h3><p class="muted">Bestimmte private Altersvorsorgeverträge können als geschütztes Vermögen gelten, abhängig von ihrer Ausgestaltung.</p></div>
+    </div>
+    <div class="motivate"><span class="spark">→</span><span><strong>Es lohnt sich:</strong> Informieren Sie sich konkret bei einer Beratungsstelle, bevor Sie aus Sorge vorschnell Vermögen verschenken oder übertragen — das kann im Sozialhilferecht selbst Nachteile auslösen.</span></div>
+  </section>
+
+  <!-- 25 · PFLEGEZUSATZVERSICHERUNG -->
+  <section class="topic" id="pflegezusatz">
+    <p class="eyebrow"><span class="icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 5-3.5 8-7 9-3.5-1-7-4-7-9V6l7-3z"/></svg></span>Thema 25 · Pflegezusatzversicherung</p>
+    <h2 class="title">Pflegezusatzversicherung &amp; Pflege-Bahr</h2>
+    <p class="lead">Freiwillige Zusatzabsicherung gegen die Pflegelücke — die gesetzliche Pflegeversicherung deckt bewusst nur einen Grundstock.</p>
+    <div class="stat-card">
+      <div class="stat">5 € + 10 €</div>
+      <div class="stat-label">Der Staat zahlt 5 € im Monat dazu, wenn Sie mindestens 10 € Eigenbeitrag in eine geförderte Pflege-Bahr-Versicherung einzahlen (§ 126/§ 127 SGB XI)</div>
+    </div>
+    <div class="grid cols-2" style="margin-top:22px">
+      <div class="card"><h3>Keine Gesundheitsprüfung</h3><p class="muted">Versicherer müssen jeden ab 18 Jahren annehmen — ohne Risikozuschläge oder Ausschlüsse (Kontrahierungszwang). Ausnahme: bereits bezogene Pflegeleistungen vor Vertragsabschluss.</p></div>
+      <div class="card"><h3>Wartezeit 5 Jahre</h3><p class="muted">Volle Leistungen gibt es erst nach 5 Jahren Vertragslaufzeit — ein früher Abschluss lohnt sich entsprechend mehr.</p></div>
+    </div>
+    <div class="callout">Eine Pflegezusatzversicherung — gefördert oder nicht — ist eine Ergänzung, kein Ersatz: Die Pflichtleistungen Ihrer Pflegekasse aus den Themen 1–9 bleiben davon vollständig unberührt.</div>
+    <div class="motivate"><span class="spark">→</span><span><strong>Es lohnt sich:</strong> Je früher abgeschlossen, desto günstiger die Prämie — und ohne Gesundheitsprüfung angenommen zu werden, ist sonst selten.</span></div>
+  </section>
+
+  <!-- 26 · PFLEGE BEI KINDERN -->
+  <section class="topic" id="pflege-kinder">
+    <p class="eyebrow"><span class="icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M15 14.3c2.3.3 4 2.3 4 5.7"/></svg></span>Thema 26 · Pflege bei Kindern</p>
+    <h2 class="title">Pflege bei Kindern und Jugendlichen</h2>
+    <p class="lead">Die Begutachtung nutzt dieselben Module wie bei Erwachsenen — aber mit besonderen, altersgemäßen Maßstäben.</p>
+    <div class="grid cols-3" style="margin-top:24px">
+      <div class="card"><h3>Unter 18 Monaten</h3><p class="muted">Automatische Einstufung in mindestens Pflegegrad 2 — ohne detaillierte Einzelprüfung.</p></div>
+      <div class="card"><h3>Ab 18 Monaten</h3><p class="muted">Vergleich mit altersentsprechend entwickelten Kindern: Bewertet wird nur, was über den üblichen Hilfebedarf eines gesunden Kindes dieses Alters hinausgeht.</p></div>
+      <div class="card"><h3>Ab 12 Jahren</h3><p class="muted">Die altersbezogene Sonderregel entfällt — ab hier gelten dieselben Maßstäbe wie bei Erwachsenen.</p></div>
+    </div>
+    <div class="callout">Eltern oder Sorgeberechtigte werden beim Begutachtungstermin aktiv einbezogen und schildern den Unterstützungsbedarf im Alltag.</div>
+    <p class="footnote">Rechtsgrundlage: § 15 Abs. 6 und 7 SGB XI (besondere Bewertungsvorschriften für Kinder).</p>
+    <div class="motivate"><span class="spark">→</span><span><strong>Es lohnt sich:</strong> Auch wenn die Maßstäbe ungewohnt wirken — gerade bei Entwicklungsverzögerungen oder chronischen Erkrankungen lohnt sich der Antrag oft früher, als Eltern zunächst denken.</span></div>
+  </section>
+
+  <!-- 27 · UMZUG INS PFLEGEHEIM -->
+  <section class="topic" id="umzug-pflegeheim">
+    <p class="eyebrow"><span class="icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg></span>Thema 27 · Umzug ins Pflegeheim</p>
+    <h2 class="title">Umzug ins Pflegeheim — die Wohnung auflösen</h2>
+    <p class="lead">Für viele Familien der emotional schwierigste praktische Schritt — und einer der meistmissverstandenen.</p>
+    <div class="callout warn"><strong>Weit verbreiteter Irrtum:</strong> Es gibt kein gesetzliches Sonderkündigungsrecht beim Umzug ins Pflegeheim. Pflegebedürftigkeit allein berechtigt nicht zur fristlosen Kündigung (§ 543 BGB) — Gerichte haben das wiederholt bestätigt. Die normale gesetzliche Kündigungsfrist von drei Monaten gilt unverändert.</div>
+    <div class="step-list">
+      <div class="step"><div class="step-num">1</div><div><h3>Vermieter frühzeitig informieren</h3><p>Je früher Bescheid gegeben wird, desto mehr Spielraum bleibt.</p></div></div>
+      <div class="step"><div class="step-num">2</div><div><h3>Nachmieter vorschlagen</h3><p>Mit einem passenden Nachmieter sind viele Vermieter zu einem Aufhebungsvertrag vor Ablauf der Frist bereit — ein Anspruch besteht darauf aber nicht.</p></div></div>
+        <div class="step"><div class="step-num">3</div><div><h3>Verträge durchgehen</h3><p>Strom, Telefon, Rundfunkbeitrag, Versicherungen — jeweils einzeln prüfen und kündigen oder ummelden.</p></div></div>
+      <div class="step"><div class="step-num">4</div><div><h3>Hausrat verteilen</h3><p>Was ins Heim mitkommt, was an Angehörige geht, was aufgelöst wird — am besten mit ausreichend Vorlauf planen.</p></div></div>
+    </div>
+    <div class="motivate"><span class="spark">→</span><span><strong>Es lohnt sich:</strong> Sprechen Sie früh und offen mit dem Vermieter — viele sind kulanter, als das Gesetz verlangt, wenn ein Nachmieter in Sicht ist.</span></div>
+  </section>
+
+  <!-- 28 · MOBILITÄT & TEILHABE -->
+  <section class="topic" id="mobilitaet">
+    <p class="eyebrow"><span class="icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11l1.5-4.5A2 2 0 0 1 8.4 5h7.2a2 2 0 0 1 1.9 1.5L19 11"/><rect x="3" y="11" width="18" height="6" rx="2"/><circle cx="7.5" cy="17" r="1.5"/><circle cx="16.5" cy="17" r="1.5"/></svg></span>Thema 28 · Mobilität &amp; Teilhabe</p>
+    <h2 class="title">Mobilität &amp; Teilhabe mit Merkzeichen</h2>
+    <p class="lead">Vertiefung zu Thema 11 — die Merkzeichen im Schwerbehindertenausweis bringen sehr konkrete Alltagsvorteile.</p>
+    <div class="grid cols-3" style="margin-top:24px">
+      <div class="card"><h3>Merkzeichen aG / Bl</h3><p class="muted">Blauer EU-Parkausweis — Parken auf gekennzeichneten Behindertenparkplätzen, europaweit gültig.</p></div>
+      <div class="card"><h3>Merkzeichen G / aG / H / Bl / Gl</h3><p class="muted">Wertmarke für unentgeltliche oder ermäßigte Fahrten im Nahverkehr (Beiblatt zum Ausweis nötig).</p></div>
+      <div class="card"><h3>Merkzeichen B</h3><p class="muted">Eine Begleitperson fährt im Nah- und Fernverkehr kostenlos mit — ebenso ein Assistenz- oder Blindenführhund.</p></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat">104 €</div>
+      <div class="stat-label">Wertmarke pro Jahr bei Merkzeichen G, Gl oder aG (53 € für 6 Monate) — kostenfrei bei H, Bl oder TBl, Stand 2025</div>
+    </div>
+    <p class="footnote">Wahlpflicht: Wer die ÖPNV-Wertmarke nutzt, kann meist nicht zugleich die Kfz-Steuer-Ermäßigung in Anspruch nehmen. Antrag jeweils beim Versorgungsamt.</p>
+    <div class="motivate"><span class="spark">→</span><span><strong>Es lohnt sich:</strong> Diese Vorteile gelten nur mit Antrag — niemand bekommt Wertmarke oder Parkausweis automatisch zugeschickt.</span></div>
+  </section>
+
+  <!-- 29 · HAUSNOTRUF -->
+  <section class="topic" id="hausnotruf">
+    <p class="eyebrow"><span class="icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>Thema 29 · Hausnotruf</p>
+    <h2 class="title">Hausnotruf — Hilfe auf Knopfdruck</h2>
+    <p class="lead">Die meisten Stürze passieren zu Hause — im Bad, im Flur, auf der Treppe. Ein Hausnotruf holt dann auch ohne Telefon Hilfe.</p>
+    <div class="stat-card">
+      <div class="stat">25,50 €</div>
+      <div class="stat-label">Zuschuss der Pflegekasse pro Monat, plus 10,49 € einmalig für Anschluss und Einweisung (§ 40 Abs. 1 SGB XI)</div>
+    </div>
+    <div class="grid cols-2" style="margin-top:22px">
+      <div class="card"><h3>Voraussetzungen</h3><p class="muted">Mindestens Pflegegrad 1 reicht aus. Zusätzlich: Sie sind über weite Teile des Tages allein oder leben mit jemandem, der im Notfall nicht selbst Hilfe holen könnte — und können im Ernstfall kein gewöhnliches Telefon nutzen.</p></div>
+      <div class="card"><h3>So funktioniert die Abrechnung</h3><p class="muted">Sie unterschreiben beim Anbieter eine Abtretungserklärung — dieser rechnet die 25,50 € direkt mit Ihrer Pflegekasse ab. Keine eigene Vorfinanzierung nötig.</p></div>
+    </div>
+    <div class="callout">Eine ärztliche Verordnung ist nicht erforderlich — der Hausnotruf ist ein Pflegehilfsmittel, kein medizinisches Hilfsmittel. Bei gelistetem Standardgerät fällt in der Regel kein Eigenanteil an. Mobile Notrufsysteme für draußen sind nicht immer als Pflegehilfsmittel anerkannt.</div>
+    <p class="footnote">Antrag formlos bei der Pflegekasse oder direkt über einen Hausnotruf-Anbieter; bei Ablehnung ist Widerspruch möglich (siehe Thema 12).</p>
+    <div class="motivate"><span class="spark">→</span><span><strong>Es lohnt sich:</strong> Gerade bei Alleinleben ist der Hausnotruf eine der günstigsten und am schnellsten organisierten Absicherungen überhaupt — oft innerhalb weniger Tage installiert.</span></div>
+  </section>
+
+  <!-- 30 · WOHNRAUM GESTALTEN -->
+  <section class="topic" id="wohnraum">
+    <p class="eyebrow"><span class="icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg></span>Thema 30 · Wohnraum gestalten</p>
+    <h2 class="title">Wohnraum pflegegerecht gestalten — ohne Klinik-Charakter</h2>
+    <p class="lead">Die wirkungsvollsten Anpassungen sind oft die unauffälligsten. Eine pflegegerechte Wohnung muss nicht nach Pflege aussehen.</p>
+
+    <div class="toc">
+      <p>Grundprinzipien</p>
+      <ol>
+        <li><span class="n">1</span><button type="button" class="toclink" onclick="jump('wr-wege')">Wege statt Wände</button></li>
+        <li><span class="n">2</span><button type="button" class="toclink" onclick="jump('wr-vertraut')">Vertrautes erhalten</button></li>
+        <li><span class="n">3</span><button type="button" class="toclink" onclick="jump('wr-licht')">Licht vor Technik</button></li>
+        <li><span class="n">4</span><button type="button" class="toclink" onclick="jump('wr-vorgehen')">So gehen Sie vor</button></li>
+      </ol>
+    </div>
+
+    <section class="block" id="wr-wege">
+      <h3 style="font-size:1.3rem;margin-bottom:10px">Wege statt Wände denken</h3>
+      <p>Freie Bewegungsflächen sind wichtiger als auffällige Hilfsmittel — für Rollstuhl oder Rollator wird ein Drehkreis von etwa 120&nbsp;cm Durchmesser empfohlen. Viele wirksame Anpassungen sind dabei unsichtbar: Türschwellen entfernen, rutschfeste statt sichtbar "medizinische" Bodenbeläge, Möbel so stellen, dass breite, klare Wege entstehen.</p>
+    </section>
+
+    <section class="block" id="wr-vertraut">
+      <h3 style="font-size:1.3rem;margin-bottom:10px">Vertrautes erhalten statt ersetzen</h3>
+      <p>Gewohnte, vertraute Möbel in passender Höhe zu erhalten, unterstützt Orientierung und Wohlbefinden stärker als ein kompletter Umbau — besonders bei Demenz (siehe Thema 7). Ergänzen Sie lieber gezielt (höherer Sessel, rutschfeste Auflage), statt großflächig auszutauschen.</p>
+      <div class="grid cols-2" style="margin-top:16px">
+        <div class="card"><h3>Rückzugsort bewahren</h3><p class="muted">Mindestens ein Bereich der Wohnung sollte bewusst unverändert bleiben — ein Ort, der weiterhin nach Zuhause aussieht und sich so anfühlt.</p></div>
+        <div class="card"><h3>Bad zuerst</h3><p class="muted">Die meisten Stürze passieren im Bad. Bodengleiche Dusche und Haltegriffe in dezenter, möbelähnlicher Optik wirken heute kaum noch klinisch.</p></div>
+      </div>
+    </section>
+
+    <section class="block" id="wr-licht">
+      <h3 style="font-size:1.3rem;margin-bottom:10px">Licht und Farbe vor Warnschildern</h3>
+      <p>Gute, blendfreie Beleuchtung in Flur, Bad und Treppenhaus verhindert mehr Stürze als jedes einzelne Hilfsmittel. Bewegungsmelder wirken unauffälliger als zusätzliche Schalterreihen. Kontrastreiche, aber harmonisch gewählte Farben — etwa ein Türrahmen, der sich von der Wand abhebt — helfen der Orientierung, ohne nach Beschilderung auszusehen.</p>
+    </section>
+
+    <section class="block" id="wr-vorgehen">
+      <h3 style="font-size:1.3rem;margin-bottom:10px">So gehen Sie vor</h3>
+      <div class="step-list">
+        <div class="step"><div class="step-num">1</div><div><h3>Bedarf vor Ort einschätzen</h3><p>Eine Wohnberatungsstelle oder Ergotherapeutin berät oft kostenlos direkt in der Wohnung.</p></div></div>
+        <div class="step"><div class="step-num">2</div><div><h3>Klein und reversibel beginnen</h3><p>Haltegriffe, Beleuchtung, Teppiche entfernen — bevor bauliche Eingriffe folgen.</p></div></div>
+        <div class="step"><div class="step-num">3</div><div><h3>Bauliche Maßnahmen finanzieren</h3><p>Über den Wohnumfeld-Zuschuss bis 4.180&nbsp;€ (siehe Thema 4).</p></div></div>
+        <div class="step"><div class="step-num">4</div><div><h3>Regelmäßig nachjustieren</h3><p>Der Bedarf verändert sich mit fortschreitender Pflegesituation — was heute reicht, kann morgen zu wenig sein.</p></div></div>
+      </div>
+      <div class="motivate"><span class="spark">→</span><span><strong>Es lohnt sich:</strong> Kleine, frühe Anpassungen verhindern oft genau den Sturz, der später einen viel größeren Umbau nötig macht.</span></div>
+    </section>
+  </section>
+
 </main>
 
 <footer>
   <div class="disclaimer">Diese Seite bietet allgemeine Informationen und ersetzt keine individuelle Sozial- oder Rechtsberatung. Für eine verbindliche Einschätzung wenden Sie sich an Ihre Pflegekasse oder einen Pflegestützpunkt in Ihrer Nähe.</div>
   <div class="sources">Hilfetelefone: Bürgertelefon Pflege (030) 340 60 66-02 · Alzheimer-Telefon 030 – 259 37 95 14 · NAKOS 030 – 31 01 89 60 · TelefonSeelsorge 0800 111 0 111 / 116 123.</div>
-  <div class="sources">Rechtsgrundlagen: <a href="https://www.gesetze-im-internet.de/sgb_11/__15.html" rel="noopener">§ 15</a>, <a href="https://dejure.org/gesetze/SGB_XI/31.html" rel="noopener">§ 31</a>, <a href="https://dejure.org/gesetze/SGB_XI/36.html" rel="noopener">§ 36</a>, <a href="https://dejure.org/gesetze/SGB_XI/37.html" rel="noopener">§ 37</a>, <a href="https://dejure.org/gesetze/SGB_XI/39.html" rel="noopener">§ 39</a>, <a href="https://dejure.org/gesetze/SGB_XI/41.html" rel="noopener">§ 41</a>, <a href="https://www.gesetze-im-internet.de/sgb_11/__40.html" rel="noopener">§ 40</a>, <a href="https://www.buzer.de/40a_SGB_11.htm" rel="noopener">§ 40a/40b</a>, <a href="https://dejure.org/gesetze/SGB_XI/42a.html" rel="noopener">§ 42a</a>, <a href="https://dejure.org/gesetze/SGB_XI/43.html" rel="noopener">§ 43</a>, <a href="https://dejure.org/gesetze/SGB_XI/44.html" rel="noopener">§ 44</a>, <a href="https://dejure.org/gesetze/SGB_XI/45b.html" rel="noopener">§ 45b</a>, <a href="https://dejure.org/gesetze/SGB_XI/45e.html" rel="noopener">§ 45f/45g</a>, <a href="https://dejure.org/gesetze/SGB_XI/72.html" rel="noopener">§ 72</a>, <a href="https://dejure.org/gesetze/SGB_XI/78.html" rel="noopener">§ 78</a>, <a href="https://dejure.org/gesetze/SGB_XI/120.html" rel="noopener">§ 120</a> SGB XI; <a href="https://dejure.org/gesetze/SGB_V/37b.html" rel="noopener">§ 37b</a>, <a href="https://dejure.org/gesetze/SGB_V/39e.html" rel="noopener">§ 39e</a> SGB V; <a href="https://www.gesetze-im-internet.de/estg/__33b.html" rel="noopener">§ 33b EStG</a>; PflegeZG, FPfZG; SGB IX; BGB (Betreuungsrecht); <a href="https://www.pflegelotse.de" rel="noopener">vdek-Pflegelotse</a>; <a href="https://www.verbraucherzentrale.de/wissen/gesundheit-pflege/pflege-zu-hause/auslaendische-betreuungskraefte-wie-geht-das-legal-10601" rel="noopener">Verbraucherzentrale</a>. Beträge gemäß Gesetz zur Befugniserweiterung und Entbürokratisierung in der Pflege (BGBl. I Nr. 371/2025), in Kraft seit 01.01.2026.</div>
+  <div class="sources">Rechtsgrundlagen: <a href="https://www.gesetze-im-internet.de/sgb_11/__15.html" rel="noopener">§ 15</a>, <a href="https://dejure.org/gesetze/SGB_XI/31.html" rel="noopener">§ 31</a>, <a href="https://dejure.org/gesetze/SGB_XI/36.html" rel="noopener">§ 36</a>, <a href="https://dejure.org/gesetze/SGB_XI/37.html" rel="noopener">§ 37</a>, <a href="https://dejure.org/gesetze/SGB_XI/39.html" rel="noopener">§ 39</a>, <a href="https://dejure.org/gesetze/SGB_XI/41.html" rel="noopener">§ 41</a>, <a href="https://www.gesetze-im-internet.de/sgb_11/__40.html" rel="noopener">§ 40</a>, <a href="https://www.buzer.de/40a_SGB_11.htm" rel="noopener">§ 40a/40b</a>, <a href="https://dejure.org/gesetze/SGB_XI/42a.html" rel="noopener">§ 42a</a>, <a href="https://dejure.org/gesetze/SGB_XI/43.html" rel="noopener">§ 43</a>, <a href="https://dejure.org/gesetze/SGB_XI/44.html" rel="noopener">§ 44</a>, <a href="https://dejure.org/gesetze/SGB_XI/45b.html" rel="noopener">§ 45b</a>, <a href="https://dejure.org/gesetze/SGB_XI/45e.html" rel="noopener">§ 45f/45g</a>, <a href="https://dejure.org/gesetze/SGB_XI/72.html" rel="noopener">§ 72</a>, <a href="https://dejure.org/gesetze/SGB_XI/78.html" rel="noopener">§ 78</a>, <a href="https://dejure.org/gesetze/SGB_XI/120.html" rel="noopener">§ 120</a>, <a href="https://www.sozialgesetzbuch-sgb.de/sgbxi/126.html" rel="noopener">§ 126/127</a> SGB XI; <a href="https://dejure.org/gesetze/SGB_V/37b.html" rel="noopener">§ 37b</a>, <a href="https://dejure.org/gesetze/SGB_V/39e.html" rel="noopener">§ 39e</a> SGB V; <a href="https://www.gesetze-im-internet.de/estg/__33b.html" rel="noopener">§ 33b EStG</a>; <a href="https://www.betanet.de/hilfe-zur-pflege.html" rel="noopener">§§ 61 ff., § 90/91</a> SGB XII; <a href="https://www.verbraucherzentrale.de/wissen/gesundheit-pflege/pflege-im-heim/elternunterhalt-kinder-zahlen-erst-ab-100000-euro-jahreseinkommen-28892" rel="noopener">§ 94 Abs. 1a SGB XII</a>; § 145 SGB IX; PflegeZG, FPfZG; BGB (Betreuungsrecht, § 543); <a href="https://www.pflegelotse.de" rel="noopener">vdek-Pflegelotse</a>; <a href="https://www.verbraucherzentrale.de/wissen/gesundheit-pflege/pflege-zu-hause/auslaendische-betreuungskraefte-wie-geht-das-legal-10601" rel="noopener">Verbraucherzentrale</a>. Beträge gemäß Gesetz zur Befugniserweiterung und Entbürokratisierung in der Pflege (BGBl. I Nr. 371/2025), in Kraft seit 01.01.2026.</div>
   <svg class="mark-mini" width="20" height="20" viewBox="0 0 64 64" aria-hidden="true">
     <g fill="none" stroke="#95a78d" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
       <path d="M16 15 L28 28"/><path d="M48 15 L36 28"/><path d="M32 38 L32 52"/>
