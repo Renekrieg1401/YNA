@@ -247,6 +247,30 @@
   a.tel:active{transform:translateY(0) scale(.98)}
   a.tel .icon svg{width:19px;height:19px}
 
+  .contact-btn{font-family:var(--font-body);font-weight:600;font-size:13.5px;color:var(--teal-700);
+    background:rgba(149,167,141,.14);border:1px solid rgba(149,167,141,.32);border-radius:99px;
+    padding:10px 16px;display:inline-flex;align-items:center;gap:7px;cursor:pointer;min-height:44px;
+    -webkit-appearance:none;appearance:none;margin-top:10px;transition:background .25s ease,transform .25s var(--ease)}
+  .contact-btn:hover{background:rgba(149,167,141,.26);transform:translateY(-1px)}
+  .contact-btn .icon svg{width:14px;height:14px}
+
+  dialog.contact-modal{border:none;border-radius:24px;padding:0;max-width:420px;width:88vw;
+    background:rgba(252,250,247,.97);backdrop-filter:blur(26px) saturate(180%);-webkit-backdrop-filter:blur(26px) saturate(180%);
+    box-shadow:0 40px 70px -20px rgba(31,36,33,.45);color:var(--ink)}
+  dialog.contact-modal::backdrop{background:rgba(20,22,21,.55);backdrop-filter:blur(2px)}
+  .cm-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:22px 22px 16px;border-bottom:1px solid var(--line)}
+  .cm-head h3{font-size:1.15rem;margin:0}
+  .cm-close{background:rgba(31,36,33,.07);border:0;border-radius:99px;width:40px;height:40px;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:17px;color:var(--ink);min-height:44px;min-width:44px}
+  .cm-close:hover{background:rgba(31,36,33,.13)}
+  .cm-body{padding:20px 22px 26px;display:grid;gap:14px}
+  .cm-hours{font-size:13.5px;color:var(--text-muted);margin:-4px 0 0}
+  .cm-row{display:flex;gap:10px;align-items:flex-start;font-size:15px;color:var(--ink);margin:0}
+  .cm-row .icon{margin-top:2px;color:var(--teal-700);flex-shrink:0}
+  a.cm-link{display:flex;gap:10px;align-items:center;font-size:15px;color:var(--teal-700);text-decoration:none;font-weight:600;min-height:44px}
+  a.cm-link:hover{text-decoration:underline}
+  a.cm-link .icon{flex-shrink:0}
+
   footer{padding:44px 0 60px;color:var(--text-muted);font-size:14px;max-width:880px;margin:0 auto;padding-left:24px;padding-right:24px;position:relative;z-index:1}
   footer .mark-mini{display:inline-block;vertical-align:middle;margin-right:8px}
   footer .disclaimer{font-size:14.5px;color:var(--ink);background:var(--glass);backdrop-filter:blur(14px) saturate(160%);-webkit-backdrop-filter:blur(14px) saturate(160%);border:1px solid var(--glass-border);
@@ -709,7 +733,9 @@
       <div class="card"><h3>Praktischer Tipp</h3><p class="muted">Notieren Sie im Pflegetagebuch gezielt Orientierungsprobleme und Verhaltensauffälligkeiten — nicht nur körperliche Hilfe.</p></div>
     </div>
     <p style="margin-top:20px">Besonders hilfreich bei Demenz: niedrigschwellige Betreuungsgruppen und Alltagsbegleitung, finanzierbar über den Entlastungsbetrag (Thema 3). Fachliche, unabhängige Information bietet die <a href="https://www.deutsche-alzheimer.de" rel="noopener">Deutsche Alzheimer Gesellschaft</a>.</p>
-    <div class="callout"><strong>Alzheimer-Telefon:</strong><br><a class="tel" href="tel:+4930259379514"><span class="icon"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>030 – 259 37 95 14</a><br><span style="font-size:14px">Mo–Do 9–18 Uhr, Fr 9–15 Uhr, kostenlos und auf Wunsch anonym. Geschulte Berater nehmen sich Zeit für Fragen zu Demenz und Pflegealltag.</span></div>
+    <div class="callout"><strong>Alzheimer-Telefon:</strong><br><a class="tel" href="tel:+4930259379514"><span class="icon"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>030 – 259 37 95 14</a><br><span style="font-size:14px">Mo–Do 9–18 Uhr, Fr 9–15 Uhr, kostenlos und auf Wunsch anonym. Geschulte Berater nehmen sich Zeit für Fragen zu Demenz und Pflegealltag.</span><br>
+      <button type="button" class="contact-btn" onclick="openContact('alzheimertelefon')"><span class="icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="11" r="1.8"/><line x1="13" y1="9.5" x2="18" y2="9.5"/><line x1="13" y1="13" x2="18" y2="13"/></svg></span>Kontakt &amp; Adresse</button>
+    </div>
     <div class="motivate"><span class="spark">→</span><span><strong>Es lohnt sich:</strong> Eine Diagnose früh ernst zu nehmen heißt nicht aufzugeben — sie öffnet den Zugang zu Unterstützung, die sonst ungenutzt bleibt. Ein Anruf beim Alzheimer-Telefon verpflichtet zu nichts.</span></div>
   </section>
 
@@ -733,7 +759,9 @@
       <div class="grid cols-3">
         <div class="card"><h3>Pflegestützpunkt</h3><p class="muted">Kostenlose, unabhängige Beratung vor Ort — kennt die Anbieter in Ihrer Region und deren Schwerpunkte.</p></div>
         <div class="card"><h3>Eigene Pflegekasse</h3><p class="muted">Führt ein Verzeichnis der in Ihrer Region zugelassenen Pflegedienste und muss Ihnen dazu Auskunft geben (§ 7a SGB XI).</p></div>
-        <div class="card"><h3>vdek-Pflegelotse</h3><p class="muted">Offizielles, kostenloses Suchportal der Ersatzkassen-Verbände unter <a href="https://www.pflegelotse.de" rel="noopener">pflegelotse.de</a> — mit Leistungen, Preisen und Qualitätsergebnissen je Anbieter.</p></div>
+        <div class="card"><h3>vdek-Pflegelotse</h3><p class="muted">Offizielles, kostenloses Suchportal der Ersatzkassen-Verbände unter <a href="https://www.pflegelotse.de" rel="noopener">pflegelotse.de</a> — mit Leistungen, Preisen und Qualitätsergebnissen je Anbieter.</p>
+          <button type="button" class="contact-btn" onclick="openContact('pflegelotse')"><span class="icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="11" r="1.8"/><line x1="13" y1="9.5" x2="18" y2="9.5"/><line x1="13" y1="13" x2="18" y2="13"/></svg></span>Kontakt</button>
+        </div>
       </div>
     </section>
 
@@ -806,7 +834,9 @@
       <div class="card"><h3>Entsendemodell</h3><p class="muted">Eine ausländische Agentur entsendet ihre Angestellte in den Haushalt. Die Arbeitgeberpflichten liegen bei der Agentur; deutsches Arbeitsrecht gilt trotzdem.</p></div>
       <div class="card"><h3>Selbständige Betreuungskraft</h3><p class="muted">Rechtlich stark umstritten — mehrere Gerichte (u. a. OLG Bamberg, OLG München) werteten dies als unzulässige Scheinselbständigkeit. Verbraucherzentralen raten davon ab.</p></div>
     </div>
-    <p class="footnote">Kosten für eine Vollzeitkraft liegen laut Verbraucherzentrale NRW meist zwischen 2.500 und 3.500&nbsp;€ monatlich. EU-Bürger können ohne besondere Arbeitserlaubnis beschäftigt werden (Arbeitnehmerfreizügigkeit). Ausführliche, unabhängige Informationen bietet die <a href="https://www.verbraucherzentrale.de/wissen/gesundheit-pflege/pflege-zu-hause/auslaendische-betreuungskraefte-wie-geht-das-legal-10601" rel="noopener">Verbraucherzentrale</a>.</p>
+    <p class="footnote">Kosten für eine Vollzeitkraft liegen laut Verbraucherzentrale NRW meist zwischen 2.500 und 3.500&nbsp;€ monatlich. EU-Bürger können ohne besondere Arbeitserlaubnis beschäftigt werden (Arbeitnehmerfreizügigkeit). Ausführliche, unabhängige Informationen bietet die <a href="https://www.verbraucherzentrale.de/wissen/gesundheit-pflege/pflege-zu-hause/auslaendische-betreuungskraefte-wie-geht-das-legal-10601" rel="noopener">Verbraucherzentrale</a>.
+      <button type="button" class="contact-btn" onclick="openContact('verbraucherzentrale')"><span class="icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="11" r="1.8"/><line x1="13" y1="9.5" x2="18" y2="9.5"/><line x1="13" y1="13" x2="18" y2="13"/></svg></span>Kontakt</button>
+    </p>
     <div class="callout">Empfehlung: Verteilen Sie die Betreuung im "Pflegemix" auf mehrere Schultern — z. B. Betreuungskraft plus ambulanter Pflegedienst plus Tagespflege — statt alles auf eine Person zu konzentrieren.</div>
     <div class="motivate"><span class="spark">→</span><span><strong>Es lohnt sich:</strong> Es gibt nicht die eine richtige Lösung — und einen Versorgungsweg später zu wechseln ist kein Scheitern, sondern ein normaler Teil der Pflegezeit.</span></div>
   </section>
@@ -822,7 +852,9 @@
       <div class="card"><h3>Betreuungsverfügung</h3><p class="muted">Äußert Wünsche zur Person des Betreuers, falls das Betreuungsgericht einen Betreuer bestellen muss. Der Betreuer wird gerichtlich kontrolliert.</p></div>
     </div>
     <div class="callout warn"><strong>Wichtig:</strong> Ehepartner haben in Deutschland kein automatisches Vertretungsrecht in größeren rechtlichen oder finanziellen Angelegenheiten. Seit 2023 gibt es ein begrenztes Ehegatten-Notvertretungsrecht — aber nur für medizinische Entscheidungen und längstens sechs Monate. Ohne Vorsorgevollmacht bestellt sonst das Betreuungsgericht einen Betreuer.</div>
-    <div class="callout">Kostenlose Formulare und die Broschüren "Betreuungsrecht" und "Patientenverfügung" bietet das Bundesministerium der Justiz. Registrieren lässt sich jedes der drei Dokumente im Zentralen Vorsorgeregister der Bundesnotarkammer — damit sie im Ernstfall auffindbar sind.</div>
+    <div class="callout">Kostenlose Formulare und die Broschüren "Betreuungsrecht" und "Patientenverfügung" bietet das Bundesministerium der Justiz. Registrieren lässt sich jedes der drei Dokumente im Zentralen Vorsorgeregister der Bundesnotarkammer — damit sie im Ernstfall auffindbar sind.
+      <button type="button" class="contact-btn" onclick="openContact('vorsorgeregister')"><span class="icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="11" r="1.8"/><line x1="13" y1="9.5" x2="18" y2="9.5"/><line x1="13" y1="13" x2="18" y2="13"/></svg></span>Kontakt zum Vorsorgeregister</button>
+    </div>
     <div class="motivate"><span class="spark">→</span><span><strong>Es lohnt sich:</strong> Diese Dokumente jetzt zu regeln, solange alles gut ist, ist ein Geschenk an die eigene Familie später. Niemand bereut, es frühzeitig erledigt zu haben — viele bereuen, es aufgeschoben zu haben.</span></div>
   </section>
 
@@ -988,8 +1020,8 @@
     <h2 class="title">Wenn die Kraft nachlässt</h2>
     <p class="lead">Pflegende Angehörige geraten oft selbst an ihre Grenzen — und übersehen dabei, dass es auch für sie Unterstützung gibt. Ein Anruf reicht.</p>
     <div class="grid cols-2" style="margin-top:24px">
-      <div class="card"><h3>Pflegetelefon</h3><p class="muted" style="margin-bottom:10px">Das Bürgertelefon Pflege des Bundesministeriums für Gesundheit berät kostenlos und unabhängig, auch zu persönlichen Belastungssituationen.</p><a class="tel" href="tel:+4930340606602"><span class="icon"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>(030) 340 60 66-02</a><p class="muted" style="margin-top:8px;font-size:13.5px">Mo–Mi 8–16 Uhr, Do 8–18 Uhr, Fr 8–12 Uhr</p></div>
-      <div class="card"><h3>Selbsthilfegruppen (NAKOS)</h3><p class="muted" style="margin-bottom:10px">Die Nationale Kontakt- und Informationsstelle für Selbsthilfegruppen führt eine bundesweite, kostenlose Datenbank und berät auch telefonisch.</p><a class="tel" href="tel:+493031018960"><span class="icon"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>030 – 31 01 89 60</a><p class="muted" style="margin-top:8px;font-size:13.5px">Di, Mi, Fr 10–14 Uhr, Do 14–17 Uhr</p></div>
+      <div class="card"><h3>Pflegetelefon</h3><p class="muted" style="margin-bottom:10px">Das Bürgertelefon Pflege des Bundesministeriums für Gesundheit berät kostenlos und unabhängig, auch zu persönlichen Belastungssituationen.</p><a class="tel" href="tel:+4930340606602"><span class="icon"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>(030) 340 60 66-02</a><p class="muted" style="margin-top:8px;font-size:13.5px">Mo–Mi 8–16 Uhr, Do 8–18 Uhr, Fr 8–12 Uhr</p><button type="button" class="contact-btn" onclick="openContact('buergertelefon')"><span class="icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="11" r="1.8"/><line x1="13" y1="9.5" x2="18" y2="9.5"/><line x1="13" y1="13" x2="18" y2="13"/></svg></span>Kontakt</button></div>
+      <div class="card"><h3>Selbsthilfegruppen (NAKOS)</h3><p class="muted" style="margin-bottom:10px">Die Nationale Kontakt- und Informationsstelle für Selbsthilfegruppen führt eine bundesweite, kostenlose Datenbank und berät auch telefonisch.</p><a class="tel" href="tel:+493031018960"><span class="icon"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>030 – 31 01 89 60</a><p class="muted" style="margin-top:8px;font-size:13.5px">Di, Mi, Fr 10–14 Uhr, Do 14–17 Uhr</p><button type="button" class="contact-btn" onclick="openContact('nakos')"><span class="icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="11" r="1.8"/><line x1="13" y1="9.5" x2="18" y2="9.5"/><line x1="13" y1="13" x2="18" y2="13"/></svg></span>Kontakt &amp; E-Mail</button></div>
       <div class="card"><h3>Pflegekurse vertiefen</h3><p class="muted">Kostenlose Kurse der Pflegekassen (§ 45 SGB XI, siehe Thema 6) lassen sich auch gezielt zu einzelnen Themen wiederholen — etwa Heben und Lagern oder Kommunikation bei Demenz.</p></div>
       <div class="card"><h3>Pflegestützpunkt</h3><p class="muted">Bietet nicht nur Antragshilfe, sondern auch Gespräche, wenn die Pflegesituation insgesamt zu viel wird (siehe Thema 8).</p></div>
     </div>
@@ -999,6 +1031,7 @@
         <a class="tel" href="tel:+498001110222"><span class="icon"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>0800 111 0 222</a>
         <a class="tel" href="tel:116123"><span class="icon"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>116 123</a>
       </div>
+      <button type="button" class="contact-btn" onclick="openContact('telefonseelsorge')"><span class="icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="11" r="1.8"/><line x1="13" y1="9.5" x2="18" y2="9.5"/><line x1="13" y1="13" x2="18" y2="13"/></svg></span>Mehr zur TelefonSeelsorge</button>
     </div>
     <div class="motivate"><span class="spark">→</span><span><strong>Es lohnt sich:</strong> Es ist kein Zeichen von Schwäche, frühzeitig Hilfe für sich selbst zu suchen — sondern die Voraussetzung dafür, für einen anderen Menschen überhaupt da sein zu können. Die meisten Angebote hier sind kostenlos, anonym möglich und unabhängig von der Pflegekasse erreichbar.</span></div>
   </section>
@@ -1016,6 +1049,15 @@
   </svg>
   YNA Digital — Yield Native Applications · Ratgeber Pflege · Stand: Juni 2026.
 </footer>
+
+<dialog id="contact-modal" class="contact-modal" aria-labelledby="cm-title" onclick="if(event.target===this) closeContact()">
+  <div class="cm-head">
+    <h3 id="cm-title"></h3>
+    <button type="button" class="cm-close" onclick="closeContact()" aria-label="Schließen">✕</button>
+  </div>
+  <div id="cm-body" class="cm-body"></div>
+</dialog>
+
 <script>
   function jump(id){
     var el = document.getElementById(id);
@@ -1024,6 +1066,88 @@
     if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex','-1');
     el.focus({preventScroll:true});
   }
+
+  var ICON_PHONE = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>';
+  var ICON_PIN = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>';
+  var ICON_MAIL = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>';
+  var ICON_LINK = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>';
+
+  var CONTACTS = {
+    buergertelefon:{
+      name:'Bürgertelefon Pflege (BMG)',
+      phones:[['(030) 340 60 66-02','+4930340606602']],
+      hours:'Mo–Mi 8–16 Uhr · Do 8–18 Uhr · Fr 8–12 Uhr · kostenlos',
+      web:['bundesgesundheitsministerium.de/service/buergertelefon','https://www.bundesgesundheitsministerium.de/service/buergertelefon']
+    },
+    alzheimertelefon:{
+      name:'Alzheimer-Telefon (Deutsche Alzheimer Gesellschaft)',
+      phones:[['030 – 259 37 95 14','+4930259379514']],
+      hours:'Mo–Do 9–18 Uhr · Fr 9–15 Uhr · kostenlos, auf Wunsch anonym',
+      address:'Friedrichstraße 236, 10969 Berlin',
+      web:['deutsche-alzheimer.de/alzheimer-telefon','https://www.deutsche-alzheimer.de/alzheimer-telefon']
+    },
+    nakos:{
+      name:'NAKOS — Selbsthilfegruppen',
+      phones:[['030 – 31 01 89 60','+493031018960']],
+      hours:'Di, Mi, Fr 10–14 Uhr · Do 14–17 Uhr',
+      address:'Otto-Suhr-Allee 115, 10627 Berlin',
+      email:'selbsthilfe@nakos.de',
+      mailSubject:'Anfrage zu Selbsthilfegruppen Pflege',
+      mailBody:'Guten Tag,\n\nich interessiere mich für eine Selbsthilfegruppe zum Thema Pflege in meiner Nähe. Können Sie mir bitte passende Kontakte oder eine Gruppe empfehlen?\n\nMit freundlichen Grüßen',
+      web:['nakos.de','https://www.nakos.de']
+    },
+    telefonseelsorge:{
+      name:'TelefonSeelsorge',
+      phones:[['0800 111 0 111','+498001110111'],['0800 111 0 222','+498001110222'],['116 123','116123']],
+      hours:'Täglich rund um die Uhr · kostenlos und anonym',
+      web:['telefonseelsorge.de','https://www.telefonseelsorge.de']
+    },
+    vorsorgeregister:{
+      name:'Zentrales Vorsorgeregister (Bundesnotarkammer)',
+      phones:[['0800 3 55 05 00','+498003550500']],
+      hours:'Mo–Do 8–16 Uhr · Fr 8–13 Uhr · gebührenfrei',
+      address:'Bundesnotarkammer, Zentrales Vorsorgeregister, Kronenstraße 42, 10117 Berlin',
+      email:'info@vorsorgeregister.de',
+      mailSubject:'Frage zur Registrierung im Zentralen Vorsorgeregister',
+      mailBody:'Guten Tag,\n\nich habe eine Frage zur Registrierung einer Vorsorgevollmacht, Patientenverfügung oder Betreuungsverfügung im Zentralen Vorsorgeregister.\n\nMit freundlichen Grüßen',
+      web:['vorsorgeregister.de/privatpersonen','https://www.vorsorgeregister.de/privatpersonen']
+    },
+    pflegelotse:{
+      name:'vdek-Pflegelotse',
+      web:['pflegelotse.de','https://www.pflegelotse.de']
+    },
+    verbraucherzentrale:{
+      name:'Verbraucherzentrale — Ausländische Betreuungskräfte',
+      web:['verbraucherzentrale.de','https://www.verbraucherzentrale.de/wissen/gesundheit-pflege/pflege-zu-hause/auslaendische-betreuungskraefte-wie-geht-das-legal-10601']
+    }
+  };
+
+  function openContact(key){
+    var c = CONTACTS[key];
+    if (!c) return;
+    document.getElementById('cm-title').textContent = c.name;
+    var html = '';
+    if (c.phones){
+      c.phones.forEach(function(p){
+        html += '<a class="tel" href="tel:'+p[1]+'"><span class="icon">'+ICON_PHONE+'</span>'+p[0]+'</a>';
+      });
+    }
+    if (c.hours) html += '<p class="cm-hours">'+c.hours+'</p>';
+    if (c.address) html += '<p class="cm-row"><span class="icon">'+ICON_PIN+'</span><span>'+c.address+'</span></p>';
+    if (c.email){
+      var mailHref = 'mailto:'+c.email+'?subject='+encodeURIComponent(c.mailSubject||'')+'&body='+encodeURIComponent(c.mailBody||'');
+      html += '<a class="cm-link" href="'+mailHref+'"><span class="icon">'+ICON_MAIL+'</span>'+c.email+'</a>';
+    }
+    if (c.web){
+      html += '<a class="cm-link" href="'+c.web[1]+'" target="_blank" rel="noopener"><span class="icon">'+ICON_LINK+'</span>'+c.web[0]+'</a>';
+    }
+    document.getElementById('cm-body').innerHTML = html;
+    document.getElementById('contact-modal').showModal();
+  }
+  function closeContact(){
+    document.getElementById('contact-modal').close();
+  }
 </script>
 </body>
+</html>
 </html>
