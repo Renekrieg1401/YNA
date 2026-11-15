@@ -438,6 +438,23 @@
   .ph-note{font-size:13px;color:var(--text-muted);background:rgba(124,147,184,.12);border:1px solid rgba(124,147,184,.28);
     border-radius:10px;padding:12px 14px;margin:0 0 6px}
 
+  #go-back-btn{
+    position:fixed; right:76px; bottom:calc(18px + env(safe-area-inset-bottom, 0px));
+    width:48px;height:48px;border-radius:99px;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(135deg, #3D4E6C, #263349);
+    color:#FFFFFF;border:1px solid rgba(124,147,184,.3);
+    box-shadow:0 14px 28px -10px rgba(0,0,0,.45);
+    cursor:pointer;-webkit-appearance:none;appearance:none;z-index:40;
+    opacity:0;visibility:hidden;pointer-events:none;transform:translateY(14px) scale(.9);
+    transition:opacity .3s var(--ease), transform .3s var(--ease), visibility .3s, background .25s ease}
+  #go-back-btn.show{opacity:1;visibility:visible;pointer-events:auto;transform:translateY(0) scale(1)}
+  #go-back-btn:hover{background:var(--taupe-700);transform:translateY(-3px) scale(1.05)}
+  #go-back-btn:active{transform:translateY(0) scale(.96)}
+  @media (max-width:680px){
+    #go-back-btn{right:68px;width:46px;height:46px;bottom:calc(14px + env(safe-area-inset-bottom, 0px))}
+  }
+
   #back-to-top{
     position:fixed; right:18px; bottom:calc(18px + env(safe-area-inset-bottom, 0px));
     width:48px;height:48px;border-radius:99px;flex-shrink:0;
@@ -469,7 +486,7 @@
   #print-btn:active{transform:translateY(0) scale(.96)}
 
   @media print{
-    header.nav, #back-to-top, #print-btn, .next-nav, .bg-blobs, .legal-row, .entry-grid, dialog,
+    header.nav, #back-to-top, #go-back-btn, #print-btn, .next-nav, .bg-blobs, .legal-row, .entry-grid, dialog,
     .sidebar, .sidebar-overlay, .menu-btn, .search-wrap, .motivate, .contact-btn{display:none!important}
     html, body{background:#fff!important}
     main{padding-top:0!important;max-width:100%}
@@ -2728,16 +2745,37 @@
     }
   })();
 
-  function jump(id){
+  var topicHistory = [];
+
+  function updateGoBackVisibility(){
+    var gbb = document.getElementById('go-back-btn');
+    if (!gbb) return;
+    if (topicHistory.length > 0) gbb.classList.add('show');
+    else gbb.classList.remove('show');
+  }
+
+  function goBack(){
+    if (topicHistory.length === 0) return;
+    var prev = topicHistory.pop();
+    jump(prev, true);
+    updateGoBackVisibility();
+  }
+
+  function jump(id, isBack){
     var el = document.getElementById(id);
     if (!el) return;
     if (el.classList.contains('topic')){
+      if (!isBack){
+        var current = document.querySelector('main > section.topic:not([hidden])');
+        if (current && current.id !== id) topicHistory.push(current.id);
+      }
       document.querySelectorAll('main > section.topic').forEach(function(t){ t.hidden = (t !== el); });
       setActiveTab(id);
       toggleSidebar(false);
       window.scrollTo(0,0);
       el.setAttribute('tabindex','-1');
       el.focus({preventScroll:true});
+      updateGoBackVisibility();
     } else {
       toggleSidebar(false);
       el.scrollIntoView({behavior:'smooth', block:'start'});
@@ -3133,19 +3171,33 @@
 
   function openNotfall(){
     document.getElementById('cm-title').textContent = 'Akute Situation';
-    var html = '<p style="font-size:14.5px;color:var(--text-muted);margin:0 0 4px">Plötzlicher Pflegebedarf, ein Sturz oder eine Krankenhausentlassung — diese Themen helfen direkt weiter.</p>';
+    var html = '<div class="callout warn" style="margin:0 0 16px"><strong>Akute Lebensgefahr — sofort anrufen:</strong>'
+      + '<div class="cm-row" style="margin-top:10px"><span class="icon">' + ICON_PHONE + '</span><a class="tel" href="tel:112" style="font-size:19px;font-weight:800">112</a></div>'
+      + '<p class="cm-hours">Rettungsdienst &amp; Feuerwehr · kostenlos, bundesweit, rund um die Uhr</p></div>';
+    html += '<p style="font-size:14.5px;color:var(--text-muted);margin:0 0 4px">Dringend, aber nicht lebensbedrohlich:</p>';
+    html += '<div class="cm-row"><span class="icon">' + ICON_PHONE + '</span><a class="tel" href="tel:116117">116 117</a></div>';
+    html += '<p class="cm-hours">Ärztlicher Bereitschaftsdienst · kostenlos, bundesweit, rund um die Uhr</p>';
+    html += '<p style="font-size:14.5px;color:var(--text-muted);margin:18px 0 4px">Seelische Krise, Überforderung, Erschöpfung:</p>';
+    html += '<div class="cm-row"><span class="icon">' + ICON_PHONE + '</span><a class="tel" href="tel:+498001110111">0800 111 0 111</a> <a class="tel" href="tel:+498001110222">0800 111 0 222</a></div>';
+    html += '<p class="cm-hours">TelefonSeelsorge · kostenlos, anonym, rund um die Uhr</p>';
+    html += '<p style="font-size:14.5px;color:var(--text-muted);margin:18px 0 4px">Allgemeine Pflegefragen (keine Notfälle):</p>';
+    html += '<div class="cm-row"><span class="icon">' + ICON_PHONE + '</span><a class="tel" href="tel:+4930340606602">(030) 340 60 66-02</a></div>';
+    html += '<p class="cm-hours">Bürgertelefon Pflege · Mo–Mi 8–16 Uhr, Do 8–18 Uhr, Fr 8–12 Uhr</p>';
+    html += '<p style="font-size:14.5px;color:var(--text-muted);margin:18px 0 4px">Plötzlicher Pflegebedarf, ein Sturz oder eine Krankenhausentlassung — diese Themen helfen direkt weiter:</p>';
     html += '<div style="display:grid;gap:10px;margin-top:6px">';
     html += '<button type="button" class="entry-btn" onclick="closeContact(); jump(\'krankenhaus\')">Nach dem Krankenhaus</button>';
     html += '<button type="button" class="entry-btn" onclick="closeContact(); jump(\'hausnotruf\')">Hausnotruf</button>';
     html += '<button type="button" class="entry-btn" onclick="closeContact(); jump(\'ersatzpflege\')">Verhinderungs- &amp; Kurzzeitpflege</button>';
     html += '</div>';
-    html += '<div class="cm-row" style="margin-top:18px"><span class="icon">' + ICON_PHONE + '</span><a class="tel" href="tel:+4930340606602">(030) 340 60 66-02</a></div>';
-    html += '<p class="cm-hours">Bürgertelefon Pflege · Mo–Mi 8–16 Uhr, Do 8–18 Uhr, Fr 8–12 Uhr</p>';
     document.getElementById('cm-title').textContent = 'Akute Situation';
     document.getElementById('cm-body').innerHTML = html;
     document.getElementById('contact-modal').showModal();
   }
 </script>
+
+<button type="button" id="go-back-btn" onclick="goBack()" aria-label="Zurück zum vorherigen Thema">
+  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+</button>
 
 <button type="button" id="back-to-top" onclick="window.scrollTo(0,0)" aria-label="Nach oben">
   <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
