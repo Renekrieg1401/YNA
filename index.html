@@ -216,19 +216,20 @@
 
   .entry-grid{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
   .entry-btn{font-family:var(--font-body);font-weight:700;font-size:15px;color:var(--ink);
-    background:rgba(184,115,51,.28);border:2px solid rgba(184,115,51,.65);border-radius:99px;
+    background:rgba(184,115,51,.28);border:2px solid var(--teal-300);border-radius:99px;
     padding:13px 20px;display:inline-flex;align-items:center;gap:8px;cursor:pointer;min-height:44px;
     -webkit-appearance:none;appearance:none;box-shadow:0 4px 16px rgba(0,0,0,.45);transition:transform .3s var(--ease),background .25s ease,border-color .25s ease}
   .entry-btn:hover{background:rgba(184,115,51,.45);border-color:var(--primary);transform:translateY(-2px)}
-  .entry-btn .num{font-family:var(--font-mono);color:var(--teal-300);font-weight:700}
+  .entry-btn .num{font-family:var(--font-mono);color:var(--teal-300);font-weight:700} /* aktuell ungenutzt (kein <span class="num"> wird gerendert) — bei Wiederverwendung: Kontrast gegen Composite-Hintergrund neu prüfen */
   .situation-btn[aria-pressed="true"]{background:var(--primary);color:var(--on-primary);border-color:var(--primary)}
   .situation-btn[aria-pressed="true"] .num{color:var(--on-primary)}
   #entry-result,#entry-result-en{display:flex;flex-direction:column;align-items:flex-start;gap:10px}
-  .entry-btn-primary{background:var(--primary);color:var(--on-primary);border-color:var(--primary);
+  .entry-btn-primary{background:var(--primary);background:color-mix(in srgb, var(--primary) 80%, var(--teal-300) 20%);
+    color:var(--on-primary);border-color:var(--primary);
     font-size:16px;padding:15px 22px;box-shadow:0 6px 22px rgba(184,115,51,.5)}
-  .entry-btn-primary:hover{background:#A6632B;border-color:#A6632B}
+  .entry-btn-primary:hover{background:var(--teal-300);border-color:var(--teal-300)}
   .entry-btn-secondary{font-size:13.5px;font-weight:600;padding:10px 16px;
-    background:rgba(184,115,51,.14);border:1px solid rgba(184,115,51,.4);box-shadow:none}
+    background:rgba(184,115,51,.14);border:1px solid var(--primary);box-shadow:none}
   .entry-btn-secondary:hover{background:rgba(184,115,51,.26)}
 
   .group-heading{display:flex;align-items:baseline;gap:10px;margin:44px 0 4px}
