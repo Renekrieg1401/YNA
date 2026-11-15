@@ -1,7 +1,7 @@
 # Pflege-Faktencheck (ex Pflege-Fakten / YNA Digital) | Silo-Governance (Genesis-Registrierung 2026-11-15)
 
 > Rename 2026-11-15 (René-Direktive): „Pflege-Fakten" → „Pflege-Faktencheck",
-> nachdem die Domain `pflegefaktencheck.de` als frei verifiziert wurde
+> nachdem die Domain `pflege-faktencheck.de` als frei verifiziert wurde
 > (DENIC-Whois, Stand 2026-11-15). Domain noch NICHT registriert — das ist
 > ein externer Kaufvorgang mit Kosten, den nur René selbst ausführen kann.
 > Seite läuft bis zur Registrierung weiterhin unter der Server-IP
