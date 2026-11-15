@@ -1,5 +1,21 @@
 # Handoff — Pflege-Faktencheck (ex Pflege-Fakten / YNA Digital), 2026-11-15
 
+## Nachtrag 2026-11-15 (4) — Domain gekauft, TLS-Entscheidung aktualisiert
+René hat `pflegefaktencheck.de` bei Strato gekauft, wartet auf Freigabe
+(DENIC-Whois zeigt Stand jetzt: noch `Status: free`, noch keine DNS-
+Einträge — normal während der Registrierungs-Aktivierung). Sobald aktiv:
+1. René setzt A-Record auf `212.132.117.130` im Strato-DNS-Bereich (sein
+   Account, nicht mein Zugriff).
+2. Ich richte danach `server_name pflegefaktencheck.de` ein + hole ein
+   echtes Let's-Encrypt-Zertifikat (certbot).
+**Aktualisierte René-Entscheidung:** Die frühere TLS-Entscheidung (s. o.,
+selbstsigniertes Zertifikat für Admin-Bereich, reines HTTP für die
+öffentliche Seite — beide explizit WEIL keine echte Domain vorlag) ist
+überholt. Mit echter Domain: **echtes Let's-Encrypt-HTTPS für ALLES**
+(öffentliche Seite + Admin-Bereich des Crawler-Servers), kein Workaround
+mehr nötig. Barrierefreiheitserklärung + alle IP-Referenzen müssen bei der
+Migration auf die echte Domain nachgezogen werden.
+
 ## Nachtrag 2026-11-15 (3) — Rename zu „Pflege-Faktencheck"
 René-Direktive: Webseiten-Name ändern, zuvor freie `.de`-Domain suchen.
 29 Kandidaten per DENIC-Whois geprüft, 9 frei, René wählte „Pflege-
