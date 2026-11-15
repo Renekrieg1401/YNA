@@ -1,5 +1,24 @@
 # Handoff — Pflege-Faktencheck (ex Pflege-Fakten / YNA Digital), 2026-11-15
 
+## Nachtrag 2026-11-15 (6) — Mobile-Header-Bug behoben, Google Search Console verifiziert
+René-Fund (echter iPhone-Screenshot): Zahnrad-Einstellungen-Icon strandete
+bei schmalen Viewports (≤395px) isoliert auf einer 3. Header-Zeile mit
+riesigem Weißraum, dadurch große Lücke vor dem Fließtext. `testing-qa`-Audit
+fand Root Cause (`.nav-inner{gap:28px}` + konkurrierende `margin-left:auto`
+bei `.settings-wrap`/`.badge`, index.html:105/107/181) — `frontend-ui` fixte
+mit `@media (max-width:420px){.nav-inner{gap:14px};.settings-wrap{margin-left:0}}`
+(index.html:105-115). Per Playwright-Bisektion exakte Schwelle ermittelt
+(Bug bis 395px, ab 396px schon vorher fehlerfrei). Zweite, unabhängige
+`testing-qa`-Gegenprüfung GEGEN DIE ECHTE LIVE-URL (nicht nur lokal)
+bestätigt PASS auf allen 5 Breiten.
+Google-Search-Console-Verifizierungs-Tag ergänzt (René hat sich bei Google
+Search Console angemeldet, URL-Präfix-Methode, HTML-Tag-Verifizierung).
+**Prozess-Transparenz:** Beide Änderungen landeten durch Timing (Agent
+schrieb auf Platte, bevor ich dessen Fertigstellung registrierte) in
+Commit `ae72d41`, dessen Nachricht nur die Search-Console-Änderung nennt —
+analog zum bereits einmal dokumentierten Vorfall bei `fc642c9`. Funktional
+nichts verloren, aber Commit-Historie an der Stelle ungenau.
+
 ## Nachtrag 2026-11-15 (5) — Domain live, echtes HTTPS eingerichtet
 DNS propagierte schneller als von Strato angekündigt (sofort statt 24h).
 `certbot`+`python3-certbot-nginx` auf dem vServer installiert, neuer
