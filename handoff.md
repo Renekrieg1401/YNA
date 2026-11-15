@@ -1,4 +1,14 @@
-# Handoff — Pflege-Fakten (ex YNA Digital), 2026-11-15
+# Handoff — Pflege-Faktencheck (ex Pflege-Fakten / YNA Digital), 2026-11-15
+
+## Nachtrag 2026-11-15 (3) — Rename zu „Pflege-Faktencheck"
+René-Direktive: Webseiten-Name ändern, zuvor freie `.de`-Domain suchen.
+29 Kandidaten per DENIC-Whois geprüft, 9 frei, René wählte „Pflege-
+Faktencheck" (`pflegefaktencheck.de`, frei verifiziert, NICHT registriert —
+Kauf/Registrierung ist externe Kostenaktion, muss René selbst ausführen).
+Alle sichtbaren Markennennungen in `index.html` umbenannt (Titel, Meta-Tag,
+Header, Footer, AGB-Text, Barrierefreiheitserklärung). Technischer
+Server-Pfad (`/pflege-fakten/`) bewusst unverändert gelassen (kein
+Deploy-Rename in dieser Runde).
 
 ## Stand
 René-Auftrag „hol dir das Silo YNA Digital und baue es auf das Brand-Design

@@ -108,7 +108,7 @@ var SEED_FACTS = [
     id: 'leistungen.pflegegeld.pg2',
     section_id: 'leistungen',
     label: 'Pflegegeld Pflegegrad 2',
-    current_value: '332 Euro/Monat',
+    current_value: '347 Euro/Monat',
     legal_basis: '§ 37 Abs. 1 SGB XI',
     source_type: 'sgbxi_html',
     source_url: 'https://www.gesetze-im-internet.de/sgb_11/__37.html'
@@ -117,7 +117,7 @@ var SEED_FACTS = [
     id: 'leistungen.pflegegeld.pg3',
     section_id: 'leistungen',
     label: 'Pflegegeld Pflegegrad 3',
-    current_value: '573 Euro/Monat',
+    current_value: '599 Euro/Monat',
     legal_basis: '§ 37 Abs. 1 SGB XI',
     source_type: 'sgbxi_html',
     source_url: 'https://www.gesetze-im-internet.de/sgb_11/__37.html'
@@ -126,7 +126,7 @@ var SEED_FACTS = [
     id: 'leistungen.pflegegeld.pg4',
     section_id: 'leistungen',
     label: 'Pflegegeld Pflegegrad 4',
-    current_value: '765 Euro/Monat',
+    current_value: '800 Euro/Monat',
     legal_basis: '§ 37 Abs. 1 SGB XI',
     source_type: 'sgbxi_html',
     source_url: 'https://www.gesetze-im-internet.de/sgb_11/__37.html'
@@ -135,7 +135,7 @@ var SEED_FACTS = [
     id: 'leistungen.pflegegeld.pg5',
     section_id: 'leistungen',
     label: 'Pflegegeld Pflegegrad 5',
-    current_value: '947 Euro/Monat',
+    current_value: '990 Euro/Monat',
     legal_basis: '§ 37 Abs. 1 SGB XI',
     source_type: 'sgbxi_html',
     source_url: 'https://www.gesetze-im-internet.de/sgb_11/__37.html'
@@ -150,22 +150,16 @@ var SEED_FACTS = [
     source_url: 'https://www.gesetze-im-internet.de/sgb_11/__45b.html'
   },
   {
-    id: 'leistungen.verhinderungspflege',
+    // Seit 1.7.2025 EIN gemeinsamer Jahresbetrag fuer Verhinderungs- UND
+    // Kurzzeitpflege zusammen (ab Pflegegrad 2) -- KEIN zwei getrennte Toepfe
+    // mehr (Rechtslage vor der Reform). Quelle: index.html Zeile 1336-1337.
+    id: 'leistungen.verhinderungs_kurzzeitpflege_kombiniert',
     section_id: 'versorgungsformen',
-    label: 'Verhinderungspflege (Jahresbetrag)',
-    current_value: '1.685 Euro/Jahr',
-    legal_basis: '§ 39 SGB XI',
+    label: 'Verhinderungs- und Kurzzeitpflege (gemeinsamer Jahresbetrag)',
+    current_value: '3.539 Euro/Jahr',
+    legal_basis: '§ 42a SGB XI',
     source_type: 'sgbxi_html',
-    source_url: 'https://www.gesetze-im-internet.de/sgb_11/__39.html'
-  },
-  {
-    id: 'leistungen.kurzzeitpflege',
-    section_id: 'versorgungsformen',
-    label: 'Kurzzeitpflege (Jahresbetrag)',
-    current_value: '1.774 Euro/Jahr',
-    legal_basis: '§ 42 SGB XI',
-    source_type: 'sgbxi_html',
-    source_url: 'https://www.gesetze-im-internet.de/sgb_11/__42.html'
+    source_url: 'https://www.gesetze-im-internet.de/sgb_11/__42a.html'
   },
   {
     id: 'leistungen.pflegehilfsmittel',

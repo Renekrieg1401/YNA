@@ -66,9 +66,10 @@ npm run crawl      # einmaliger Crawl-Lauf (node crawl.js)
 
 ### Seed-Daten (bewusst nur 5-8 Beispiel-Facts)
 
-`db.js` legt beim ersten Start **8 Beispiel-Facts** an (Pflegegeld PG2-PG5,
-Entlastungsbetrag §45b, Verhinderungspflege §39, Kurzzeitpflege §42,
-Pflegehilfsmittel §40) — reicht zum Testen des gesamten Workflows, ist aber
+`db.js` legt beim ersten Start **7 Beispiel-Facts** an (Pflegegeld PG2-PG5,
+Entlastungsbetrag §45b, gemeinsamer Jahresbetrag Verhinderungs-/
+Kurzzeitpflege §42a, Pflegehilfsmittel §40) — reicht zum Testen des gesamten
+Workflows, ist aber
 **ausdrücklich nicht** die vollständige ~28-Themen-/~30-40-Werte-Liste aus
 `index.html`. Die vollständige Fact-Liste (alle Zahlenwerte + Quell-URLs
 korrekt zugeordnet) ist ein **separater, eigener Folgeauftrag** — nicht Teil

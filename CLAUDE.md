@@ -1,4 +1,11 @@
-# Pflege-Fakten (ex YNA Digital) | Silo-Governance (Genesis-Registrierung 2026-11-15)
+# Pflege-Faktencheck (ex Pflege-Fakten / YNA Digital) | Silo-Governance (Genesis-Registrierung 2026-11-15)
+
+> Rename 2026-11-15 (René-Direktive): „Pflege-Fakten" → „Pflege-Faktencheck",
+> nachdem die Domain `pflegefaktencheck.de` als frei verifiziert wurde
+> (DENIC-Whois, Stand 2026-11-15). Domain noch NICHT registriert — das ist
+> ein externer Kaufvorgang mit Kosten, den nur René selbst ausführen kann.
+> Seite läuft bis zur Registrierung weiterhin unter der Server-IP
+> (`http://212.132.117.130/pflege-fakten/`, Pfad-Slug technisch unverändert).
 
 > Nachtrag-Registrierung (2026-11-15) — Repo+AERIS-Rebrand existierten bereits
 > (Commits bis 2026-10-04), waren aber nirgends in der Root-Governance
@@ -9,7 +16,7 @@
 > die Registrierung fehlte noch. Analog zu den Präzedenzfällen `aeris-web`/
 > `Bestellschein-pflegebox` (unregistrierte, aber real existierende Silos).
 
-## Was ist Pflege-Fakten
+## Was ist Pflege-Faktencheck
 Öffentlicher, statischer Pflege-Ratgeber („Ratgeber Pflege") — ein-Datei-
 HTML-Anwendung (`index.html`, ~3.200 Zeilen) mit ~28 Themen-Abschnitten:
 Pflegegrad, Pflegegeld/Leistungen, Versorgungsformen, Entlastungsbetrag,
