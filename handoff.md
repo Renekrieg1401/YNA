@@ -14,8 +14,51 @@ Registrierung nachgeholt.
 - Farbwerte stichprobenhaft gegen AERIS-Design-Token-Tabelle abgeglichen
   (`#131B27`/`#6B4423→#B87333→#E8C39E`/`#303F58`) — Übereinstimmung.
 
+## Nachtrag 2026-11-15 — Faktencheck, Brand-Trennung, a11y-Fixes, Live-Deploy
+- `legal-compliance`: alle SGB-XI-Zahlenwerte korrekt, aber falsche Rechtsgrundlage-
+  Fußnote (Z.2665, zitiertes Gesetz regelt nicht die Beträge) + Impressum/
+  Datenschutz waren reine Platzhalter (§5 DDG-Verstoß) — beides behoben.
+- René-Direktive „Gehört nicht mehr zu AERIS GmbH" — alle AERIS-Eigentums-/
+  Produktzuordnungs-Aussagen entfernt, Impressum/Datenschutz mit Renés
+  privater Identität befüllt (Privatperson, kein Unternehmen). Bronze/Navy-
+  Design bewusst unverändert (reine Farboptik, keine Eigentumsaussage).
+- `accessibility-a11y` fand 10 echte WCAG-Kontrast-Fails + 6 Touch-Target-
+  Unterschreitungen (u. a. Notruf-Button 40px statt 44px) — `frontend-ui`
+  behoben, unabhängig von `accessibility-a11y` gegengeprüft: alle PASS.
+- **Live deployed:** `http://212.132.117.130/pflege-fakten/` (AERIS-vServer,
+  neue Nginx-Location im bestehenden HTTP-Server-Block, analog `/aeris-learn/`-
+  Muster — bewusst reines HTTP ohne Auth, da öffentliches Infoangebot ohne
+  Personendaten; Haupt-AERIS-Seite auf 443 unberührt). Verifiziert: HTTP 200,
+  korrekter Titel, keine sichtbaren AERIS-Erwähnungen (nur 5 harmlose
+  Code-Kommentare), Haupt-Redirect weiterhin intakt. Backup der alten
+  Nginx-Config unter `/etc/nginx/sites-available/aeris.bak-*` auf dem Server.
+- Alle Änderungen committed+gepusht (`982611c`, `14b7014`).
+
+## Nachtrag 2026-11-15 (2) — AGB/Barrierefreiheitserklärung fertiggestellt
+Letzte Platzhalter aufgelöst (ehrliche Nutzungsbedingungen statt künstlicher
+AGB-Struktur; Barrierefreiheitserklärung als „teilweise konform" statt
+beschönigt „vollständig konform"). Committed+gepusht (`508c687`), auf dem
+Server redeployed, live verifiziert (0 Platzhalter mehr im ausgelieferten
+HTML).
+
 ## Offen
-- Produkt-Hierarchie-Zugehörigkeit (offizielles AERIS-Unterprodukt ja/nein)
-  bei Bedarf mit René klären — s. `CLAUDE.md` in diesem Ordner.
-- Fachinhalte (SGB-XI-Bezüge) nicht primärquellen-verifiziert.
-- Kein Vier-Augen-Gegenprüfer-Lauf (reine Registrierung, Score <6).
+- **Crawler-Feature** (autonome Übernahme neuer SGB-XI-/BMG-/MD-Bund-
+  Änderungen + Vorher/Nachher-Warnhinweis-Overlay) — Scoping-Fragen
+  beantwortet (Freigabe-Pflicht vor Live-Schaltung, Quellen, eigener
+  Server), aber `software-architect`-Planung noch nicht begonnen. Größter
+  offener Punkt.
+- Nur 1 `legal-compliance`-Lauf — kein zweiter unabhängiger Rechts-Review.
+- Kein echtes TLS für `/pflege-fakten/` (reines HTTP, bewusst analog
+  aeris-learn — kein Personenbezug, kein Login).
+- **Kein `testing-qa`-Lauf** für diese Änderungskette (nur eigene grobe
+  Konsolenfehler-/Broken-Link-Prüfung durch Claude direkt) — Vier-Augen-
+  Tabelle sieht `testing-qa` eigentlich als Pflicht-Gegenprüfer für
+  `frontend-ui` vor, wurde hier übersprungen.
+- **Kein `quality-management`-Prozess-Check** dieser Kette.
+- Keine echte Browser-/Playwright-Visualprüfung nach den Touch-Target-
+  Vergrößerungen (nur CSS-Rechenwerte von `frontend-ui`/`accessibility-a11y`
+  geprüft, z. B. ob das breitere Settings-Panel (240→300px) auf schmalen
+  Mobile-Viewports überläuft).
+- Domain ist nur die rohe Server-IP (`212.132.117.130`), keine echte
+  Domain/DNS — Barrierefreiheitserklärung müsste bei einer echten Domain
+  nachgezogen werden.
