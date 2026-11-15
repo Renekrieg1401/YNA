@@ -3017,8 +3017,6 @@
     document.getElementById('contact-modal').showModal();
   }
 
-  var PH_NOTE = '<p class="ph-note">Dieses Dokument ist eine rechtliche Vorlage mit <span class="ph">farbig markierten Platzhaltern</span>. Vor Veröffentlichung müssen alle Platzhalter durch die tatsächlichen Angaben ersetzt und das Dokument von einer fachkundigen Stelle geprüft werden.</p>';
-
   var IMPRESSUM_HTML =
     '<h4>Angaben gemäß § 5 DDG</h4>' +
     '<p>René Krieg<br>Hohenfelsstraße 34<br>35232 Dautphetal<br>Deutschland</p>' +
@@ -3051,21 +3049,15 @@
     '<h4>10. Hosting</h4>' +
     '<p>STRATO AG, Rechenzentrumsstandort Deutschland/EU.</p>';
 
-  var AGB_HTML = PH_NOTE +
-    '<h4>§ 1 Geltungsbereich</h4>' +
-    '<p>Diese Allgemeinen Geschäftsbedingungen gelten für <span class="ph">[Beschreibung des Angebots, z. B. die Nutzung der Anwendung "CareShield"]</span>, angeboten von <span class="ph">[Firmenname]</span>.</p>' +
-    '<h4>§ 2 Vertragsschluss</h4>' +
-    '<p><span class="ph">[Wie ein Vertrag zustande kommt — Registrierung, Bestellprozess, Annahmeerklärung]</span></p>' +
-    '<h4>§ 3 Leistungsbeschreibung</h4>' +
-    '<p><span class="ph">[Konkrete Beschreibung der angebotenen Leistung]</span></p>' +
-    '<h4>§ 4 Preise und Zahlungsbedingungen</h4>' +
-    '<p><span class="ph">[Preisangaben, Zahlungsmodalitäten, ggf. Hinweis auf Kostenübernahme durch Pflegekassen nach § 40a SGB XI]</span></p>' +
-    '<h4>§ 5 Laufzeit und Kündigung</h4>' +
-    '<p><span class="ph">[Vertragslaufzeit, Kündigungsfristen und -wege]</span></p>' +
-    '<h4>§ 6 Haftung</h4>' +
-    '<p><span class="ph">[Haftungsregelungen im gesetzlich zulässigen Rahmen]</span></p>' +
-    '<h4>§ 7 Schlussbestimmungen</h4>' +
-    '<p>Es gilt das Recht der Bundesrepublik Deutschland. <span class="ph">[Ggf. Gerichtsstand, salvatorische Klausel]</span></p>';
+  var AGB_HTML =
+    '<h4>Geltungsbereich</h4>' +
+    '<p>Pflege-Fakten ist ein kostenfreies, privates und nicht-kommerzielles Informationsangebot zum Thema Pflege von René Krieg. Es findet keine Registrierung, kein Vertragsschluss, keine Bestellung und keine Zahlung statt — "Allgemeine Geschäftsbedingungen" im klassischen Sinn sind daher nicht einschlägig; dieser Abschnitt beschreibt stattdessen die Nutzungsbedingungen.</p>' +
+    '<h4>Nutzung</h4>' +
+    '<p>Die Inhalte dürfen von jedem Besucher kostenfrei gelesen und genutzt werden. Ein Vertragsverhältnis entsteht dadurch nicht.</p>' +
+    '<h4>Haftung</h4>' +
+    '<p>Die Inhalte wurden mit Sorgfalt erstellt und gegen echte Primärquellen (SGB XI, SGB V, SGB IX) geprüft, ersetzen aber keine individuelle Sozial- oder Rechtsberatung (s. Rechtsgrundlagen). Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte wird keine Gewähr übernommen.</p>' +
+    '<h4>Anwendbares Recht</h4>' +
+    '<p>Es gilt das Recht der Bundesrepublik Deutschland.</p>';
 
   function openImpressum(){
     document.getElementById('cm-title').textContent = 'Impressum';
@@ -3111,19 +3103,19 @@
 
   function openBarrierefreiheit(){
     document.getElementById('cm-title').textContent = 'Barrierefreiheitserklärung';
-    var html = PH_NOTE +
+    var html =
       '<h4>Geltungsbereich</h4>' +
-      '<p>Diese Erklärung gilt für den Ratgeber Pflege „Pflege-Fakten" unter <span class="ph">[Domain einfügen]</span>, gemäß § 3 BFSG (Barrierefreiheitsstärkungsgesetz) i. V. m. BFSGV.</p>' +
+      '<p>Diese freiwillige Erklärung gilt für den Ratgeber Pflege „Pflege-Fakten" unter http://212.132.117.130/pflege-fakten/. Es handelt sich um ein privates, nicht-kommerzielles Informationsangebot einer Privatperson — ob das BFSG (Barrierefreiheitsstärkungsgesetz) auf ein solches Angebot überhaupt anwendbar ist, ist zweifelhaft (BFSG richtet sich primär an Wirtschaftsakteure mit Produkten/Dienstleistungen für Verbraucher). Die Erklärung wird trotzdem freiwillig abgegeben.</p>' +
       '<h4>Stand der Vereinbarkeit</h4>' +
-      '<p>Diese Website wurde nach den Grundsätzen von WCAG 2.1 Stufe AA umgesetzt: ausreichender Farbkontrast, vollständige Tastaturbedienbarkeit, sichtbarer Fokus, Zielgrößen ≥ 44 × 44 px, <code>prefers-reduced-motion</code> wird respektiert. <span class="ph">[Ergebnis einer formalen Prüfung/Selbstbewertung hier ergänzen: vollständig konform / teilweise konform]</span></p>' +
+      '<p>Diese Website wurde nach den Grundsätzen von WCAG 2.1 Stufe AA umgesetzt: ausreichender Farbkontrast, Zielgrößen ≥ 44 × 44 px, <code>prefers-reduced-motion</code> wird respektiert. <strong>Teilweise konform</strong> — grimmig-ehrlich: geprüft (per automatisierter Kontrastberechnung + manueller Zielgrößen-Kontrolle) wurden konkret gefundene Farbkontrast- und Touch-Target-Probleme; eine vollständige Prüfung aller WCAG-2.1-AA-Erfolgskriterien (u. a. lückenlose Tastaturnavigation, vollständige Screenreader-Semantik aller interaktiven Elemente) hat nicht stattgefunden.</p>' +
       '<h4>Nicht barrierefreie Inhalte</h4>' +
-      '<p><span class="ph">[Bekannte Ausnahmen benennen, sofern vorhanden — z. B. einzelne PDF-Dokumente ohne vollständige Tagging-Struktur]</span></p>' +
+      '<p>Keine über den oben genannten Prüfumfang hinaus bekannten Ausnahmen — es wurde aber auch nicht aktiv nach weiteren gesucht.</p>' +
       '<h4>Erstellung dieser Erklärung</h4>' +
-      '<p>Diese Erklärung wurde am <span class="ph">[Datum einfügen]</span> erstellt, beruhend auf <span class="ph">[Selbstbewertung / externe Prüfung benennen]</span>.</p>' +
+      '<p>Diese Erklärung wurde am 15.11.2026 erstellt, beruhend auf einer internen Selbstbewertung (automatisierte WCAG-Kontrastberechnung + manuelle Zielgrößen-Prüfung), keine externe Zertifizierungsstelle.</p>' +
       '<h4>Feedback und Kontaktdaten</h4>' +
-      '<p>Probleme mit der Barrierefreiheit können Sie uns über die Funktion „Feedback" in dieser Seite oder direkt per E-Mail an <span class="ph">[email protected]</span> melden.</p>' +
+      '<p>Probleme mit der Barrierefreiheit können Sie uns über die Funktion „Feedback" in dieser Seite oder direkt per E-Mail an r.krieg.home@gmail.com melden.</p>' +
       '<h4>Schlichtungsverfahren</h4>' +
-      '<p>Bleibt eine Anfrage erfolglos, kann die Schlichtungsstelle nach § 16 BFSG eingeschaltet werden: <span class="ph">[zuständige Schlichtungsstelle des Bundeslandes einfügen]</span>.</p>';
+      '<p>Da die Anwendbarkeit des BFSG auf dieses private Angebot zweifelhaft ist (s. o.), wird auf die Nennung einer Schlichtungsstelle nach § 16 BFSG verzichtet, statt eine nicht verifizierte Adresse zu benennen.</p>';
     document.getElementById('cm-body').innerHTML = html;
     document.getElementById('contact-modal').showModal();
   }
