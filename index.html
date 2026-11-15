@@ -30,6 +30,11 @@
     color-scheme:dark;
     --dust-grey:#303F58; --bone:#253349; --muted-teal:#6B4423; --rosy-taupe:#8B5A2B; --vibrant-coral:#B87333;
     --coral-700:#96683A; --teal-700:#8B5A2B; --taupe-700:#6B4423;
+    /* a11y-Fix (2026-11-15): hellere, hue-erhaltene Text-/Icon-Varianten von teal-700/coral-700 fuer
+       Verwendung auf dunklem Grund (WCAG AA 4,5:1) -- NICHT die Basistoken selbst aufgehellt, da die
+       dunklen Werte weiterhin als Hintergrund (a.tel-Gradient, .module-fill) mit weissem Text gebraucht
+       werden und dort sonst einen neuen Kontrastfehler erzeugen wuerden. */
+    --teal-300:#D19D6B; --coral-300:#CFA882;
     --ink:#E7E2D6; --paper:#1A2536; --cream:#131B27; --line:rgba(124,147,184,.22); --text-muted:#9CADC9;
     --bg:var(--cream); --surface:var(--paper); --text:var(--ink);
     --primary:#B87333; --on-primary:#131B27; --link:#E8C39E;
@@ -99,30 +104,32 @@
   .nav-inner{max-width:1180px;margin:0 auto;padding:14px 32px;display:flex;align-items:center;gap:28px;flex-wrap:wrap}
 
   .settings-wrap{position:relative;margin-left:auto}
-  .settings-btn{display:flex;align-items:center;justify-content:center;width:38px;height:38px;
+  .settings-btn{display:flex;align-items:center;justify-content:center;width:44px;height:44px;
     background:var(--surface);border:1px solid var(--line);border-radius:99px;color:var(--text-muted);
     cursor:pointer;-webkit-appearance:none;transition:background .2s ease,color .2s ease}
   .settings-btn:hover{background:#B8733324;color:var(--ink)}
   .settings-btn[aria-expanded="true"]{background:var(--primary);color:var(--on-primary)}
   @media print{.settings-wrap{display:none!important}}
 
-  .settings-panel{position:absolute;top:calc(100% + 8px);right:0;z-index:60;min-width:240px;
+  .settings-panel{position:absolute;top:calc(100% + 8px);right:0;z-index:60;min-width:300px;
     background:var(--glass-strong);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);
     border:1px solid var(--glass-border);border-radius:16px;box-shadow:0 18px 40px -16px rgba(0,0,0,.35);
     padding:14px}
-  .settings-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:7px 2px}
+  .settings-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;padding:7px 2px}
   .settings-row + .settings-row{border-top:1px solid var(--line);margin-top:4px;padding-top:11px}
   .settings-label{font-size:13px;font-weight:600;color:var(--ink)}
 
   .font-ctrl{display:flex;gap:3px;background:var(--surface);border:1px solid var(--line);border-radius:99px;padding:3px}
   .font-ctrl button{font-family:var(--font-body);font-weight:700;font-size:13px;color:var(--text-muted);
-    background:transparent;border:0;border-radius:99px;width:30px;height:30px;cursor:pointer;-webkit-appearance:none}
+    background:transparent;border:0;border-radius:99px;min-width:44px;min-height:44px;
+    display:flex;align-items:center;justify-content:center;cursor:pointer;-webkit-appearance:none}
   .font-ctrl button:hover{background:#B8733324;color:var(--ink)}
   .font-ctrl button:active{transform:scale(.92)}
 
   .lang-ctrl{display:flex;gap:3px;background:var(--surface);border:1px solid var(--line);border-radius:99px;padding:3px}
   .lang-ctrl button{font-family:var(--font-mono);font-weight:700;font-size:12px;color:var(--text-muted);
-    background:transparent;border:0;border-radius:99px;padding:6px 10px;cursor:pointer;-webkit-appearance:none;min-height:30px}
+    background:transparent;border:0;border-radius:99px;padding:6px 14px;cursor:pointer;-webkit-appearance:none;
+    min-height:44px;min-width:44px;display:inline-flex;align-items:center;justify-content:center}
   .lang-ctrl button[aria-pressed="true"]{background:var(--primary);color:var(--on-primary)}
   .lang-ctrl button:hover{background:#B8733324}
   .lang-ctrl button[aria-pressed="true"]:hover{background:var(--primary)}
@@ -137,7 +144,7 @@
   .notfall-btn{font-family:var(--font-body);font-weight:700;font-size:13px;color:#fff;
     background:linear-gradient(135deg, #B33A2A, #7A2318);
     border:0;border-radius:99px;padding:9px 16px;display:inline-flex;align-items:center;gap:6px;
-    cursor:pointer;-webkit-appearance:none;appearance:none;min-height:40px;
+    cursor:pointer;-webkit-appearance:none;appearance:none;min-height:44px;
     box-shadow:0 8px 16px -6px rgba(179,58,42,.45);transition:transform .25s var(--ease)}
   .notfall-btn:hover{transform:translateY(-1px) scale(1.03)}
   .notfall-btn:active{transform:translateY(0) scale(.97)}
@@ -169,10 +176,10 @@
   }
   .nav-brand{display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-weight:700;font-size:18px;text-decoration:none;color:var(--ink);margin-bottom:10px;background:none;border:0;cursor:pointer;padding:0;-webkit-appearance:none;appearance:none;transition:transform .3s var(--ease)}
   .nav-brand:hover{transform:scale(1.04)}
-  .nav-brand .sub{color:var(--teal-700);font-weight:500}
-  .badge{margin-left:auto;margin-bottom:10px;font-family:var(--font-mono);font-size:11.5px;color:var(--teal-700);
+  .nav-brand .sub{color:var(--teal-300);font-weight:500}
+  .badge{margin-left:auto;margin-bottom:10px;font-family:var(--font-mono);font-size:11.5px;color:var(--teal-300);
     border:1px solid rgba(124,147,184,.35);padding:4px 9px;border-radius:99px;background:rgba(124,147,184,.12);white-space:nowrap}
-  .menu-btn{display:flex;align-items:center;justify-content:center;width:40px;height:40px;flex-shrink:0;
+  .menu-btn{display:flex;align-items:center;justify-content:center;width:44px;height:44px;flex-shrink:0;
     background:transparent;border:1px solid var(--line);border-radius:12px;color:var(--ink);
     cursor:pointer;-webkit-appearance:none;transition:background .2s ease}
   .menu-btn:hover{background:#B8733324}
@@ -192,7 +199,7 @@
   .sidebar-head{display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
     padding:18px 14px 18px 22px;border-bottom:1px solid var(--line)}
   .sidebar-title{font-family:var(--font-display);font-weight:700;font-size:18px;color:var(--ink)}
-  .sidebar-close{display:flex;align-items:center;justify-content:center;width:40px;height:40px;
+  .sidebar-close{display:flex;align-items:center;justify-content:center;width:44px;height:44px;
     background:transparent;border:0;border-radius:99px;color:var(--text-muted);cursor:pointer;-webkit-appearance:none}
   .sidebar-close:hover{background:#B8733324;color:var(--ink)}
 
@@ -213,7 +220,7 @@
     padding:11px 18px;display:inline-flex;align-items:center;gap:8px;cursor:pointer;min-height:44px;
     -webkit-appearance:none;appearance:none;box-shadow:var(--shadow);transition:transform .3s var(--ease),background .25s ease}
   .entry-btn:hover{background:rgba(37,51,73,.95);transform:translateY(-2px)}
-  .entry-btn .num{font-family:var(--font-mono);color:var(--teal-700);font-weight:700}
+  .entry-btn .num{font-family:var(--font-mono);color:var(--teal-300);font-weight:700}
   .situation-btn[aria-pressed="true"]{background:var(--primary);color:var(--on-primary);border-color:var(--primary)}
   .situation-btn[aria-pressed="true"] .num{color:var(--on-primary)}
 
@@ -233,14 +240,14 @@
 
   main{max-width:1180px;margin:0 auto;padding:0 32px 70px;position:relative;z-index:1}
   .topic{padding-top:54px;scroll-margin-top:var(--header-h)}
-  .eyebrow{font-family:var(--font-mono);font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--teal-700);
+  .eyebrow{font-family:var(--font-mono);font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--teal-300);
     font-weight:600;display:inline-flex;align-items:center;gap:6px;background:rgba(124,147,184,.14);
     border:1px solid rgba(124,147,184,.3);padding:6px 13px;border-radius:99px;margin-bottom:18px}
   .lead{font-size:19px;max-width:62ch}
   .muted{color:var(--text-muted)}
   h2.title{font-size:clamp(1.7rem,4.4vw,2.3rem);margin-bottom:14px;color:var(--ink)}
   #start .title{font-size:clamp(2.3rem,6.2vw,3.3rem);
-    background:linear-gradient(100deg, var(--ink) 8%, var(--teal-700) 48%, var(--coral-700) 88%);
+    background:linear-gradient(100deg, var(--ink) 8%, var(--teal-300) 48%, var(--coral-300) 88%);
     -webkit-background-clip:text;background-clip:text;color:transparent;
     filter:drop-shadow(0 6px 24px rgba(150,104,58,.2))}
   section.block{padding:40px 0;border-top:1px solid rgba(124,147,184,.08);scroll-margin-top:var(--header-h)}
@@ -274,9 +281,9 @@
   .toc p{margin:0 0 10px;font-weight:600;font-family:var(--font-display);font-size:15px}
   .toc ol{margin:0;padding:0;list-style:none;display:grid;gap:6px}
   .toc li{display:flex;align-items:baseline;gap:10px}
-  .toc .n{font-family:var(--font-mono);color:var(--teal-700);font-weight:600;flex:0 0 20px;font-size:14px}
+  .toc .n{font-family:var(--font-mono);color:var(--teal-300);font-weight:600;flex:0 0 20px;font-size:14px}
   .toc .toclink{text-decoration:none;font-weight:600;color:var(--ink);padding:3px 0;font-size:15px;background:none;border:0;cursor:pointer;font-family:inherit;display:inline;-webkit-appearance:none;appearance:none;transition:color .25s ease}
-  .toc .toclink:hover{color:var(--teal-700)}
+  .toc .toclink:hover{color:var(--teal-300)}
 
   .scale-wrap{margin-top:26px}
   .scale-bar{display:flex;height:50px;border-radius:14px;overflow:hidden;border:1px solid rgba(124,147,184,.55);
@@ -305,7 +312,7 @@
     font-family:var(--font-display);font-weight:700;font-size:1.5rem;color:var(--ink);flex-shrink:0;
     box-shadow:0 10px 22px -10px rgba(0,0,0,.4), inset 0 2px 4px rgba(255,255,255,.45), inset 0 -3px 6px rgba(0,0,0,.08)}
   .grade-card h3{font-size:1.1rem;margin-bottom:3px}
-  .grade-points{font-family:var(--font-mono);font-size:13.5px;color:var(--teal-700);font-weight:600;margin-bottom:10px}
+  .grade-points{font-family:var(--font-mono);font-size:13.5px;color:var(--teal-300);font-weight:600;margin-bottom:10px}
   .grade-card p{margin:0;font-size:15.5px}
   .grade-mini{display:flex;height:8px;border-radius:99px;overflow:hidden;margin:12px 0 14px;background:rgba(124,147,184,.14)}
   .grade-mini span{display:block;height:100%}
@@ -313,7 +320,7 @@
   .module-list{display:grid;gap:16px;margin-top:24px}
   .module-row{display:grid;grid-template-columns:1fr auto;gap:8px 16px;align-items:baseline}
   .module-row .name{font-weight:700;font-size:16px}
-  .module-row .pct{font-family:var(--font-mono);font-weight:600;color:var(--teal-700);font-size:15px}
+  .module-row .pct{font-family:var(--font-mono);font-weight:600;color:var(--teal-300);font-size:15px}
   .module-row .desc{grid-column:1/-1;font-size:15px;color:var(--text-muted);margin-top:2px}
   .module-track{grid-column:1/-1;height:10px;border-radius:99px;background:rgba(124,147,184,.16);overflow:hidden;margin-top:4px}
   .module-fill{height:100%;border-radius:99px;position:relative;overflow:hidden;
@@ -337,8 +344,8 @@
   .step{display:grid;grid-template-columns:48px 1fr;gap:16px;padding:20px 22px;border-bottom:1px solid rgba(124,147,184,.07);transition:background .3s ease}
   .step:hover{background:rgba(124,147,184,.1)}
   .step:last-child{border-bottom:0}
-  .step-num{width:38px;height:38px;border-radius:99px;background:linear-gradient(150deg, #B87333, #6B4423);
-    color:var(--on-primary);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:700;font-size:1rem;
+  .step-num{width:38px;height:38px;border-radius:99px;background:var(--taupe-700);
+    color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:700;font-size:1rem;
     box-shadow:0 8px 16px -6px rgba(0,0,0,.45), inset 0 1px 1px rgba(255,255,255,.25)}
   .step h3{font-size:1.05rem;margin-bottom:5px}
   .step p{margin:0;font-size:15.5px}
@@ -351,14 +358,14 @@
   summary{font-family:var(--font-display);font-weight:600;font-size:16.5px;padding:16px 20px;cursor:pointer;
     list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px}
   summary::-webkit-details-marker{display:none}
-  summary::after{content:'+';font-family:var(--font-mono);font-size:20px;color:var(--teal-700);flex-shrink:0;
+  summary::after{content:'+';font-family:var(--font-mono);font-size:20px;color:var(--teal-300);flex-shrink:0;
     display:inline-block;transition:transform .4s var(--ease)}
   details[open] summary::after{transform:rotate(45deg)}
   details[open] summary{border-bottom:1px solid rgba(124,147,184,.08)}
   .faq-a{padding:4px 20px 18px;font-size:15.5px;color:var(--text-muted)}
 
   .stat{font-family:var(--font-display);font-weight:700;font-size:clamp(2.6rem,7.4vw,3.8rem);line-height:1;
-    background:linear-gradient(120deg, var(--ink), var(--teal-700) 55%, var(--coral-700));
+    background:linear-gradient(120deg, var(--ink), var(--teal-300) 55%, var(--coral-300));
     -webkit-background-clip:text;background-clip:text;color:transparent}
   .stat-label{font-size:15.5px;color:var(--text-muted);margin-top:8px}
   .stat-card{position:relative;background:rgba(37,51,73,.62);backdrop-filter:blur(22px) saturate(180%);
@@ -372,7 +379,7 @@
   .motivate .spark{display:none}
   .motivate::before{content:'';position:absolute;left:18px;top:18px;width:18px;height:18px;
     background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d01f09' stroke-width='2.3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='5' y1='12' x2='19' y2='12'/%3E%3Cpolyline points='13 6 19 12 13 18'/%3E%3C/svg%3E") no-repeat center/contain}
-  .motivate strong{font-family:var(--font-display);color:var(--coral-700)}
+  .motivate strong{font-family:var(--font-display);color:var(--coral-300)}
 
   .callout{position:relative;padding-left:54px!important}
   .callout::before{content:'';position:absolute;left:18px;top:19px;width:20px;height:20px;
@@ -392,7 +399,7 @@
   a.tel:active{transform:translateY(0) scale(.98)}
   a.tel .icon svg{width:19px;height:19px}
 
-  .contact-btn{font-family:var(--font-body);font-weight:600;font-size:13.5px;color:var(--teal-700);
+  .contact-btn{font-family:var(--font-body);font-weight:600;font-size:13.5px;color:var(--teal-300);
     background:rgba(124,147,184,.14);border:1px solid rgba(124,147,184,.32);border-radius:99px;
     padding:10px 16px;display:inline-flex;align-items:center;gap:7px;cursor:pointer;min-height:44px;
     -webkit-appearance:none;appearance:none;margin-top:10px;transition:background .25s ease,transform .25s var(--ease)}
@@ -412,14 +419,14 @@
   .cm-body{padding:20px 22px 26px;display:grid;gap:14px;overflow-y:auto}
   .cm-hours{font-size:13.5px;color:var(--text-muted);margin:-4px 0 0}
   .cm-row{display:flex;gap:10px;align-items:flex-start;font-size:15px;color:var(--ink);margin:0}
-  .cm-row .icon{margin-top:2px;color:var(--teal-700);flex-shrink:0}
-  a.cm-link{display:flex;gap:10px;align-items:center;font-size:15px;color:var(--teal-700);text-decoration:none;font-weight:600;min-height:44px}
+  .cm-row .icon{margin-top:2px;color:var(--teal-300);flex-shrink:0}
+  a.cm-link{display:flex;gap:10px;align-items:center;font-size:15px;color:var(--teal-300);text-decoration:none;font-weight:600;min-height:44px}
   a.cm-link:hover{text-decoration:underline}
   a.cm-link .icon{flex-shrink:0}
   .cm-body h4{font-family:var(--font-display);font-size:15.5px;margin:18px 0 4px;color:var(--ink)}
   .cm-body h4:first-child{margin-top:0}
   .cm-body p{margin:0;font-size:14.5px;line-height:1.65;color:var(--ink)}
-  .ph{background:rgba(150,104,58,.16);color:var(--coral-700);padding:1px 7px;border-radius:5px;font-weight:600;font-style:normal;white-space:normal}
+  .ph{background:rgba(150,104,58,.16);color:var(--coral-300);padding:1px 7px;border-radius:5px;font-weight:600;font-style:normal;white-space:normal}
   .ph-note{font-size:13px;color:var(--text-muted);background:rgba(124,147,184,.12);border:1px solid rgba(124,147,184,.28);
     border-radius:10px;padding:12px 14px;margin:0 0 6px}
 
@@ -434,7 +441,7 @@
     opacity:0;visibility:hidden;pointer-events:none;transform:translateY(14px) scale(.9);
     transition:opacity .3s var(--ease), transform .3s var(--ease), visibility .3s, background .25s ease}
   #back-to-top.show{opacity:1;visibility:visible;pointer-events:auto;transform:translateY(0) scale(1)}
-  #back-to-top:hover{background:linear-gradient(135deg, #B87333, #6B4423);transform:translateY(-3px) scale(1.05)}
+  #back-to-top:hover{background:var(--taupe-700);transform:translateY(-3px) scale(1.05)}
   #back-to-top:active{transform:translateY(0) scale(.96)}
   @media (max-width:680px){
     #back-to-top{right:14px;width:46px;height:46px;bottom:calc(14px + env(safe-area-inset-bottom, 0px))}
@@ -481,7 +488,7 @@
   .next-btn .nb-label{display:block;font-family:var(--font-mono);font-size:11px;text-transform:uppercase;
     letter-spacing:.06em;color:var(--text-muted);margin-bottom:2px}
   .next-btn .nb-name{display:block;line-height:1.25}
-  .next-btn .icon{flex-shrink:0;color:var(--teal-700)}
+  .next-btn .icon{flex-shrink:0;color:var(--teal-300)}
   @media (max-width:680px){ .next-nav{justify-content:stretch} .next-btn{width:100%;justify-content:space-between} }
 
   footer{padding:44px 0 60px;color:var(--text-muted);font-size:14px;max-width:880px;margin:0 auto;padding-left:24px;padding-right:24px;position:relative;z-index:1}
@@ -1471,11 +1478,11 @@
     <section class="block" id="pd-wichtig">
       <h3 style="font-size:1.3rem;margin-bottom:10px">Was ist wichtig?</h3>
       <ul class="a11y" style="margin-top:8px;list-style:none;padding:0">
-        <li style="display:flex;gap:12px;font-size:15.5px;background:var(--glass);border:1px solid var(--glass-border);border-radius:14px;padding:14px 16px;box-shadow:var(--shadow)"><span style="color:var(--teal-700);font-weight:700;flex:0 0 auto">✓</span><span><b>Transparenzbericht/Qualitätsbericht:</b> öffentlich einsehbare Prüfergebnisse des Medizinischen Dienstes — beim vdek-Pflegelotse oder direkt beim Anbieter erhältlich.</span></li>
-        <li style="display:flex;gap:12px;font-size:15.5px;background:var(--glass);border:1px solid var(--glass-border);border-radius:14px;padding:14px 16px;margin-top:10px;box-shadow:var(--shadow)"><span style="color:var(--teal-700);font-weight:700;flex:0 0 auto">✓</span><span><b>Erreichbarkeit &amp; Notdienst:</b> Wer ist abends, nachts oder am Wochenende erreichbar?</span></li>
-        <li style="display:flex;gap:12px;font-size:15.5px;background:var(--glass);border:1px solid var(--glass-border);border-radius:14px;padding:14px 16px;margin-top:10px;box-shadow:var(--shadow)"><span style="color:var(--teal-700);font-weight:700;flex:0 0 auto">✓</span><span><b>Feste Bezugspflegekraft:</b> möglichst dieselben ein bis zwei Personen statt wechselndem Personal.</span></li>
-        <li style="display:flex;gap:12px;font-size:15.5px;background:var(--glass);border:1px solid var(--glass-border);border-radius:14px;padding:14px 16px;margin-top:10px;box-shadow:var(--shadow)"><span style="color:var(--teal-700);font-weight:700;flex:0 0 auto">✓</span><span><b>Leistungsumfang genau klären:</b> was ist mit der Sachleistung abgedeckt, was kostet zusätzlich?</span></li>
-        <li style="display:flex;gap:12px;font-size:15.5px;background:var(--glass);border:1px solid var(--glass-border);border-radius:14px;padding:14px 16px;margin-top:10px;box-shadow:var(--shadow)"><span style="color:var(--teal-700);font-weight:700;flex:0 0 auto">✓</span><span><b>Persönlicher Eindruck:</b> Wirkt das Team beim Erstgespräch zugewandt und nimmt sich Zeit für Fragen?</span></li>
+        <li style="display:flex;gap:12px;font-size:15.5px;background:var(--glass);border:1px solid var(--glass-border);border-radius:14px;padding:14px 16px;box-shadow:var(--shadow)"><span style="color:var(--teal-300);font-weight:700;flex:0 0 auto">✓</span><span><b>Transparenzbericht/Qualitätsbericht:</b> öffentlich einsehbare Prüfergebnisse des Medizinischen Dienstes — beim vdek-Pflegelotse oder direkt beim Anbieter erhältlich.</span></li>
+        <li style="display:flex;gap:12px;font-size:15.5px;background:var(--glass);border:1px solid var(--glass-border);border-radius:14px;padding:14px 16px;margin-top:10px;box-shadow:var(--shadow)"><span style="color:var(--teal-300);font-weight:700;flex:0 0 auto">✓</span><span><b>Erreichbarkeit &amp; Notdienst:</b> Wer ist abends, nachts oder am Wochenende erreichbar?</span></li>
+        <li style="display:flex;gap:12px;font-size:15.5px;background:var(--glass);border:1px solid var(--glass-border);border-radius:14px;padding:14px 16px;margin-top:10px;box-shadow:var(--shadow)"><span style="color:var(--teal-300);font-weight:700;flex:0 0 auto">✓</span><span><b>Feste Bezugspflegekraft:</b> möglichst dieselben ein bis zwei Personen statt wechselndem Personal.</span></li>
+        <li style="display:flex;gap:12px;font-size:15.5px;background:var(--glass);border:1px solid var(--glass-border);border-radius:14px;padding:14px 16px;margin-top:10px;box-shadow:var(--shadow)"><span style="color:var(--teal-300);font-weight:700;flex:0 0 auto">✓</span><span><b>Leistungsumfang genau klären:</b> was ist mit der Sachleistung abgedeckt, was kostet zusätzlich?</span></li>
+        <li style="display:flex;gap:12px;font-size:15.5px;background:var(--glass);border:1px solid var(--glass-border);border-radius:14px;padding:14px 16px;margin-top:10px;box-shadow:var(--shadow)"><span style="color:var(--teal-300);font-weight:700;flex:0 0 auto">✓</span><span><b>Persönlicher Eindruck:</b> Wirkt das Team beim Erstgespräch zugewandt und nimmt sich Zeit für Fragen?</span></li>
       </ul>
       <div class="motivate"><span class="spark">→</span><span><strong>Es lohnt sich:</strong> Ein Erstgespräch zu vereinbaren bindet Sie zu nichts — und ein passender Pflegedienst kann der Unterschied zwischen Überforderung und einem tragbaren Alltag sein.</span></div>
     </section>
@@ -1515,11 +1522,11 @@
     <section class="block" id="pd-wichtig-en">
       <h3 style="font-size:1.3rem;margin-bottom:10px">What matters most?</h3>
       <ul class="a11y" style="margin-top:8px;list-style:none;padding:0">
-        <li style="display:flex;gap:12px;font-size:15.5px;background:var(--glass);border:1px solid var(--glass-border);border-radius:14px;padding:14px 16px;box-shadow:var(--shadow)"><span style="color:var(--teal-700);font-weight:700;flex:0 0 auto">✓</span><span><b>Transparency/quality report:</b> publicly available inspection results from the Medical Service — available via vdek-Pflegelotse or directly from the provider.</span></li>
-        <li style="display:flex;gap:12px;font-size:15.5px;background:var(--glass);border:1px solid var(--glass-border);border-radius:14px;padding:14px 16px;margin-top:10px;box-shadow:var(--shadow)"><span style="color:var(--teal-700);font-weight:700;flex:0 0 auto">✓</span><span><b>Availability &amp; emergency cover:</b> who's reachable in the evening, at night, or on weekends?</span></li>
-        <li style="display:flex;gap:12px;font-size:15.5px;background:var(--glass);border:1px solid var(--glass-border);border-radius:14px;padding:14px 16px;margin-top:10px;box-shadow:var(--shadow)"><span style="color:var(--teal-700);font-weight:700;flex:0 0 auto">✓</span><span><b>Consistent carers:</b> ideally the same one or two people rather than rotating staff.</span></li>
-        <li style="display:flex;gap:12px;font-size:15.5px;background:var(--glass);border:1px solid var(--glass-border);border-radius:14px;padding:14px 16px;margin-top:10px;box-shadow:var(--shadow)"><span style="color:var(--teal-700);font-weight:700;flex:0 0 auto">✓</span><span><b>Clarify scope exactly:</b> what's covered by the in-kind benefit, and what costs extra?</span></li>
-        <li style="display:flex;gap:12px;font-size:15.5px;background:var(--glass);border:1px solid var(--glass-border);border-radius:14px;padding:14px 16px;margin-top:10px;box-shadow:var(--shadow)"><span style="color:var(--teal-700);font-weight:700;flex:0 0 auto">✓</span><span><b>Personal impression:</b> does the team seem attentive at the first meeting and take time for questions?</span></li>
+        <li style="display:flex;gap:12px;font-size:15.5px;background:var(--glass);border:1px solid var(--glass-border);border-radius:14px;padding:14px 16px;box-shadow:var(--shadow)"><span style="color:var(--teal-300);font-weight:700;flex:0 0 auto">✓</span><span><b>Transparency/quality report:</b> publicly available inspection results from the Medical Service — available via vdek-Pflegelotse or directly from the provider.</span></li>
+        <li style="display:flex;gap:12px;font-size:15.5px;background:var(--glass);border:1px solid var(--glass-border);border-radius:14px;padding:14px 16px;margin-top:10px;box-shadow:var(--shadow)"><span style="color:var(--teal-300);font-weight:700;flex:0 0 auto">✓</span><span><b>Availability &amp; emergency cover:</b> who's reachable in the evening, at night, or on weekends?</span></li>
+        <li style="display:flex;gap:12px;font-size:15.5px;background:var(--glass);border:1px solid var(--glass-border);border-radius:14px;padding:14px 16px;margin-top:10px;box-shadow:var(--shadow)"><span style="color:var(--teal-300);font-weight:700;flex:0 0 auto">✓</span><span><b>Consistent carers:</b> ideally the same one or two people rather than rotating staff.</span></li>
+        <li style="display:flex;gap:12px;font-size:15.5px;background:var(--glass);border:1px solid var(--glass-border);border-radius:14px;padding:14px 16px;margin-top:10px;box-shadow:var(--shadow)"><span style="color:var(--teal-300);font-weight:700;flex:0 0 auto">✓</span><span><b>Clarify scope exactly:</b> what's covered by the in-kind benefit, and what costs extra?</span></li>
+        <li style="display:flex;gap:12px;font-size:15.5px;background:var(--glass);border:1px solid var(--glass-border);border-radius:14px;padding:14px 16px;margin-top:10px;box-shadow:var(--shadow)"><span style="color:var(--teal-300);font-weight:700;flex:0 0 auto">✓</span><span><b>Personal impression:</b> does the team seem attentive at the first meeting and take time for questions?</span></li>
       </ul>
       <div class="motivate"><span class="spark">→</span><span><strong>It's worth it:</strong> Arranging a first conversation commits you to nothing — and the right care service can be the difference between being overwhelmed and a manageable daily routine.</span></div>
     </section>
