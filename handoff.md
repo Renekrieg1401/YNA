@@ -1,5 +1,20 @@
 # Handoff — Pflege-Faktencheck (ex Pflege-Fakten / YNA Digital), 2026-11-15
 
+## Nachtrag 2026-11-15 (5) — Domain live, echtes HTTPS eingerichtet
+DNS propagierte schneller als von Strato angekündigt (sofort statt 24h).
+`certbot`+`python3-certbot-nginx` auf dem vServer installiert, neuer
+Nginx-Server-Block `/etc/nginx/sites-available/pflege-faktencheck`
+(Domain-Root statt `/pflege-fakten/`-Unterpfad), echtes Let's-Encrypt-
+Zertifikat geholt (gültig bis 2027-02-13), HTTP→HTTPS-Redirect aktiv.
+**Live: https://pflege-faktencheck.de/** (+ www-Variante). Barrierefrei-
+heitserklärung von roher IP auf echte Domain umgestellt, committed+gepusht
+(`c609ff6`), redeployed, verifiziert (0 IP-Referenzen mehr im HTML).
+Alter Pfad `http://212.132.117.130/pflege-fakten/` bewusst unverändert als
+Fallback belassen (kein Schaden, nicht beworben).
+Crawler-Server-Admin-Bereich (`server/`) läuft noch NICHT hinter diesem
+Zertifikat — das ist ein eigener, noch ausstehender devops-infra-Schritt
+(eigener Port/Reverse-Proxy für den Node-Server).
+
 ## Nachtrag 2026-11-15 (4) — Domain gekauft, TLS-Entscheidung aktualisiert
 René hat `pflege-faktencheck.de` bei Strato gekauft, wartet auf Freigabe
 (DENIC-Whois zeigt Stand jetzt: noch `Status: free`, noch keine DNS-
