@@ -7,6 +7,7 @@
 <meta name="supported-color-schemes" content="dark">
 <title>Pflege-Faktencheck — Ratgeber Pflege</title>
 <meta name="description" content="Kostenloser, werbefreier Ratgeber zu Pflegegrad, Pflegegeld, Entlastungsbetrag und weiteren SGB-XI-Leistungen — jeder Betrag gegen den echten Gesetzestext geprüft.">
+<meta name="google-site-verification" content="tRVQlPVw-kJXRrugIQpUINKhmOsNDbXmJYbsJrlRZYk">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='pfg' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%236B4423'/><stop offset='50%25' stop-color='%23B87333'/><stop offset='100%25' stop-color='%23E8C39E'/></linearGradient></defs><circle cx='50' cy='50' r='48' fill='%23131B27'/><path d='M50 74 C30 60,18 48,18 34 C18 23,27 15,36 15 C43 15,48 19,50 24 C52 19,57 15,64 15 C73 15,82 23,82 34 C82 48,70 60,50 74 Z' fill='none' stroke='url(%23pfg)' stroke-width='6' stroke-linejoin='round'/><path d='M36 48 L46 58 L66 36' fill='none' stroke='url(%23pfg)' stroke-width='7' stroke-linecap='round' stroke-linejoin='round'/></svg>">
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='pfg' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%236B4423'/><stop offset='50%25' stop-color='%23B87333'/><stop offset='100%25' stop-color='%23E8C39E'/></linearGradient></defs><circle cx='50' cy='50' r='48' fill='%23131B27'/><path d='M50 74 C30 60,18 48,18 34 C18 23,27 15,36 15 C43 15,48 19,50 24 C52 19,57 15,64 15 C73 15,82 23,82 34 C82 48,70 60,50 74 Z' fill='none' stroke='url(%23pfg)' stroke-width='6' stroke-linejoin='round'/><path d='M36 48 L46 58 L66 36' fill='none' stroke='url(%23pfg)' stroke-width='7' stroke-linecap='round' stroke-linejoin='round'/></svg>">
 <meta name="theme-color" content="#131B27">
@@ -103,6 +104,17 @@
     backdrop-filter:blur(22px) saturate(180%);-webkit-backdrop-filter:blur(22px) saturate(180%);
     border-bottom:1px solid rgba(124,147,184,.5);box-shadow:0 14px 32px -22px rgba(0,0,0,.28)}
   .nav-inner{max-width:1180px;margin:0 auto;padding:14px 32px;display:flex;align-items:center;gap:28px;flex-wrap:wrap}
+  /* Bugfix (2026-11-15, frontend-ui): unter ~400px reichte der 28px-Gap nicht fuer
+     Badge+Notfall+Zahnrad auf einer Zeile -- das Zahnrad brach allein auf eine 3.
+     Zeile um und wurde durch sein eigenes margin-left:auto dort voll nach rechts
+     gedrueckt (riesige Leerstelle). Fix: engerer Gap gibt genug Breite, damit alle
+     drei auf der Badge-Zeile bleiben (identisch zum bereits bugfreien ≥428px-Fall);
+     margin-left:0 als Fallback, falls es auf sehr schmalen Geraeten (<360px)
+     dennoch umbricht -- dann links statt mit Riesenluecke rechts. */
+  @media (max-width:420px){
+    .nav-inner{gap:14px}
+    .settings-wrap{margin-left:0}
+  }
 
   .settings-wrap{position:relative;margin-left:auto}
   .settings-btn{display:flex;align-items:center;justify-content:center;width:44px;height:44px;
