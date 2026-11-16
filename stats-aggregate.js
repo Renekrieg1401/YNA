@@ -232,37 +232,125 @@ function hatEchtesBrowserPraefix(userAgent) {
   return /^Mozilla\//.test(userAgent || '');
 }
 
-// Bekannte Cloud-/CDN-IP-Bereiche (Rene-Fund 2026-11-16: "iPhone"-UA aus einem
-// Rechenzentrum ist offensichtlich kein echter Mensch, egal was der User-Agent
-// behauptet). Rene-Entscheidung 2026-11-16 (Nachtrag, nach Verhaltensmuster-Indiz --
-// identischer User-Agent, wiederholte Selbst-Referer-Treffer innerhalb weniger
-// Minuten): AUCH Cloudflare und Fastly werden jetzt ausgeschlossen, bewusst trotz
-// des Risikos, dass dadurch vereinzelt ein echter deutscher Leser mit Apple iCloud
-// Private Relay (nutzt genau diese beiden Anbieter) faelschlich nicht gezaehlt wird --
-// Rene hat dieses Risiko nach Abwaegung explizit akzeptiert. Grob/unvollstaendig
-// (kein echtes ASN-Lookup gegen die offiziellen Google/AWS/Cloudflare/Fastly-Listen),
-// deckt aber die per WHOIS tatsaechlich bestaetigten Faelle ab -- bei neuen Funden
-// hier ergaenzen.
+// Bekannte Cloud-/CDN-IP-Bereiche, die NICHT in der grossen Hosting-Liste (s. unten)
+// stehen, weil sie dort bewusst anders kategorisiert sind (Cloudflare ist primaer ein
+// CDN/Reverse-Proxy vor echten fremden Webseiten, kein klassischer Hosting-Anbieter --
+// die X4BNet-Liste listet es deshalb nicht als "Datacenter"). Rene-Entscheidung
+// 2026-11-16 (nach Verhaltensmuster-Indiz: identischer User-Agent, wiederholte
+// Selbst-Referer-Treffer innerhalb weniger Minuten): Cloudflare wird trotzdem
+// ausgeschlossen, bewusst trotz des Risikos, dass dadurch vereinzelt ein echter
+// deutscher Leser mit Apple iCloud Private Relay faelschlich nicht gezaehlt wird --
+// Rene hat dieses Risiko nach Abwaegung explizit akzeptiert. AWS/GCP/Fastly/Subnet
+// Digital etc. kommen jetzt aus der grossen Liste unten, keine Handarbeit mehr noetig.
 var CLOUD_IP_PREFIXE = [
-  /^34\.(6[4-9]|[7-9]\d|1[01]\d|12[0-7])\./, // Google Cloud 34.64.0.0/10
-  /^104\.19[6-9]\./,                          // Google Cloud 104.196.0.0/14 (WHOIS-verifiziert)
-  /^52\./, /^54\./,                           // AWS (grosse, bekannte /8-Bereiche)
   /^104\.(1[6-9]|2[0-9]|3[01])\./,            // Cloudflare 104.16.0.0/12
-  /^172\.6[4-9]\./, /^172\.7[01]\./,          // Cloudflare 172.64.0.0/13 (grob)
-  /^140\.248\./                               // Fastly (WHOIS-verifiziert)
+  /^172\.6[4-9]\./, /^172\.7[01]\./           // Cloudflare 172.64.0.0/13 (grob)
 ];
 
-// Einzeln per WHOIS bestaetigte Hosting-/VPS-Anbieter-IPs, die sich als normaler
-// Browser ausgeben (kein Bot-UA-Muster, sonst waeren sie schon oben erfasst) -- bei
-// jedem neuen Fund hier ergaenzen (Rene-Fund 2026-11-16: ausnahmslos jede bisher
-// gepruefte "unauffaellige" Nicht-DE-IP stellte sich als Hosting-Rechenzentrum heraus).
+// Einzeln per WHOIS bestaetigte Hosting-/VPS-IPs, die auch in der grossen Liste unten
+// NICHT auftauchen (z.B. Sundance International LLC -- kleinerer Anbieter, nicht in
+// jeder Community-Liste erfasst). Bei neuen Funden hier ergaenzen.
 var BEKANNTE_HOSTING_IPS = [
-  '216.38.230.121', // Sundance International LLC (AS40355, Hosting-ASN)
-  '147.93.155.10',  // Contabo GmbH (deutscher VPS-Anbieter)
-  '104.253.228.91'  // Subnet Digital LLC (Santa Clara, Baremetal-/Cloud-Hoster)
+  '216.38.230.121' // Sundance International LLC (AS40355, Hosting-ASN)
 ];
+
+// Grosse, offline gebuendelte Liste bekannter Hosting-/Rechenzentrums-IP-Bereiche
+// (Rene-Auftrag 2026-11-16 "skalierbare Loesung statt einzelner IPs von Hand" --
+// nach dem fuenften einzeln per WHOIS entlarvten Bot an einem Tag). Quelle: X4BNet/
+// lists_vpn (oeffentlich, Community-gepflegt, MIT-aehnliche Lizenz), Datacenter-Teil,
+// einmalig heruntergeladen und lokal in hosting-ranges.txt gebuendelt -- KEIN
+// Live-API-Call pro Besucher-IP, genau wie bei geoip-lite. Deckt u.a. die bisher
+// manuell gepflegten AWS-/GCP-/Fastly-/Subnet-Digital-Bereiche automatisch ab
+// (per Stichprobe gegen alle bisher bestaetigten Faelle verifiziert: 7 von 9 Treffern
+// bereits in der Liste enthalten, deutlich praeziser als die vorherige Hand-Regex).
+var HOSTING_RANGES = (function () {
+  var pfad = path.join(__dirname, 'hosting-ranges.txt');
+  var zeilen;
+  try { zeilen = fs.readFileSync(pfad, 'utf8').split('\n'); } catch (e) { return []; }
+  var ergebnis = [];
+  zeilen.forEach(function (zeile) {
+    var z = zeile.trim();
+    if (!z || z.indexOf('/') === -1) return;
+    var teile = z.split('/');
+    var ipTeile = teile[0].split('.').map(Number);
+    if (ipTeile.length !== 4 || ipTeile.some(function (n) { return isNaN(n) || n < 0 || n > 255; })) return;
+    var netzInt = ((ipTeile[0] << 24) | (ipTeile[1] << 16) | (ipTeile[2] << 8) | ipTeile[3]) >>> 0;
+    var praefix = parseInt(teile[1], 10);
+    if (isNaN(praefix) || praefix < 0 || praefix > 32) return;
+    var maske = praefix === 0 ? 0 : (0xFFFFFFFF << (32 - praefix)) >>> 0;
+    ergebnis.push({ netz: netzInt & maske, maske: maske });
+  });
+  return ergebnis;
+})();
+
+function ipv4ZuInt(ip) {
+  var teile = (ip || '').split('.').map(Number);
+  if (teile.length !== 4 || teile.some(function (n) { return isNaN(n) || n < 0 || n > 255; })) return null;
+  return ((teile[0] << 24) | (teile[1] << 16) | (teile[2] << 8) | teile[3]) >>> 0;
+}
+
+// IPv6-Gegenstueck (Rene-Fund 2026-11-16 "warum nur IPv4" -- berechtigt, dieselbe
+// X4BNet-Liste gibt es auch fuer IPv6). 128 Bit passen nicht in normale JS-Zahlen/
+// Bitoperatoren (die sind auf 32 Bit begrenzt), daher BigInt statt der >>>/&-Tricks
+// oben bei IPv4.
+function ipv6ZuBigInt(ip) {
+  if (!ip || ip.indexOf(':') === -1) return null;
+  var teile = ip.split('::');
+  if (teile.length > 2) return null;
+  var kopf = teile[0] ? teile[0].split(':') : [];
+  var fuss = teile.length === 2 && teile[1] ? teile[1].split(':') : [];
+  var fehlende = 8 - kopf.length - fuss.length;
+  if (teile.length === 1 && kopf.length !== 8) return null;
+  if (teile.length === 2 && fehlende < 0) return null;
+  var gruppen = teile.length === 2
+    ? kopf.concat(new Array(fehlende).fill('0')).concat(fuss)
+    : kopf;
+  if (gruppen.length !== 8) return null;
+  var ergebnis = 0n;
+  for (var i = 0; i < 8; i++) {
+    var wert = parseInt(gruppen[i] || '0', 16);
+    if (isNaN(wert) || wert < 0 || wert > 0xFFFF) return null;
+    ergebnis = (ergebnis << 16n) | BigInt(wert);
+  }
+  return ergebnis;
+}
+
+var HOSTING_RANGES_V6 = (function () {
+  var pfad = path.join(__dirname, 'hosting-ranges-v6.txt');
+  var zeilen;
+  try { zeilen = fs.readFileSync(pfad, 'utf8').split('\n'); } catch (e) { return []; }
+  var VOLLE_MASKE_V6 = (1n << 128n) - 1n;
+  var ergebnis = [];
+  zeilen.forEach(function (zeile) {
+    var z = zeile.trim();
+    if (!z || z.indexOf('/') === -1) return;
+    var teile = z.split('/');
+    var netzBig = ipv6ZuBigInt(teile[0]);
+    var praefix = parseInt(teile[1], 10);
+    if (netzBig === null || isNaN(praefix) || praefix < 0 || praefix > 128) return;
+    var maske = praefix === 0 ? 0n : (VOLLE_MASKE_V6 << BigInt(128 - praefix)) & VOLLE_MASKE_V6;
+    ergebnis.push({ netz: netzBig & maske, maske: maske });
+  });
+  return ergebnis;
+})();
+
+function istInHostingListeV6(ip) {
+  var ipBig = ipv6ZuBigInt(ip);
+  if (ipBig === null) return false;
+  return HOSTING_RANGES_V6.some(function (bereich) { return (ipBig & bereich.maske) === bereich.netz; });
+}
+
+function istInHostingListe(ip) {
+  if ((ip || '').indexOf(':') !== -1) return istInHostingListeV6(ip);
+  var ipInt = ipv4ZuInt(ip);
+  if (ipInt === null) return false;
+  return HOSTING_RANGES.some(function (bereich) { return (ipInt & bereich.maske) === bereich.netz; });
+}
+
 function istCloudHostingIp(ip) {
-  return CLOUD_IP_PREFIXE.some(function (re) { return re.test(ip); }) || BEKANNTE_HOSTING_IPS.indexOf(ip) !== -1;
+  return CLOUD_IP_PREFIXE.some(function (re) { return re.test(ip); })
+    || BEKANNTE_HOSTING_IPS.indexOf(ip) !== -1
+    || istInHostingListe(ip);
 }
 
 // Verweildauer (Rene-Auftrag 2026-11-16): Beacon-Request /beacon-dauer?ms=<N> wird

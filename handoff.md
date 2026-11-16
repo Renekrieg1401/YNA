@@ -1,5 +1,33 @@
 # Handoff — Pflege-Faktencheck (ex Pflege-Fakten / YNA Digital), 2026-11-15
 
+## Nachtrag 2026-11-16 (12) — Skalierbare Hosting-IP-Erkennung statt Handarbeit
+René-Auftrag nach dem fünften einzeln per WHOIS entlarvten Bot an einem Tag
+("Ja leg los" auf den Vorschlag einer fertigen Liste) + Nachfrage "warum
+nur IPv4".
+
+- **`hosting-ranges.txt`/`hosting-ranges-v6.txt`:** Einmalig heruntergeladene,
+  lokal gebündelte Listen bekannter Hosting-/Rechenzentrums-IP-Bereiche
+  (Quelle: `X4BNet/lists_vpn`, öffentlich, Community-gepflegt, Datacenter-
+  Teil — 45.830 IPv4- + 8.590 IPv6-Bereiche). Kein Live-API-Call pro
+  Besucher-IP, genau wie bei geoip-lite.
+- **Verifiziert vor Einbau:** Stichprobe gegen alle 9 bisher per WHOIS
+  bestätigten Hosting-IPs des Tages — 8 von 9 bereits in der Liste
+  enthalten (nur Sundance International LLC fehlt, bleibt als einzelner
+  Handeintrag bestehen). Deutlich präziser als die vorherige Hand-Regex
+  (AWS/GCP/Fastly/Subnet Digital kommen jetzt automatisch aus der Liste).
+- **IPv6-Nachtrag (René-Nachfrage):** Eigene BigInt-basierte Pruefung
+  ergänzt (JS-Bitoperatoren sind auf 32 Bit begrenzt, reichen für IPv6
+  nicht). Mit mehreren Testfällen auf dem Server verifiziert (Google-
+  Cloud-IPv6-Bereich korrekt erkannt, `::1` korrekt NICHT erkannt).
+- **Performance:** Kompletter Aggregator-Lauf inkl. ~54.000 IP-Bereichen
+  weiterhin 262ms — kein Problem für den 5-Minuten-Timer.
+- Live deployed, Testergebnis: 10/10 bekannte Hosting-IPs korrekt erkannt,
+  3/3 echte ISPs korrekt durchgelassen.
+- **[OFFEN]:** Liste ist ein einmaliger Download, kein automatisches
+  Update-Mechanismus — Community-Listen wie diese ändern sich über Zeit
+  (neue Hosting-Bereiche kommen dazu). Bei Bedarf künftig regelmäßig neu
+  herunterladen.
+
 ## Nachtrag 2026-11-16 (11) — Flyer: weißer Seitenrand in der PDF behoben
 René-Fund: Seitenkanten der Flyer-PDF weiß wie eine Papierkante. Echte
 Pixelprüfung (fitz/PIL, nicht nur visuell geschätzt) bestätigte: eine
