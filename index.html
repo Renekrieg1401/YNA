@@ -3373,6 +3373,16 @@
     });
     window.addEventListener('pagehide', sendeDauer);
   })();
+
+  // JS-Lade-Signal (René-Auftrag 2026-11-16, "Barriere ohne echte Nutzer zu blockieren"):
+  // beweist, dass echtes JavaScript gelaufen ist -- reine HTTP-Tools (curl/requests/
+  // aiohttp/Scraper ohne Browser-Engine) koennen diesen Request nicht aussenden, egal
+  // wie gut sie Header faelschen. Kein Cookie, keine personenbezogene Kennung, nur ein
+  // einzelner Request ohne Payload.
+  (function(){
+    if (!navigator.sendBeacon) return;
+    navigator.sendBeacon('/beacon-geladen');
+  })();
 </script>
 </body>
 </html>

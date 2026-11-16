@@ -409,8 +409,27 @@ function findeRotierendeUaIps(eintraege) {
   return ergebnis;
 }
 
+// JS-Lade-Signal (Rene-Auftrag 2026-11-16, "Barriere ohne echte Nutzer zu blockieren"):
+// nur IPs, die mindestens einmal den per JavaScript ausgeloesten /beacon-geladen-Request
+// gesendet haben, zaehlen als echter Seitenaufruf -- reine HTTP-Tools ohne Browser-Engine
+// koennen diesen Request nicht aussenden, egal wie gut sie Header faelschen. Grenze
+// ehrlich benannt: ein Bot, der den Beacon-Aufruf gezielt nachbaut, waere davon nicht
+// betroffen -- das filtert nur Tools, die kein JavaScript ausfuehren (die meisten
+// bisher gefundenen Faelle heute).
+var JS_AUSGEFUEHRT_IPS = {};
+function findeJsAusgefuehrtIps(eintraege) {
+  var ergebnis = {};
+  eintraege.forEach(function (e) {
+    if (e.methode === 'GET' && e.pfad === '/beacon-geladen' && e.status === 204) {
+      ergebnis[e.ip] = true;
+    }
+  });
+  return ergebnis;
+}
+
 function istEchterSeitenaufruf(e) {
   if (ROTIERENDE_UA_IPS[e.ip]) return false;
+  if (!JS_AUSGEFUEHRT_IPS[e.ip]) return false;
   if (e.methode !== 'GET') return false;
   if (e.status !== 200) return false;
   if (BOT_RE.test(e.userAgent)) return false;
@@ -438,6 +457,7 @@ function main() {
   var zeilen = raw.split('\n').filter(Boolean);
   var eintraege = zeilen.map(parseZeile).filter(Boolean);
   ROTIERENDE_UA_IPS = findeRotierendeUaIps(eintraege);
+  JS_AUSGEFUEHRT_IPS = findeJsAusgefuehrtIps(eintraege);
   var aufrufe = eintraege.filter(istEchterSeitenaufruf);
 
   var proTag = {}; // YYYY-MM-DD -> count

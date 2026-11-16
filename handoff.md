@@ -1,5 +1,26 @@
 # Handoff — Pflege-Faktencheck (ex Pflege-Fakten / YNA Digital), 2026-11-15
 
+## Nachtrag 2026-11-16 (13) — JS-Lade-Signal als weitere Bot-Barriere
+René-Frage "welche Barrieren ohne echte Nutzer zu blockieren" + Freigabe
+("Ok") für die empfohlene Option: ein per JavaScript beim Seitenaufruf
+ausgelöster Beacon (`navigator.sendBeacon('/beacon-geladen')`, neue
+`location = /beacon-geladen { return 204; }` in nginx). Nur IPs, die
+mindestens einmal diesen Request gesendet haben, zählen als echter
+Seitenaufruf — reine HTTP-Tools ohne Browser-Engine (curl/requests/
+aiohttp/die meisten bisher gefundenen Scraper) können das nicht aussenden,
+egal wie gut sie Header fälschen.
+- Isoliert mit synthetischen Daten verifiziert: Bot ohne Beacon → nicht
+  gezählt, echter Besucher mit Beacon → gezählt.
+- Live mit echtem Playwright-Durchlauf (0 Konsolenfehler) + parallelem
+  curl-Request ohne JS getestet (beide liefen zufällig über dieselbe
+  eigene IP, daher nur isolierter Funktionstest aussagekräftig, nicht der
+  Live-Vergleich selbst).
+- **[OFFEN, ehrlich benannt]:** Kein Allheilmittel — ein Bot, der den
+  Beacon-Aufruf gezielt nachbaut (z.B. ein zweiter `fetch()`-Call direkt
+  nach dem Haupt-Request), würde davon nicht erkannt. Filtert nur Tools,
+  die gar kein JavaScript ausführen — das war aber die Mehrheit der
+  heute gefundenen Fälle.
+
 ## Nachtrag 2026-11-16 (12) — Skalierbare Hosting-IP-Erkennung statt Handarbeit
 René-Auftrag nach dem fünften einzeln per WHOIS entlarvten Bot an einem Tag
 ("Ja leg los" auf den Vorschlag einer fertigen Liste) + Nachfrage "warum
