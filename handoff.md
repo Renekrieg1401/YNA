@@ -1,5 +1,11 @@
 # Handoff — Pflege-Faktencheck (ex Pflege-Fakten / YNA Digital), 2026-11-15
 
+## Nachtrag 2026-11-16 (10) — Flyer v3 (Hilfe-Headline) live ausgetauscht
+René-Freigabe nach Vorschau. Neue Version (Benefits + kleiner Footer-QR +
+"Kostenlose Hilfe bei Pflegegrad, Pflegegeld & Co."-Headline) live unter
+`flyer-pflege-faktencheck.pdf` ausgetauscht, per Download-Vergleich
+(`diff`) identisch zur freigegebenen Datei bestätigt.
+
 ## Nachtrag 2026-11-16 (9) — Alle verbliebenen Bot-Signale ausgebaut
 René-Fund "immer noch nur USA/Thailand/Belgien" + Auftrag "alle noch
 möglichen Nicht-Mensch-Signale einbauen". Jede verbliebene Nicht-DE-IP per
