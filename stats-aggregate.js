@@ -258,7 +258,8 @@ var CLOUD_IP_PREFIXE = [
 // gepruefte "unauffaellige" Nicht-DE-IP stellte sich als Hosting-Rechenzentrum heraus).
 var BEKANNTE_HOSTING_IPS = [
   '216.38.230.121', // Sundance International LLC (AS40355, Hosting-ASN)
-  '147.93.155.10'   // Contabo GmbH (deutscher VPS-Anbieter)
+  '147.93.155.10',  // Contabo GmbH (deutscher VPS-Anbieter)
+  '104.253.228.91'  // Subnet Digital LLC (Santa Clara, Baremetal-/Cloud-Hoster)
 ];
 function istCloudHostingIp(ip) {
   return CLOUD_IP_PREFIXE.some(function (re) { return re.test(ip); }) || BEKANNTE_HOSTING_IPS.indexOf(ip) !== -1;
