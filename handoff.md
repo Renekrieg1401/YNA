@@ -59,6 +59,19 @@ Regionen, 12-Monats-Prognose, fortlaufend aktualisiert, in Safari zeigen".
 - In Safari geöffnet (Credentials in der URL eingebettet, da nur für René
   bestimmt).
 
+## Nachtrag 2026-11-16 (3) — Zugriffsschutz-Korrektur: Basic-Auth entfernt
+René-Direktive "ohne Registrierung oder Anmeldung" — der Basic-Auth-Login
+war beim "Zum Home-Bildschirm"-Aufruf auf iOS unzuverlässig (eingebettete
+URL-Credentials übersteht den Standalone-/WebClip-Kontext nicht verlässlich,
+führte vermutlich erneut zum Login-Dialog statt direktem Öffnen). Ersetzt
+durch einen langen zufälligen URL-Pfad (`openssl rand -hex 20`, 40 Hex-
+Zeichen) — kein Anmeldedialog mehr, weiterhin nicht öffentlich verlinkt.
+`.htpasswd` entfernt. Live verifiziert: alter `/dashboard/`-Pfad jetzt 404,
+neuer Pfad liefert 200 ohne jede Authentifizierung, Playwright-Test im
+echten Browser bestätigt fehlerfreies Laden + Datenabruf. In Safari erneut
+geöffnet. Token selbst bewusst NICHT in diesem Git-Repo hinterlegt (René
+hat ihn im Chat erhalten) — exakt dasselbe Prinzip wie zuvor beim Passwort.
+
 **[OFFEN]:**
 - Aktuell 0 echte Daten (Log-Erfassung läuft erst seit wenigen Minuten) —
   Dashboard füllt sich organisch, nichts weiter zu tun.

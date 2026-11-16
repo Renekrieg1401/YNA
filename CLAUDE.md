@@ -83,13 +83,17 @@ René-Auftrag: Besucher-Zahlen/Regionen/12-Monats-Prognose überwachen.
 - **Prognose-Sperre (bewusst, "grimmiges Framing"):** Unter 14 Tagen
   echter Daten zeigt das Dashboard explizit "noch keine seriöse Prognose
   möglich" statt einer erfundenen Zahl.
-- Dashboard unter `https://pflege-faktencheck.de/dashboard/` — per
-  HTTP-Basic-Auth geschützt (`/opt/pflege-fakten-stats/.htpasswd`,
-  Nutzer `rene`), nicht von der öffentlichen Seite verlinkt. **Passwort
-  NICHT im Git-Repo** — bei Bedarf per SSH neu setzen: `htpasswd -bc
-  /opt/pflege-fakten-stats/.htpasswd rene '<neues-passwort>'` auf
-  `212.132.117.130`, danach `systemctl reload nginx` NICHT nötig (nur
-  bei Config-Änderung).
+- **Zugriffsschutz-Korrektur (René-Direktive "ohne Registrierung oder
+  Anmeldung"):** HTTP-Basic-Auth wieder entfernt — auf iOS war der
+  Login-Dialog beim "Zum Home-Bildschirm"-Aufruf unzuverlässig (eingebettete
+  URL-Credentials werden von Safari im Standalone-/WebClip-Kontext nicht
+  verlässlich übernommen). Stattdessen jetzt Schutz durch einen langen,
+  zufälligen URL-Pfad (`/dash-<40-stelliger Hex-Token>/`, nicht in diesem
+  Repo hinterlegt — René hat ihn im Chat erhalten, bei Bedarf auf dem
+  Server in `/etc/nginx/sites-available/pflege-faktencheck` nachsehen oder
+  neu generieren: `openssl rand -hex 20`, Location-Block entsprechend
+  anpassen, `nginx -t && systemctl reload nginx`). Kein Login-Dialog mehr,
+  aber weiterhin nicht öffentlich verlinkt/auffindbar.
 - Manueller "Aktualisieren"-Button + automatisches Neuladen bei
   `visibilitychange` ergänzt (René-Fund: "Zum Home-Bildschirm"-Aufruf auf
   iOS pausiert `setInterval` im Hintergrund, aktualisiert beim
