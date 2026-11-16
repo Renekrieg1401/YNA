@@ -9,8 +9,9 @@
   /* Internes Admin-Dashboard (René-Auftrag 2026-11-16) -- bewusst NICHT im Konsumenten-
      Design der oeffentlichen Seite, sondern als eigenstaendiges Analyse-Tool erkennbar
      (analog iris-hub/iris-monitor-Praezedenzfall), Farbwerte dennoch aus derselben
-     Bronze/Navy-Palette (index.html :root) fuer Wiedererkennbarkeit. Nur per HTTP-Basic-
-     Auth erreichbar (/dashboard/), nicht von der oeffentlichen Seite verlinkt. */
+     Bronze/Navy-Palette (index.html :root) fuer Wiedererkennbarkeit. Erreichbar nur ueber
+     einen langen, zufaelligen URL-Pfad (kein Login-Dialog mehr, s. CLAUDE.md), nicht von
+     der oeffentlichen Seite verlinkt. */
   :root{
     --cream:#131B27; --paper:#1A2536; --card:#253349; --line:rgba(124,147,184,.22);
     --ink:#E7E2D6; --muted:#9CADC9; --bronze1:#6B4423; --bronze2:#B87333; --bronze3:#E8C39E;
@@ -105,12 +106,31 @@
   </section>
 
   <section>
+    <h2>Bundesland (Deutschland)</h2>
+    <p class="hint">Abgeleitet aus der aufgelösten Stadt — nur möglich, wenn die IP überhaupt stadtgenau auflösbar ist.</p>
+    <div id="bundesland-container"><p class="hint">Noch keine Aufrufe erfasst.</p></div>
+  </section>
+
+  <section>
+    <h2>Stadt</h2>
+    <p class="hint" id="stadt-hint">Feinste erreichbare Stufe ohne kostenpflichtigen Drittanbieter.</p>
+    <div id="stadt-container"><p class="hint">Noch keine Aufrufe erfasst.</p></div>
+  </section>
+
+  <section>
+    <h2>Zugriffsquelle</h2>
+    <p class="hint">Woher der Aufruf kam — Direktaufruf, Suchmaschine, Social Media oder sonstiger Verweis (aus dem HTTP-Referer, kein zusätzliches Tracking).</p>
+    <div id="quelle-container"><p class="hint">Noch keine Aufrufe erfasst.</p></div>
+    <div id="verweise-container" style="margin-top:14px"></div>
+  </section>
+
+  <section>
     <h2>12-Monats-Prognose</h2>
     <p class="hint" id="prognose-hint"></p>
     <div id="prognose-container"></div>
   </section>
 
-  <footer>Zuletzt aktualisiert: <span id="footer-zeit">—</span> · Aktualisiert sich automatisch alle 60 Sekunden · Nur für René sichtbar (HTTP-Basic-Auth)</footer>
+  <footer>Zuletzt aktualisiert: <span id="footer-zeit">—</span> · Aktualisiert sich automatisch alle 60 Sekunden · Geheimer, nicht verlinkter Zugriffspfad</footer>
 </div>
 
 <script>
@@ -141,16 +161,43 @@
     el.innerHTML = svg;
   }
 
-  function renderLaender(liste, gesamt){
-    var el = document.getElementById('land-container');
+  function renderBalkenListe(containerId, liste, nameFn){
+    var el = document.getElementById(containerId);
     if (!liste.length) { el.innerHTML = '<p class="hint">Noch keine Aufrufe erfasst.</p>'; return; }
     var max = liste[0].aufrufe || 1;
     el.innerHTML = liste.map(function(l){
       var pct = Math.round((l.aufrufe/max)*100);
-      return '<div class="land-row"><div class="land-name">'+landName(l.land)+'</div>'+
+      return '<div class="land-row"><div class="land-name">'+nameFn(l)+'</div>'+
         '<div class="land-bar-wrap"><div class="land-bar" style="width:'+pct+'%"></div></div>'+
         '<div class="land-count">'+l.aufrufe+'</div></div>';
     }).join('');
+  }
+
+  function renderLaender(liste){
+    renderBalkenListe('land-container', liste, function(l){ return landName(l.land); });
+  }
+
+  function renderBundeslaender(liste){
+    renderBalkenListe('bundesland-container', liste, function(l){
+      return l.bundesland === 'unbekannt' ? 'Unbekannt (keine Stadtauflösung)' : l.bundesland;
+    });
+  }
+
+  function renderStaedte(liste){
+    renderBalkenListe('stadt-container', liste, function(l){ return l.stadt; });
+  }
+
+  function renderQuellen(liste){
+    renderBalkenListe('quelle-container', liste, function(l){ return l.quelle; });
+  }
+
+  function renderVerweise(liste){
+    var el = document.getElementById('verweise-container');
+    if (!liste || !liste.length) { el.innerHTML = ''; return; }
+    el.innerHTML = '<p class="hint" style="margin-bottom:8px">Top-Verweisseiten (sonstige externe Links):</p>' +
+      '<table><thead><tr><th>Domain</th><th class="num">Aufrufe</th></tr></thead><tbody>' +
+      liste.map(function(v){ return '<tr><td>'+v.host+'</td><td class="num">'+v.aufrufe+'</td></tr>'; }).join('') +
+      '</tbody></table>';
   }
 
   function renderPrognose(p, hinweis){
@@ -176,7 +223,12 @@
       document.getElementById('kpi-heute').textContent = heuteEintrag ? heuteEintrag.aufrufe : '0';
       document.getElementById('kpi-seit').textContent = new Date(d.datenerfassungSeit).toLocaleString('de-DE', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
       renderBalkenChart(d.aufrufeProTag);
-      renderLaender(d.aufrufeProLand, d.gesamtAufrufe);
+      renderLaender(d.aufrufeProLand);
+      renderBundeslaender(d.aufrufeProBundesland || []);
+      renderStaedte(d.aufrufeProStadt || []);
+      if (d.bezirksHinweis) document.getElementById('stadt-hint').textContent = d.bezirksHinweis;
+      renderQuellen(d.aufrufeProQuelle || []);
+      renderVerweise(d.topVerweisDomains || []);
       renderPrognose(d.prognose, d.prognoseHinweis);
       document.getElementById('footer-zeit').textContent = new Date(d.generiertAm).toLocaleString('de-DE');
       document.getElementById('refresh-text').textContent = 'live';

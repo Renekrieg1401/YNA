@@ -40,6 +40,69 @@ function istGueltigeIp(ip) {
   return IPV4_RE.test(ip) || IPV6_RE.test(ip);
 }
 
+// Stadt -> Bundesland (Rene-Entscheidung 2026-11-16: kostenlose geoip-lite-Datenbasis
+// liefert KEINE echten Verwaltungsbezirke/Landkreise -- die feinste erreichbare Stufe
+// ist ein Stadtname. Bundesland wird ueber diese verifizierbare, oeffentlich bekannte
+// Stadt-Zuordnung abgeleitet, nicht ueber den opaken numerischen geoip-lite-Regioncode
+// (dessen Kodierung nicht zuverlaessig dokumentiert ist -- Raten verboten, s. CLAUDE.md
+// "Never guess, verify against source").
+var STADT_ZU_BUNDESLAND = {
+  'Berlin':'Berlin',
+  'Hamburg':'Hamburg',
+  'Bremen':'Bremen','Bremerhaven':'Bremen',
+  'München':'Bayern','Nürnberg':'Bayern','Augsburg':'Bayern','Regensburg':'Bayern',
+  'Ingolstadt':'Bayern','Würzburg':'Bayern','Fürth':'Bayern','Erlangen':'Bayern',
+  'Köln':'Nordrhein-Westfalen','Düsseldorf':'Nordrhein-Westfalen','Dortmund':'Nordrhein-Westfalen',
+  'Essen':'Nordrhein-Westfalen','Duisburg':'Nordrhein-Westfalen','Bochum':'Nordrhein-Westfalen',
+  'Wuppertal':'Nordrhein-Westfalen','Bielefeld':'Nordrhein-Westfalen','Bonn':'Nordrhein-Westfalen',
+  'Münster':'Nordrhein-Westfalen','Gelsenkirchen':'Nordrhein-Westfalen','Mönchengladbach':'Nordrhein-Westfalen',
+  'Aachen':'Nordrhein-Westfalen','Krefeld':'Nordrhein-Westfalen','Oberhausen':'Nordrhein-Westfalen',
+  'Hagen':'Nordrhein-Westfalen','Hamm':'Nordrhein-Westfalen','Leverkusen':'Nordrhein-Westfalen',
+  'Solingen':'Nordrhein-Westfalen','Herne':'Nordrhein-Westfalen','Neuss':'Nordrhein-Westfalen',
+  'Paderborn':'Nordrhein-Westfalen','Bottrop':'Nordrhein-Westfalen','Recklinghausen':'Nordrhein-Westfalen',
+  'Bergisch Gladbach':'Nordrhein-Westfalen','Remscheid':'Nordrhein-Westfalen','Moers':'Nordrhein-Westfalen',
+  'Siegen':'Nordrhein-Westfalen','Mülheim an der Ruhr':'Nordrhein-Westfalen',
+  'Frankfurt am Main':'Hessen','Wiesbaden':'Hessen','Kassel':'Hessen','Darmstadt':'Hessen',
+  'Offenbach am Main':'Hessen',
+  'Stuttgart':'Baden-Württemberg','Karlsruhe':'Baden-Württemberg','Mannheim':'Baden-Württemberg',
+  'Freiburg im Breisgau':'Baden-Württemberg','Heidelberg':'Baden-Württemberg','Ulm':'Baden-Württemberg',
+  'Heilbronn':'Baden-Württemberg','Pforzheim':'Baden-Württemberg','Reutlingen':'Baden-Württemberg',
+  'Leipzig':'Sachsen','Dresden':'Sachsen','Chemnitz':'Sachsen',
+  'Hannover':'Niedersachsen','Braunschweig':'Niedersachsen','Oldenburg':'Niedersachsen',
+  'Osnabrück':'Niedersachsen','Wolfsburg':'Niedersachsen','Göttingen':'Niedersachsen',
+  'Hildesheim':'Niedersachsen','Salzgitter':'Niedersachsen',
+  'Kiel':'Schleswig-Holstein','Lübeck':'Schleswig-Holstein',
+  'Halle (Saale)':'Sachsen-Anhalt','Magdeburg':'Sachsen-Anhalt',
+  'Erfurt':'Thüringen','Jena':'Thüringen',
+  'Mainz':'Rheinland-Pfalz','Ludwigshafen am Rhein':'Rheinland-Pfalz','Trier':'Rheinland-Pfalz',
+  'Koblenz':'Rheinland-Pfalz',
+  'Rostock':'Mecklenburg-Vorpommern',
+  'Saarbrücken':'Saarland',
+  'Potsdam':'Brandenburg'
+};
+
+function bundeslandFuerStadt(stadt) {
+  return STADT_ZU_BUNDESLAND[stadt] || null;
+}
+
+// Zugriffsquelle aus dem HTTP-Referer (Rene-Auftrag 2026-11-16 Nachtrag: "woher wurde
+// die Seite aufgerufen -- Suche oder Social Media"). Nutzt NUR den bereits im Nginx-Log
+// vorhandenen Referer-Header -- kein zusaetzlicher Tracking-Code auf der oeffentlichen
+// Seite, kein neuer Datenschutz-Mehraufwand.
+var SUCHMASCHINEN_RE = /google\.|bing\.|duckduckgo\.|yahoo\.|ecosia\.|startpage\.|qwant\.|yandex\.|baidu\./i;
+var SOCIAL_MEDIA_RE = /facebook\.|instagram\.|twitter\.|\bx\.com|t\.co\b|tiktok\.|linkedin\.|pinterest\.|reddit\.|whatsapp\.|telegram\.|threads\.net|youtube\./i;
+var EIGENE_DOMAIN_RE = /pflege-faktencheck\.de/i;
+
+function quelleFuerReferer(referer) {
+  if (!referer || referer === '-') return { kategorie: 'Direkt', host: null };
+  if (EIGENE_DOMAIN_RE.test(referer)) return { kategorie: 'Direkt', host: null };
+  var host = null;
+  try { host = new URL(referer).hostname; } catch (e) { /* kaputter Referer-String, bleibt ohne Host */ }
+  if (SUCHMASCHINEN_RE.test(referer)) return { kategorie: 'Suchmaschine', host: host };
+  if (SOCIAL_MEDIA_RE.test(referer)) return { kategorie: 'Social Media', host: host };
+  return { kategorie: 'Sonstige Verweise', host: host };
+}
+
 // Bot-/Crawler-Erkennung: grobe, konservative Liste bekannter Nicht-Menschen-User-Agents --
 // zieht die Aufrufzahlen NICHT kuenstlich hoch (waere bei einer "Monetarisierungs-
 // Ueberwachung" grimmig gesagt: Selbstbetrug ueber die eigene Reichweite).
@@ -82,6 +145,10 @@ function main() {
 
   var proTag = {}; // YYYY-MM-DD -> count
   var proLand = {}; // ISO-Code -> count
+  var proBundesland = {}; // Name -> count (nur DE, nur wenn Stadt aufloesbar)
+  var proStadt = {}; // Stadtname -> count (feinste erreichbare Stufe ohne kostenpflichtigen Dienst)
+  var proQuelle = {}; // Direkt/Suchmaschine/Social Media/Sonstige Verweise -> count
+  var proVerweisHost = {}; // externe Domain -> count (nur "Sonstige Verweise")
   var eindeutigeIps = new Set();
   var gesamt = 0;
 
@@ -96,8 +163,18 @@ function main() {
       var geo = geoip.lookup(e.ip);
       var land = (geo && geo.country) || 'unbekannt';
       proLand[land] = (proLand[land] || 0) + 1;
+      if (land === 'DE' && geo && geo.city) {
+        proStadt[geo.city] = (proStadt[geo.city] || 0) + 1;
+        var bl = bundeslandFuerStadt(geo.city);
+        proBundesland[bl || 'unbekannt'] = (proBundesland[bl || 'unbekannt'] || 0) + 1;
+      }
     } else {
       proLand['unbekannt'] = (proLand['unbekannt'] || 0) + 1;
+    }
+    var quelle = quelleFuerReferer(e.referer);
+    proQuelle[quelle.kategorie] = (proQuelle[quelle.kategorie] || 0) + 1;
+    if (quelle.kategorie === 'Sonstige Verweise' && quelle.host) {
+      proVerweisHost[quelle.host] = (proVerweisHost[quelle.host] || 0) + 1;
     }
   });
 
@@ -131,6 +208,17 @@ function main() {
     aufrufeProTag: tage.map(function (t) { return { datum: t, aufrufe: proTag[t] }; }),
     aufrufeProLand: Object.keys(proLand).sort(function (a, b) { return proLand[b] - proLand[a]; })
       .map(function (l) { return { land: l, aufrufe: proLand[l] }; }),
+    aufrufeProBundesland: Object.keys(proBundesland).sort(function (a, b) { return proBundesland[b] - proBundesland[a]; })
+      .map(function (b) { return { bundesland: b, aufrufe: proBundesland[b] }; }),
+    aufrufeProStadt: Object.keys(proStadt).sort(function (a, b) { return proStadt[b] - proStadt[a]; })
+      .map(function (s) { return { stadt: s, aufrufe: proStadt[s] }; }),
+    aufrufeProQuelle: Object.keys(proQuelle).sort(function (a, b) { return proQuelle[b] - proQuelle[a]; })
+      .map(function (q) { return { quelle: q, aufrufe: proQuelle[q] }; }),
+    topVerweisDomains: Object.keys(proVerweisHost).sort(function (a, b) { return proVerweisHost[b] - proVerweisHost[a]; })
+      .slice(0, 10).map(function (h) { return { host: h, aufrufe: proVerweisHost[h] }; }),
+    bezirksHinweis: 'Echte Landkreise/Stadtbezirke liefert die kostenlose Offline-GeoIP-' +
+      'Datenbasis nicht -- feinste erreichbare Stufe ohne kostenpflichtigen Drittanbieter ' +
+      'ist der Stadtname. Bundesland wird daraus abgeleitet, nicht aus einem direkten Feld.',
     prognose: prognose,
     prognoseHinweis: prognose ? null :
       'Noch keine seriöse 12-Monats-Prognose möglich — erst ' + anzahlTageMitDaten +

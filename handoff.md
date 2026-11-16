@@ -1,5 +1,36 @@
 # Handoff — Pflege-Faktencheck (ex Pflege-Fakten / YNA Digital), 2026-11-15
 
+## Nachtrag 2026-11-16 (4) — Dashboard: Bundesland/Stadt + Zugriffsquelle ergänzt
+René-Aufträge "nicht nur Herkunftsland sondern auch Bundesland und Bezirke"
+und "von wo aus die Seite aufgerufen wurde — direkt, Suche oder Social
+Media". Echter Befund vorab mitgeteilt: die kostenlose Offline-GeoIP-Quelle
+(`geoip-lite`) liefert KEINE echten Landkreise/Stadtbezirke, nur Stadtname
+als feinste Stufe — René hat sich per Rückfrage explizit gegen einen
+kostenpflichtigen Drittanbieter (echte Bezirksauflösung, laufende Kosten +
+IP-Weitergabe) und für die kostenlose Variante entschieden.
+- **Bundesland:** abgeleitet aus der aufgelösten Stadt über eine neue,
+  verifizierte Stadt→Bundesland-Tabelle (`STADT_ZU_BUNDESLAND`, ~80 größte
+  deutsche Städte) in `stats-aggregate.js` — bewusst NICHT über den opaken
+  numerischen geoip-lite-Regioncode (Kodierung nicht zuverlässig
+  dokumentiert, Raten wäre ein Governance-Verstoß).
+- **Stadt:** direkt aus `geoip-lite`, als eigener Dashboard-Bereich.
+- **Zugriffsquelle:** Direkt/Suchmaschine/Social Media/Sonstige Verweise,
+  abgeleitet aus dem ohnehin bereits geloggten HTTP-Referer-Header — kein
+  neuer Tracking-Code auf der öffentlichen Seite. Top-10-Liste externer
+  Verweisdomains ("Sonstige Verweise") als Zusatzinfo.
+- **Verifikation:** `node --check` auf dem Server sauber. Funktionsnachweis
+  per synthetischen Testzeilen (Berlin/Nürnberg-IP, Google/Facebook/Direkt/
+  Forum-Referer) im echten Log, Aggregator-Lauf bestätigte korrekte
+  Klassifikation (4/4), Playwright gegen die echte Live-URL bestätigte
+  korrektes Rendering aller neuen Bereiche, 0 Konsolenfehler. Testzeilen
+  danach wieder aus dem echten Log entfernt — ehrlicher Nullpunkt
+  (0 Aufrufe) wiederhergestellt, kein Datenbestand verfälscht.
+- **[OFFEN]:** Stadt→Bundesland-Tabelle deckt die ~80 größten deutschen
+  Städte ab, nicht jede kleinere Stadt — bei Besuchen aus kleineren Orten
+  zeigt Bundesland ggf. "Unbekannt (keine Stadtauflösung)", obwohl
+  `geoip-lite` durchaus eine Stadt gefunden hat, die nur nicht in der
+  Tabelle steht. Bei Bedarf Tabelle erweitern.
+
 ## Nachtrag 2026-11-16 (1) — Notfall-Overlay Mobile-Überlauf behoben
 René-Fund: "Overlay in Notfall auf dem Smartphone innerhalb zu groß, man
 muss hin und her wischen". Live bei 375px Breite reproduziert: `.cm-body`

@@ -98,6 +98,20 @@ René-Auftrag: Besucher-Zahlen/Regionen/12-Monats-Prognose überwachen.
   `visibilitychange` ergänzt (René-Fund: "Zum Home-Bildschirm"-Aufruf auf
   iOS pausiert `setInterval` im Hintergrund, aktualisiert beim
   Wiederöffnen nicht automatisch).
+- **Erweiterung Bundesland/Stadt/Zugriffsquelle (René-Auftrag 2026-11-16,
+  Nachtrag):** `geoip-lite` liefert KEINE echten Landkreise/Stadtbezirke
+  (René-Entscheidung nach Rückfrage: kostenlose Variante statt
+  kostenpflichtigem Drittanbieter) — feinste erreichbare Stufe ist der
+  Stadtname. Bundesland wird daraus über eine verifizierte Stadt→
+  Bundesland-Tabelle (`STADT_ZU_BUNDESLAND` in `stats-aggregate.js`, ~80
+  größte deutsche Städte) abgeleitet, NICHT über den opaken numerischen
+  geoip-lite-Regioncode (dessen Kodierung nicht zuverlässig dokumentiert
+  ist). Zugriffsquelle (Direkt/Suchmaschine/Social Media/Sonstige
+  Verweise) wird aus dem ohnehin bereits geloggten HTTP-Referer-Header
+  abgeleitet — kein zusätzlicher Tracking-Code auf der öffentlichen Seite.
+  Alle Erweiterungen live mit synthetischen Testzeilen (Berlin/Nürnberg,
+  Google/Facebook/Direkt/Forum-Referer) verifiziert, danach aus dem echten
+  Log wieder entfernt (ehrlicher Nullpunkt, kein Datenbestand verfälscht).
 - **Quellcode im Repo:** `dashboard/index.html` (Frontend),
   `stats-aggregate.js` (Aggregator, 1:1-Kopie dessen was auf dem Server
   unter `/opt/pflege-fakten-stats/` läuft — bei künftigen Änderungen
