@@ -15,14 +15,19 @@
      Marketing-Floskel. */
   @page { size: 105mm 148mm; margin: 0; }
   * { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; }
+  html, body { margin: 0; padding: 0; background: #131B27; overflow: hidden; }
+  /* body 1mm groesser als die Zielgroesse auf jeder Seite (Playwright/Chromium rundet die
+     mm->pt-Seitengroesse beim PDF-Export minimal grosszuegiger, als der exakte 105x148mm-
+     Inhalt abdeckt -- ohne diesen Puffer blieb ein winziger, aber sichtbarer weisser Rand
+     rechts/unten). Ueberschuss liegt ausserhalb der echten PDF-Seite und wird dadurch
+     automatisch abgeschnitten, nicht durch overflow:hidden. */
   body {
-    width: 105mm; height: 148mm; overflow: hidden;
+    width: 107mm; height: 150mm; overflow: hidden;
     background: #131B27; color: #E7E2D6;
     font-family: 'Inter', system-ui, "Segoe UI", Roboto, sans-serif;
     position: relative;
   }
-  .flyer { width: 105mm; height: 148mm; padding: 7mm 8mm 5mm; display: flex; flex-direction: column; align-items: center; text-align: center;
+  .flyer { position: absolute; top: 0; left: 0; width: 105mm; height: 148mm; padding: 7mm 8mm 5mm; display: flex; flex-direction: column; align-items: center; text-align: center;
     background: radial-gradient(ellipse at 50% -10%, #303F58 0%, #131B27 60%); }
   .logo { width: 14mm; height: 14mm; flex-shrink: 0; }
   .brand { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; font-weight: 800; font-size: 5.6mm; letter-spacing: -0.3px; margin: 2mm 0 1mm; color: #E7E2D6; }

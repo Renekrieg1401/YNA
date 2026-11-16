@@ -1,5 +1,26 @@
 # Handoff — Pflege-Faktencheck (ex Pflege-Fakten / YNA Digital), 2026-11-15
 
+## Nachtrag 2026-11-16 (11) — Flyer: weißer Seitenrand in der PDF behoben
+René-Fund: Seitenkanten der Flyer-PDF weiß wie eine Papierkante. Echte
+Pixelprüfung (fitz/PIL, nicht nur visuell geschätzt) bestätigte: eine
+dünne, aber reale weiße Linie an rechter/unterer Kante — NICHT durch
+Drucker-Hardware verursacht (René druckt nicht, sieht es direkt in der
+Datei), sondern durch Chromiums `page.pdf()`-Druck-Pipeline selbst (ein
+Screenshot derselben Seite war pixelgenau sauber bis zum Rand, die
+PDF-Druckfunktion nicht — mehrere CSS-Fixversuche wie html-Hintergrund
+und 1mm-Inhaltspuffer brachten keine Besserung, da der Fehler dort nicht
+lag). Lösung: PDF nicht mehr über Chromiums Druckfunktion erzeugt, sondern
+der bereits saubere Screenshot (4x Pixel-Dichte, ~384 DPI) direkt per PIL
+als Einzelseiten-PDF mit exakter physischer Seitengröße gespeichert.
+Pixelprüfung an allen 6 Kanten/Ecken danach einheitlich (18-20,26-27,38),
+QR-Code erneut per OpenCV als scannbar bestätigt. Live ausgetauscht und
+per Download-`diff` identisch bestätigt.
+- **[KORREKTUR-POTENZIAL]:** Dieselbe Chromium-`page.pdf()`-Eigenheit
+  könnte auch den ursprünglichen Sticker (`sticker-rund-final.png`, dort
+  schon als Raster statt Live-PDF gebaut) oder andere künftige A6/A4-PDF-
+  Exporte in diesem Silo betreffen — bei neuen Druckvorlagen vorsorglich
+  denselben Screenshot-zu-PDF-Weg statt `page.pdf()` verwenden.
+
 ## Nachtrag 2026-11-16 (10) — Flyer v3 (Hilfe-Headline) live ausgetauscht
 René-Freigabe nach Vorschau. Neue Version (Benefits + kleiner Footer-QR +
 "Kostenlose Hilfe bei Pflegegrad, Pflegegeld & Co."-Headline) live unter
