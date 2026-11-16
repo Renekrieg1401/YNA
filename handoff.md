@@ -14,6 +14,17 @@ Verifiziert: `curl -I` zeigt den Header, Playwright-Test löst einen
 echten `download`-Event mit korrektem Dateinamen aus. `nginx -t` +
 `systemctl reload nginx` sauber durchgelaufen.
 
+**Ergänzung (René-Fund, direkt im Anschluss):** Download funktionierte
+weiterhin nicht, wenn die Seite vom Home-Bildschirm aus geöffnet wird.
+Root Cause: `apple-mobile-web-app-capable: yes` (bereits vorhanden,
+`index.html` Zeile 14) schaltet den Home-Bildschirm-Modus in eine
+abgespeckte WKWebView-Ansicht OHNE Safari-Werkzeugleiste — dort gibt es
+keinen Download-/Teilen-Mechanismus, unabhängig vom Server-Header. Fix:
+`target="_blank" rel="noopener"` auf dem Flyer-Link ergänzt — das
+schickt den Klick gezielt in die echte Safari-App, wo der
+`Content-Disposition`-Header normal funktioniert. Live deployed,
+Link-Attribute per `curl` verifiziert.
+
 ## Nachtrag 2026-11-16 (4) — Dashboard: Bundesland/Stadt + Zugriffsquelle ergänzt
 René-Aufträge "nicht nur Herkunftsland sondern auch Bundesland und Bezirke"
 und "von wo aus die Seite aufgerufen wurde — direkt, Suche oder Social
