@@ -52,6 +52,28 @@ ergänzen", "Bots blockieren", "meine IP ausschließen", "Firewall-Frage".
   Bereich (mögliche Bots über Private-Relay-Pfad) bleibt ungelöst — bräuchte
   echtes ASN-/Reputations-Lookup für eine sauberere Trennung.
 
+## Nachtrag 2026-11-16 (7) — Bot-Filter-Nachschärfung + Verweildauer pro Aufruf
+René-Fund nach (6): Bot-Zahlen waren trotz Filter weiterhin hoch (11 statt
+erwartet niedriger). Per WHOIS echte Netz-Zugehörigkeit geklärt statt
+geraten: `104.197.x.x` ist ebenfalls Google Cloud (Lücke geschlossen),
+`140.248.x.x` ist Fastly (Apples zweiter Private-Relay-Anbieter neben
+Cloudflare), `205.169.x.x` ist CenturyLink (echter US-Provider, kein
+Hosting). René-Entscheidung nach Vorlage des Verhaltensmusters (identischer
+User-Agent, wiederholte Selbst-Referer-Treffer binnen Minuten): Cloudflare
+UND Fastly jetzt ebenfalls ausgeschlossen, Risiko vereinzelter echter
+Private-Relay-Nutzer bewusst akzeptiert. Gesamtaufrufe dadurch von 11 auf 2
+korrigiert.
+- **Verweildauer pro Aufruf (nicht nur Durchschnitt):** Neue Liste
+  `verweildauerJeAufruf` (Zeit, Land, Dauer — bewusst KEINE IP, konsistent
+  mit dem Rest des Dashboards), max. 50 letzte Einträge, gleiche Bot-/Cloud-/
+  Bekannte-IP-Filter wie bei den Seitenaufrufen. Neue Dashboard-Sektion
+  "Verweildauer je Aufruf" mit Tabelle. Mit synthetischer Testzeile
+  end-to-end verifiziert (Live-Rendering bestätigt, 0 Fehler), danach wieder
+  aus dem echten Log entfernt.
+- **[OFFEN]:** Renés echte IP weiterhin nicht bekannt. Keine Session-
+  Zusammenführung bei mehreren Beacons derselben Person (jeder Beacon ist
+  ein eigener Listeneintrag, auch bei mehreren Tabs/Besuchen).
+
 ## Nachtrag 2026-11-16 (5) — Flyer-Download: iOS-Safari öffnete nur Vorschau statt Download
 René-Fund: Button "Flyer herunterladen" zeigte die PDF nur in der Safari-
 Vorschau an, kein echter Download. Root Cause: der HTML `download`-

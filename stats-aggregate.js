@@ -333,14 +333,35 @@ function main() {
     }
   });
 
+  // Verweildauer je einzelnem Aufruf (Rene-Auftrag 2026-11-16 Nachtrag: "pro User",
+  // nicht nur der Durchschnitt). Dieselben Bot-/Cloud-/Bekannte-IP-Filter wie bei den
+  // Seitenaufrufen, damit kein Bot-Beacon die Liste verfaelscht. KEINE rohe IP in der
+  // Ausgabe -- nur Land (wie in den uebrigen Dashboard-Bereichen auch), konsistent mit
+  // dem bisherigen Datenschutz-Ansatz dieses Dashboards.
   var verweildauerWerteMs = [];
+  var verweildauerListe = [];
   eintraege.forEach(function (e) {
     if (e.methode !== 'GET' || BOT_RE.test(e.userAgent)) return;
+    if (istCloudHostingIp(e.ip) || BEKANNTE_IPS.indexOf(e.ip) !== -1) return;
     var m = VERWEILDAUER_RE.exec(e.pfad);
     if (!m) return;
     var ms = parseInt(m[1], 10);
-    if (ms > 0 && ms < MAX_PLAUSIBLE_VERWEILDAUER_MS) verweildauerWerteMs.push(ms);
+    if (!(ms > 0 && ms < MAX_PLAUSIBLE_VERWEILDAUER_MS)) return;
+    verweildauerWerteMs.push(ms);
+    var land = 'unbekannt';
+    if (istGueltigeIp(e.ip)) {
+      var geo = geoip.lookup(e.ip);
+      land = (geo && geo.country) || 'unbekannt';
+    }
+    var dt = parseNginxZeit(e.zeit);
+    verweildauerListe.push({
+      zeit: dt ? dt.toISOString() : null,
+      land: land,
+      sekunden: Math.round(ms / 1000)
+    });
   });
+  verweildauerListe.sort(function (a, b) { return (b.zeit || '').localeCompare(a.zeit || ''); });
+  verweildauerListe = verweildauerListe.slice(0, 50); // letzte 50, Payload-Groesse begrenzen
   var verweildauerDurchschnittSekunden = verweildauerWerteMs.length
     ? Math.round(verweildauerWerteMs.reduce(function (s, v) { return s + v; }, 0) / verweildauerWerteMs.length / 1000)
     : null;
@@ -388,6 +409,7 @@ function main() {
       'ist der Stadtname. Bundesland wird daraus abgeleitet, nicht aus einem direkten Feld.',
     verweildauerDurchschnittSekunden: verweildauerDurchschnittSekunden,
     verweildauerAnzahlMessungen: verweildauerWerteMs.length,
+    verweildauerJeAufruf: verweildauerListe,
     prognose: prognose,
     prognoseHinweis: prognose ? null :
       'Noch keine seriöse 12-Monats-Prognose möglich — erst ' + anzahlTageMitDaten +
