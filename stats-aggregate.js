@@ -220,16 +220,24 @@ function quelleFuerReferer(referer) {
 // Ueberwachung" grimmig gesagt: Selbstbetrug ueber die eigene Reichweite).
 var BOT_RE = /bot|crawl|spider|slurp|bingpreview|facebookexternalhit|ahrefs|semrush|mj12|petalbot|yandex|baidu|duckduckbot|ia_archiver|uptime|monitor|pingdom|curl\/|python-requests|headlesschrome|aiohttp|axios\/|go-http-client|okhttp|libwww-perl|wget\/|scrapy|node-fetch|java\/|apache-httpclient/i;
 
-// Bekannte AWS/Google-Cloud-IP-Bereiche (Rene-Fund 2026-11-16: "iPhone"-UA aus einem
-// AWS-Rechenzentrum ist offensichtlich kein echter Mensch, egal was der User-Agent
-// behauptet). Bewusst NICHT der Cloudflare-Bereich (104.16-31.*, 172.64-71.*) -- dort
-// laeuft auch Apples echtes iCloud Private Relay (Privatsphaere-Feature, echte
-// Besucher!), eine Blockade wuerde reale Leser faelschlich ausschliessen. AWS/GCP
-// nutzt Private Relay dagegen nie, daher dort ein eindeutigeres Signal. Grob/
-// unvollstaendig (kein echtes ASN-Lookup), deckt aber die heute beobachteten Faelle ab.
+// Bekannte Cloud-/CDN-IP-Bereiche (Rene-Fund 2026-11-16: "iPhone"-UA aus einem
+// Rechenzentrum ist offensichtlich kein echter Mensch, egal was der User-Agent
+// behauptet). Rene-Entscheidung 2026-11-16 (Nachtrag, nach Verhaltensmuster-Indiz --
+// identischer User-Agent, wiederholte Selbst-Referer-Treffer innerhalb weniger
+// Minuten): AUCH Cloudflare und Fastly werden jetzt ausgeschlossen, bewusst trotz
+// des Risikos, dass dadurch vereinzelt ein echter deutscher Leser mit Apple iCloud
+// Private Relay (nutzt genau diese beiden Anbieter) faelschlich nicht gezaehlt wird --
+// Rene hat dieses Risiko nach Abwaegung explizit akzeptiert. Grob/unvollstaendig
+// (kein echtes ASN-Lookup gegen die offiziellen Google/AWS/Cloudflare/Fastly-Listen),
+// deckt aber die per WHOIS tatsaechlich bestaetigten Faelle ab -- bei neuen Funden
+// hier ergaenzen.
 var CLOUD_IP_PREFIXE = [
   /^34\.(6[4-9]|[7-9]\d|1[01]\d|12[0-7])\./, // Google Cloud 34.64.0.0/10
-  /^52\./, /^54\./                            // AWS (grosse, bekannte /8-Bereiche)
+  /^104\.19[6-9]\./,                          // Google Cloud 104.196.0.0/14 (WHOIS-verifiziert)
+  /^52\./, /^54\./,                           // AWS (grosse, bekannte /8-Bereiche)
+  /^104\.(1[6-9]|2[0-9]|3[01])\./,            // Cloudflare 104.16.0.0/12
+  /^172\.6[4-9]\./, /^172\.7[01]\./,          // Cloudflare 172.64.0.0/13 (grob)
+  /^140\.248\./                               // Fastly (WHOIS-verifiziert)
 ];
 function istCloudHostingIp(ip) {
   return CLOUD_IP_PREFIXE.some(function (re) { return re.test(ip); });
