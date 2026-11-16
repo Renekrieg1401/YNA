@@ -7,7 +7,12 @@
   /* Druckvorlage DIN A6 (105mm x 148mm, Hochformat) für Auslagen (Arztpraxen, Apotheken,
      Beratungsstellen). Farbwerte 1:1 aus index.html :root übernommen (GLOBAL_SOURCE_OF_
      TRUTH_MANDATE) -- keine neue Palette erfunden. Logo (Herz+Haken) 1:1 aus dem Header
-     kopiert. Tagline = echter <meta name="description">-Text der Seite, nicht neu getextet. */
+     kopiert. v2 (René-Auftrag 2026-11-16): Fokus auf Benefits im Hauptbereich, kleiner
+     QR-Code nur noch im Footer statt zentral -- Benefits sind reale, bereits verifizierte
+     Fakten dieser Session (kostenlos/werbefrei lt. echtem <meta name="description">,
+     Primärquellen-Prüfung lt. legal-compliance-Arbeit, Newsletter lt. heute live
+     deploytem Feature, kein Tracking lt. tatsächlicher Architektur), keine erfundene
+     Marketing-Floskel. */
   @page { size: 105mm 148mm; margin: 0; }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
@@ -17,21 +22,26 @@
     font-family: 'Inter', system-ui, "Segoe UI", Roboto, sans-serif;
     position: relative;
   }
-  .flyer { width: 105mm; height: 148mm; padding: 6mm 7mm; display: flex; flex-direction: column; align-items: center; text-align: center;
+  .flyer { width: 105mm; height: 148mm; padding: 7mm 8mm 5mm; display: flex; flex-direction: column; align-items: center; text-align: center;
     background: radial-gradient(ellipse at 50% -10%, #303F58 0%, #131B27 60%); }
-  .logo { width: 17mm; height: 17mm; flex-shrink: 0; margin-top: 1mm; }
-  .brand { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; font-weight: 800; font-size: 6.4mm; letter-spacing: -0.3px; margin: 2.5mm 0 1mm; color: #E7E2D6; }
-  .badge { display: inline-block; font-size: 2.6mm; letter-spacing: 0.06em; text-transform: uppercase; color: #E8C39E;
-    border: 0.3mm solid rgba(184,115,51,0.5); border-radius: 999px; padding: 0.8mm 3mm; margin-bottom: 3.5mm; }
-  .tagline { font-size: 3.3mm; line-height: 1.4; color: #9CADC9; max-width: 85mm; margin-bottom: 4mm; }
-  .qr-box { background: #ffffff; border-radius: 3mm; padding: 2.5mm; margin-bottom: 3mm; flex-shrink: 0; }
-  .qr-box img { display: block; width: 29mm; height: 29mm; }
-  .scan-hint { font-size: 3.2mm; font-weight: 700; color: #E7E2D6; margin-bottom: 0.5mm; }
-  .url { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 3.4mm; color: #E8C39E; margin-bottom: 3mm; }
-  .topics { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.5mm; max-width: 88mm; margin-bottom: auto; }
-  .topics span { font-size: 2.7mm; color: #D19D6B; background: rgba(184,115,51,0.12); border: 0.25mm solid rgba(184,115,51,0.3);
-    border-radius: 999px; padding: 1mm 2.4mm; }
-  .footer { font-size: 2.3mm; color: #6B7A94; line-height: 1.5; border-top: 0.2mm solid rgba(124,147,184,0.22); padding-top: 2mm; width: 100%; flex-shrink: 0; }
+  .logo { width: 14mm; height: 14mm; flex-shrink: 0; }
+  .brand { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; font-weight: 800; font-size: 5.6mm; letter-spacing: -0.3px; margin: 2mm 0 1mm; color: #E7E2D6; }
+  .badge { display: inline-block; font-size: 2.4mm; letter-spacing: 0.06em; text-transform: uppercase; color: #E8C39E;
+    border: 0.3mm solid rgba(184,115,51,0.5); border-radius: 999px; padding: 0.7mm 2.8mm; margin-bottom: 3mm; }
+
+  .benefits { width: 100%; display: flex; flex-direction: column; gap: 2.6mm; margin-bottom: auto; text-align: left; }
+  .benefit { display: flex; align-items: flex-start; gap: 2.2mm; }
+  .benefit .tick { flex-shrink: 0; width: 4.2mm; height: 4.2mm; margin-top: 0.2mm; }
+  .benefit .txt { font-size: 3mm; line-height: 1.38; color: #D7DCE6; }
+  .benefit .txt b { color: #E7E2D6; display: block; font-size: 3.1mm; margin-bottom: 0.3mm; }
+
+  .footer { width: 100%; flex-shrink: 0; border-top: 0.2mm solid rgba(124,147,184,0.22); padding-top: 3mm; margin-top: 3mm;
+    display: flex; align-items: center; gap: 3mm; text-align: left; }
+  .footer .qr-box { background: #ffffff; border-radius: 1.6mm; padding: 1mm; flex-shrink: 0; line-height: 0; }
+  .footer .qr-box img { display: block; width: 14mm; height: 14mm; }
+  .footer .info { flex: 1; min-width: 0; }
+  .footer .url { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 3.1mm; font-weight: 700; color: #E8C39E; margin-bottom: 0.8mm; }
+  .footer .legal { font-size: 2mm; color: #6B7A94; line-height: 1.4; }
 </style>
 </head>
 <body>
@@ -47,20 +57,36 @@
     </svg>
     <div class="brand">Pflege-Faktencheck</div>
     <div class="badge">Ratgeber · Pflege</div>
-    <div class="tagline">Kostenloser, werbefreier Ratgeber zu Pflegegrad, Pflegegeld, Entlastungsbetrag und weiteren SGB-XI-Leistungen — jeder Betrag gegen den echten Gesetzestext geprüft.</div>
 
-    <div class="qr-box"><img src="data:image/png;base64,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ECPeABAj3gAQI94AECPeABAj3gAQI94AECPeABAj3gAQI94AECPeABAj3gAQI94AECPeABAj3gAQI94AEPNZgq7zmB4hY9323DsqzjzlyV49ed6p91s8V287k1Mzr0PnaoqbNwDEiDcAxIg3AMSINwDEiDcAxIg3AMSINwDEiDcAxIg3AMSINwDEiDcAxIg3AMSINwDEiDcAxIg3AMSINwDEiDcAxIg3AMSINwDEfJaXWbd9qbnOY6kp7vPbnvfJzMUzOaV4Nt52rtbgzG7eABAj3gAQI94AECPeABAj3gAQI94AECPeABAj3gAQI94AECPeABAj3gAQI94AECPeABAj3gAQI94AECPeABAj3gAQI94AECPeABDzmR6Av9N1HiPrrts+8tviXk158rxP3tHUuk+87WxMuYL77OYNADHiDQAx4g0AMeINADHiDQAx4g0AMeINADHiDQAx4g0AMeINADHiDQAx4g0AMeINADHiDQAx4g0AMeINADHiDQAx4g0AMeINADGf6QHgp7jOY3mTddtH9urJulPe9rxPFJ93HfoWnnDzBoAY8QaAGPEGgBjxBoAY8QaAGPEGgBjxBoAY8QaAGPEGgBjxBoAY8QaAGPEGgBjxBoAY8QaAGPEGgBjxBoAY8QaAGPEGgBjxBoCYz/Iy13lMj8D/sG57bt3iuSrOPGXqbEx9C1Nno7hXU9y8ASBGvAEgRrwBIEa8ASBGvAEgRrwBIEa8ASBGvAEgRrwBIEa8ASBGvAEgRrwBIEa8ASBGvAEgRrwBIEa8ASBGvAEgRrwBIEa8ASDmswSt2z49Aj/0HV3nsbyJfeZ3vKMn56p4Nq7gzG7eABAj3gAQI94AECPeABAj3gAQI94AECPeABAj3gAQI94AECPeABAj3gAQI94AECPeABAj3gAQI94AECPeABAj3gAQI94AECPeABDzdd/39AwAwD/g5g0AMeINADHiDQAx4g0AMeINADHiDQAx4g0AMeINADHiDQAx4g0AMeINADHiDQAx4g0AMeINADHiDQAx4g0AMeINADHiDQAx4g0AMeINADHiDQAx4g0AMeINADHiDQAx4g0AMeINADHiDQAx4g0AMeINADHiDQAx4g0AMeINADHiDQAx4g0AMeINADHiDQAx4g0AMeINADHiDQBLy78BIQ0i6dG9rMkAAAAASUVORK5CYII=" alt="QR-Code zu pflege-faktencheck.de"></div>
-    <div class="scan-hint">Jetzt scannen</div>
-    <div class="url">pflege-faktencheck.de</div>
-
-    <div class="topics">
-      <span>Pflegegrad</span><span>Pflegegeld</span><span>Entlastungsbetrag</span>
-      <span>Pflegehilfsmittel</span><span>Kurzzeitpflege</span><span>Demenz</span>
+    <div class="benefits">
+      <div class="benefit">
+        <svg class="tick" viewBox="0 0 24 24" fill="none" stroke="#B87333" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" fill="none" stroke="#B87333" stroke-width="1.6"/><path d="M8 12.5l2.5 2.5L16 9"/></svg>
+        <div class="txt"><b>Kostenlos & werbefrei</b>Kein Abo, keine Werbung, keine versteckten Kosten.</div>
+      </div>
+      <div class="benefit">
+        <svg class="tick" viewBox="0 0 24 24" fill="none" stroke="#B87333" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" fill="none" stroke="#B87333" stroke-width="1.6"/><path d="M8 12.5l2.5 2.5L16 9"/></svg>
+        <div class="txt"><b>Jeder Betrag geprüft</b>Pflegegeld, Entlastungsbetrag & Co. direkt gegen den echten Gesetzestext abgeglichen.</div>
+      </div>
+      <div class="benefit">
+        <svg class="tick" viewBox="0 0 24 24" fill="none" stroke="#B87333" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" fill="none" stroke="#B87333" stroke-width="1.6"/><path d="M8 12.5l2.5 2.5L16 9"/></svg>
+        <div class="txt"><b>Alle wichtigen Themen</b>Pflegegrad, Hilfsmittel, Hausnotruf, Demenz, Pflege-WG, Vorsorge u. v. m.</div>
+      </div>
+      <div class="benefit">
+        <svg class="tick" viewBox="0 0 24 24" fill="none" stroke="#B87333" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" fill="none" stroke="#B87333" stroke-width="1.6"/><path d="M8 12.5l2.5 2.5L16 9"/></svg>
+        <div class="txt"><b>Newsletter bei Rechtsänderungen</b>Kostenlos abonnieren, jederzeit mit 1 Klick wieder abmeldbar.</div>
+      </div>
+      <div class="benefit">
+        <svg class="tick" viewBox="0 0 24 24" fill="none" stroke="#B87333" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" fill="none" stroke="#B87333" stroke-width="1.6"/><path d="M8 12.5l2.5 2.5L16 9"/></svg>
+        <div class="txt"><b>Ohne Anmeldung nutzbar</b>Kein Konto, kein Tracking, keine Datensammlung zum Lesen.</div>
+      </div>
     </div>
 
     <div class="footer">
-      Privates, nicht-kommerzielles Informationsangebot · Herausgeber: René Krieg,
-      Hohenfelsstraße 34, 35232 Dautphetal
+      <div class="qr-box"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAApQAAAKUCAIAAAA1rT9rAAAN1klEQVR4nO3XMZKkyhVAUVpRS8BkAex/NSwAkz0gQ54czW808/oO5/gV+UiSupFf930vAEDHv6YHAAD+GfEGgBjxBoAY8QaAGPEGgBjxBoAY8QaAGPEGgBjxBoAY8QaAGPEGgBjxBoAY8QaAGPEGgBjxBoAY8QaAGPEGgBjxBoAY8QaAGPEGgBjxBoAY8QaAGPEGgBjxBoAY8QaAGPEGgBjxBoAY8QaAGPEGgBjxBoAY8QaAGPEGgBjxBoCYz9TC67ZPLc0vus5j5P0W1+Xnf/vF9+t/8ue7hs6VmzcAxIg3AMSINwDEiDcAxIg3AMSINwDEiDcAxIg3AMSINwDEiDcAxIg3AMSINwDEiDcAxIg3AMSINwDEiDcAxIg3AMSINwDEiDcAxHyWoOs8pkfIWLc9946ezDy17tvOc/EdTc08pTjzlHXo23/CzRsAYsQbAGLEGwBixBsAYsQbAGLEGwBixBsAYsQbAGLEGwBixBsAYsQbAGLEGwBixBsAYsQbAGLEGwBixBsAYsQbAGLEGwBixBsAYj7Ly6zbvtRc5zE9witM7fOTM/lk5qlv4W3PW1Tcq+tl/5Nu3gAQI94AECPeABAj3gAQI94AECPeABAj3gAQI94AECPeABAj3gAQI94AECPeABAj3gAQI94AECPeABAj3gAQI94AECPeABAj3gAQ85kegL/Tuu3f/u11HiPrTvG8P/9cwU/j5g0AMeINADHiDQAx4g0AMeINADHiDQAx4g0AMeINADHiDQAx4g0AMeINADHiDQAx4g0AMeINADHiDQAx4g0AMeINADHiDQAx4g0AMZ/pAeC/rds+su51HiPrFp93ambgP9y8ASBGvAEgRrwBIEa8ASBGvAEgRrwBIEa8ASBGvAEgRrwBIEa8ASBGvAEgRrwBIEa8ASBGvAEgRrwBIEa8ASBGvAEgRrwBIEa8ASDms7zMdR7TI/BD3++67cubPHneqe+o+H6L/znFmd/GzRsAYsQbAGLEGwBixBsAYsQbAGLEGwBixBsAYsQbAGLEGwBixBsAYsQbAGLEGwBixBsAYsQbAGLEGwBixBsAYsQbAGLEGwBixBsAYj5L0Lrt0yPwG13nMXI2rGvd37HulOLM/Do3bwCIEW8AiBFvAIgRbwCIEW8AiBFvAIgRbwCIEW8AiBFvAIgRbwCIEW8AiBFvAIgRbwCIEW8AiBFvAIgRbwCIEW8AiBFvAIgRbwCI+brve3oG/kLrti8113ksb9rnqectno23nSt+PjdvAIgRbwCIEW8AiBFvAIgRbwCIEW8AiBFvAIgRbwCIEW8AiBFvAIgRbwCIEW8AiBFvAIgRbwCIEW8AiBFvAIgRbwCIEW8AiBFvAIj5uu97ZOF127/92+s8lpqp532yLr/OO/ozpr597+jPKL7fa2hmN28AiBFvAIgRbwCIEW8AiBFvAIgRbwCIEW8AiBFvAIgRbwCIEW8AiBFvAIgRbwCIEW8AiBFvAIgRbwCIEW8AiBFvAIgRbwCIEW8AiPm673upWbd9ZN3rPJY3ebLPT/bK++WnnckpU98CP/9cuXkDQIx4A0CMeANAjHgDQIx4A0CMeANAjHgDQIx4A0CMeANAjHgDQIx4A0CMeANAjHgDQIx4A0CMeANAjHgDQIx4A0CMeANAjHgDQMxneZnrPL7923XbR9Z9YmrmJ+u+TXGvps7z276jJ6bWLVqD36CbNwDEiDcAxIg3AMSINwDEiDcAxIg3AMSINwDEiDcAxIg3AMSINwDEiDcAxIg3AMSINwDEiDcAxIg3AMSINwDEiDcAxIg3AMSINwDEfKYWXrd9qbnOY+R5n6z75Ldv40z+md9OKX4LxZmn/uvW4Jl8ws0bAGLEGwBixBsAYsQbAGLEGwBixBsAYsQbAGLEGwBixBsAYsQbAGLEGwBixBsAYsQbAGLEGwBixBsAYsQbAGLEGwBixBsAYsQbAGK+7vte3mTd9m//9jqPpTZz0ZN9ntqrqZmnzuQTU89b/I6K73fK+rLvyM0bAGLEGwBixBsAYsQbAGLEGwBixBsAYsQbAGLEGwBixBsAYsQbAGLEGwBixBsAYsQbAGLEGwBixBsAYsQbAGLEGwBixBsAYsQbAGK+7vseWXjd9m//9jqP3LpvU9znJzMXTX1HU4rfb3Gf3+YaOldu3gAQI94AECPeABAj3gAQI94AECPeABAj3gAQI94AECPeABAj3gAQI94AECPeABAj3gAQI94AECPeABAj3gAQI94AECPeABAj3gAQ85la+DqPb/923fb/6yw/fd3iXk3N/GTdKcWZn3jb8xb5z/n53LwBIEa8ASBGvAEgRrwBIEa8ASBGvAEgRrwBIEa8ASBGvAEgRrwBIEa8ASBGvAEgRrwBIEa8ASBGvAEgRrwBIEa8ASBGvAEgRrwBIOYztfC67d/+7XUeuXWfKM7M3302pr7BJ972v/G2512HztUUN28AiBFvAIgRbwCIEW8AiBFvAIgRbwCIEW8AiBFvAIgRbwCIEW8AiBFvAIgRbwCIEW8AiBFvAIgRbwCIEW8AiBFvAIgRbwCIEW8AiPm673tk4XXbv/3b6zyWmqnnfbJu0dTZeNs+v03xP+dt1pc1xc0bAGLEGwBixBsAYsQbAGLEGwBixBsAYsQbAGLEGwBixBsAYsQbAGLEGwBixBsAYsQbAGLEGwBixBsAYsQbAGLEGwBixBsAYsQbAGI+S9C67SPrXueRe94nM79tn6e87Xmdq5+/V1Pe9h/7hJs3AMSINwDEiDcAxIg3AMSINwDEiDcAxIg3AMSINwDEiDcAxIg3AMSINwDEiDcAxIg3AMSINwDEiDcAxIg3AMSINwDEiDcAxIg3AMR83fc9PUPGuu0j617nkZv5bd72jp487xNP9mrqHRX36oniPq/B9+vmDQAx4g0AMeINADHiDQAx4g0AMeINADHiDQAx4g0AMeINADHiDQAx4g0AMeINADHiDQAx4g0AMeINADHiDQAx4g0AMeINADHiDQAxX/d9L2+ybvu3f3udx/Kmmd+2V0VT73eK8/zzZ56yDp3nqX128waAGPEGgBjxBoAY8QaAGPEGgBjxBoAY8QaAGPEGgBjxBoAY8QaAGPEGgBjxBoAY8QaAGPEGgBjxBoAY8QaAGPEGgBjxBoAY8QaAmM/Uwuu2Ty39KsV9npr5Oo9X7fOT533C+/0zijM/eUfXy96vmzcAxIg3AMSINwDEiDcAxIg3AMSINwDEiDcAxIg3AMSINwDEiDcAxIg3AMSINwDEiDcAxIg3AMSINwDEiDcAxIg3AMSINwDEiDcAxHymFr7OY2rpnOJerds+PcIrPNnnJ+equO6Ut32/xectcvMGgBjxBoAY8QaAGPEGgBjxBoAY8QaAGPEGgBjxBoAY8QaAGPEGgBjxBoAY8QaAGPEGgBjxBoAY8QaAGPEGgBjxBoAY8QaAGPEGgJjP1MLrtk8tzS+6ziO37pNzNXUmp/Z5im//z+zV1LnyHf0Zbt4AECPeABAj3gAQI94AECPeABAj3gAQI94AECPeABAj3gAQI94AECPeABAj3gAQI94AECPeABAj3gAQI94AECPeABAj3gAQI94AEPNZgq7zmB4hY9323DsqzjzlyV49ed6p91s8V287k1Mzr0PnaoqbNwDEiDcAxIg3AMSINwDEiDcAxIg3AMSINwDEiDcAxIg3AMSINwDEiDcAxIg3AMSINwDEiDcAxIg3AMSINwDEiDcAxIg3AMSINwDEfJaXWbd9qbnOY6kp7vPbnvfJzMUzOaV4Nt52rtbgzG7eABAj3gAQI94AECPeABAj3gAQI94AECPeABAj3gAQI94AECPeABAj3gAQI94AECPeABAj3gAQI94AECPeABAj3gAQI94AECPeABDzmR6Av9N1HiPrrts+8tviXk158rxP3tHUuk+87WxMuYL77OYNADHiDQAx4g0AMeINADHiDQAx4g0AMeINADHiDQAx4g0AMeINADHiDQAx4g0AMeINADHiDQAx4g0AMeINADHiDQAx4g0AMeINADGf6QHgp7jOY3mTddtH9urJulPe9rxPFJ93HfoWnnDzBoAY8QaAGPEGgBjxBoAY8QaAGPEGgBjxBoAY8QaAGPEGgBjxBoAY8QaAGPEGgBjxBoAY8QaAGPEGgBjxBoAY8QaAGPEGgBjxBoCYz/Iy13lMj8D/sG57bt3iuSrOPGXqbEx9C1Nno7hXU9y8ASBGvAEgRrwBIEa8ASBGvAEgRrwBIEa8ASBGvAEgRrwBIEa8ASBGvAEgRrwBIEa8ASBGvAEgRrwBIEa8ASBGvAEgRrwBIEa8ASDmswSt2z49Aj/0HV3nsbyJfeZ3vKMn56p4Nq7gzG7eABAj3gAQI94AECPeABAj3gAQI94AECPeABAj3gAQI94AECPeABAj3gAQI94AECPeABAj3gAQI94AECPeABAj3gAQI94AECPeABDzdd/39AwAwD/g5g0AMeINADHiDQAx4g0AMeINADHiDQAx4g0AMeINADHiDQAx4g0AMeINADHiDQAx4g0AMeINADHiDQAx4g0AMeINADHiDQAx4g0AMeINADHiDQAx4g0AMeINADHiDQAx4g0AMeINADHiDQAx4g0AMeINADHiDQBLy78BIQ0i6dG9rMkAAAAASUVORK5CYII=" alt="QR-Code zu pflege-faktencheck.de"></div>
+      <div class="info">
+        <div class="url">pflege-faktencheck.de</div>
+        <div class="legal">Privates, nicht-kommerzielles Informationsangebot · Herausgeber: René Krieg, Hohenfelsstraße 34, 35232 Dautphetal</div>
+      </div>
     </div>
   </div>
 </body>
