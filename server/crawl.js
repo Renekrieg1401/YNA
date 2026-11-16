@@ -11,6 +11,7 @@ var db = dbMod.db;
 var uuid = dbMod.uuid;
 var crawlFact = require('./scrapers').crawlFact;
 var notifyNewDraft = require('./mailer').notifyNewDraft;
+var broadcastLegalChange = require('./mailer').broadcastLegalChange;
 
 async function run() {
   dbMod.seedIfEmpty();
@@ -71,6 +72,18 @@ async function run() {
       }
     } catch (err) {
       console.error('[crawl] Mailversand warf einen Fehler: ' + err.message + ' -- Crawl-Lauf wird dadurch NICHT abgebrochen.');
+    }
+
+    // Newsletter-Broadcast (Rene-Direktive 2026-11-16: vollautomatisch, OHNE die
+    // Admin-Freigabe abzuwarten -- bewusst anders als die oeffentliche Fakten-Seite,
+    // die weiterhin erst nach manueller Pruefung aktualisiert wird). Quelle ist in
+    // jedem Fall einer der drei bereits vertrauten source_type-Werte (sgbxi_html/
+    // bmg_pdf/mdbund_pdf), kein Fremdinhalt.
+    try {
+      var broadcastResult = await broadcastLegalChange(fact, draft);
+      console.log('[crawl] Newsletter-Broadcast: ' + broadcastResult.sent + ' gesendet, ' + broadcastResult.failed + ' fehlgeschlagen.');
+    } catch (err) {
+      console.error('[crawl] Newsletter-Broadcast warf einen Fehler: ' + err.message + ' -- Crawl-Lauf wird dadurch NICHT abgebrochen.');
     }
   }
 

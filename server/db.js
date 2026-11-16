@@ -83,6 +83,28 @@ CREATE TABLE IF NOT EXISTS login_sperre (
   bis TEXT NOT NULL DEFAULT '',
   PRIMARY KEY (art, schluessel)
 );
+
+-- Newsletter-Abonnenten (Rene-Auftrag 2026-11-16, Double-Opt-In + 12-Klick-Abmeldung).
+-- consent_given_at/consent_ip sind der Nachweis der Einwilligung (Art. 6 Abs. 1 lit. a
+-- DSGVO, Nachweispflicht Art. 7 Abs. 1 DSGVO) -- NIE geloescht, solange der Datensatz
+-- existiert, auch nach "unsubscribed" (sonst kein Nachweis mehr moeglich, dass die
+-- Einwilligung je gegeben wurde). confirm_token wird nach erfolgreicher Bestaetigung
+-- auf NULL gesetzt (kein nutzbarer Alt-Token mehr), unsubscribe_token bleibt dauerhaft
+-- gueltig (1-Klick-Abmeldung muss jederzeit funktionieren, auch Jahre spaeter).
+CREATE TABLE IF NOT EXISTS subscribers (
+  id TEXT PRIMARY KEY,
+  email TEXT NOT NULL UNIQUE,
+  status TEXT NOT NULL DEFAULT 'pending_confirmation'
+    CHECK (status IN ('pending_confirmation','confirmed','unsubscribed')),
+  confirm_token TEXT,
+  confirm_token_expires TEXT,
+  unsubscribe_token TEXT NOT NULL,
+  consent_given_at TEXT NOT NULL,
+  consent_ip TEXT,
+  created_at TEXT NOT NULL,
+  confirmed_at TEXT,
+  unsubscribed_at TEXT
+);
 `);
 
 // Additive Migration fuer bereits bestehende DB-Dateien von vor der approved_new_value-

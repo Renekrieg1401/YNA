@@ -3109,7 +3109,7 @@
     '<h4>Angaben gemäß § 5 DDG</h4>' +
     '<p>René Krieg<br>Hohenfelsstraße 34<br>35232 Dautphetal<br>Deutschland</p>' +
     '<h4>Kontakt</h4>' +
-    '<p>E-Mail: r.krieg.home@gmail.com</p>' +
+    '<p>E-Mail: pflegefaktencheck@gmail.com</p>' +
     '<h4>Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV</h4>' +
     '<p>René Krieg, Anschrift wie oben</p>' +
     '<h4>Hinweis</h4>' +
@@ -3117,7 +3117,7 @@
 
   var DATENSCHUTZ_HTML =
     '<h4>1. Verantwortlicher</h4>' +
-    '<p>Verantwortlicher im Sinne der DSGVO: René Krieg, Hohenfelsstraße 34, 35232 Dautphetal, E-Mail: r.krieg.home@gmail.com</p>' +
+    '<p>Verantwortlicher im Sinne der DSGVO: René Krieg, Hohenfelsstraße 34, 35232 Dautphetal, E-Mail: pflegefaktencheck@gmail.com</p>' +
     '<h4>2. Datenschutzbeauftragter</h4>' +
     '<p>Ein Datenschutzbeauftragter wurde nicht bestellt, da gesetzlich nicht erforderlich.</p>' +
     '<h4>3. Erhebung und Speicherung personenbezogener Daten</h4>' +
@@ -3174,7 +3174,7 @@
     html += '<option value="Sonstiges">Sonstiges</option>';
     html += '</select></div>';
     html += '<div id="fb-link-wrap" style="margin-top:16px"></div>';
-    html += '<p style="font-size:13px;color:var(--text-muted);margin-top:16px">Feedback wird an r.krieg.home@gmail.com gesendet.</p>';
+    html += '<p style="font-size:13px;color:var(--text-muted);margin-top:16px">Feedback wird an pflegefaktencheck@gmail.com gesendet.</p>';
     document.getElementById('cm-body').innerHTML = html;
     updateFeedbackLink();
     document.getElementById('contact-modal').showModal();
@@ -3184,7 +3184,7 @@
     var kategorie = sel ? sel.value : 'Sonstiges';
     var subject = 'Feedback zum Ratgeber Pflege: ' + kategorie;
     var body = 'Hallo,\n\nKategorie: ' + kategorie + '\n\nBetroffenes Thema/Seite:\n[hier einfügen]\n\nMein Hinweis:\n\n\n';
-    var mailHref = 'mailto:r.krieg.home@gmail.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+    var mailHref = 'mailto:pflegefaktencheck@gmail.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
     var wrap = document.getElementById('fb-link-wrap');
     if (wrap) wrap.innerHTML = '<a class="cm-link" href="' + mailHref + '"><span class="icon">' + ICON_MAIL + '</span>Feedback per E-Mail senden</a>';
   }
@@ -3201,7 +3201,7 @@
       '<h4>Erstellung dieser Erklärung</h4>' +
       '<p>Diese Erklärung wurde am 15.11.2026 erstellt, beruhend auf einer internen Selbstbewertung (automatisierte WCAG-Kontrastberechnung + manuelle Zielgrößen-Prüfung), keine externe Zertifizierungsstelle.</p>' +
       '<h4>Feedback und Kontaktdaten</h4>' +
-      '<p>Probleme mit der Barrierefreiheit können Sie uns über die Funktion „Feedback" in dieser Seite oder direkt per E-Mail an r.krieg.home@gmail.com melden.</p>' +
+      '<p>Probleme mit der Barrierefreiheit können Sie uns über die Funktion „Feedback" in dieser Seite oder direkt per E-Mail an pflegefaktencheck@gmail.com melden.</p>' +
       '<h4>Schlichtungsverfahren</h4>' +
       '<p>Da die Anwendbarkeit des BFSG auf dieses private Angebot zweifelhaft ist (s. o.), wird auf die Nennung einer Schlichtungsstelle nach § 16 BFSG verzichtet, statt eine nicht verifizierte Adresse zu benennen.</p>';
     document.getElementById('cm-body').innerHTML = html;

@@ -13,6 +13,8 @@ var dbMod = require('./db');
 var db = dbMod.db;
 var uuid = dbMod.uuid;
 var resolveEffectiveValue = require('./lib/resolveEffectiveValue').resolveEffectiveValue;
+var crypto = require('crypto');
+var mailer = require('./mailer');
 
 var app = express();
 
@@ -190,6 +192,102 @@ app.get('/api/public/facts', function (req, res) {
     };
   });
   res.json(result);
+});
+
+// --- Public: Newsletter (Rene-Auftrag 2026-11-16, Double-Opt-In + 1-Klick-Abmeldung) ---
+
+var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+var CONFIRM_TOKEN_GUELTIG_MS = 48 * 60 * 60 * 1000; // 48h
+var RESEND_SPERRE_MS = 5 * 60 * 1000; // verhindert Mail-Bombing einer fremden Adresse
+
+function brandSeite(titel, text) {
+  return '<!doctype html><html lang="de"><head><meta charset="utf-8">' +
+    '<meta name="viewport" content="width=device-width, initial-scale=1"><title>' + titel + ' — Pflege-Faktencheck</title>' +
+    '<meta name="robots" content="noindex, nofollow"></head>' +
+    '<body style="margin:0;background:#131B27;color:#E7E2D6;font-family:-apple-system,Segoe UI,Roboto,sans-serif;' +
+    'min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px">' +
+    '<div style="max-width:420px;text-align:center">' +
+    '<div style="font-weight:800;font-size:18px;background:linear-gradient(135deg,#6B4423,#B87333,#E8C39E);' +
+    '-webkit-background-clip:text;background-clip:text;color:#B87333;margin-bottom:18px">Pflege-Faktencheck</div>' +
+    '<h1 style="font-size:1.1rem">' + titel + '</h1><p style="color:#9CADC9;font-size:.9rem">' + text + '</p>' +
+    '<p><a href="/" style="color:#B87333;font-size:.85rem">← Zurück zur Seite</a></p></div></body></html>';
+}
+
+app.post('/api/newsletter/subscribe', function (req, res) {
+  var email = String((req.body && req.body.email) || '').trim().toLowerCase();
+  var consent = req.body && req.body.consent === true;
+  if (!EMAIL_RE.test(email) || email.length > 254) {
+    return res.status(400).json({ error: 'invalid_email' });
+  }
+  if (!consent) {
+    return res.status(400).json({ error: 'consent_required' });
+  }
+
+  var now = new Date();
+  var nowIso = now.toISOString();
+  var existing = db.prepare('SELECT * FROM subscribers WHERE email = ?').get(email);
+
+  if (existing && existing.status === 'confirmed') {
+    return res.json({ ok: true, status: 'already_confirmed' });
+  }
+  if (existing && existing.status === 'pending_confirmation') {
+    var zuletzt = new Date(existing.created_at).getTime();
+    if (now.getTime() - zuletzt < RESEND_SPERRE_MS) {
+      return res.json({ ok: true, status: 'confirmation_pending' });
+    }
+    var neuerToken = crypto.randomBytes(24).toString('hex');
+    db.prepare('UPDATE subscribers SET confirm_token = ?, confirm_token_expires = ?, created_at = ? WHERE email = ?')
+      .run(neuerToken, new Date(now.getTime() + CONFIRM_TOKEN_GUELTIG_MS).toISOString(), nowIso, email);
+    mailer.sendConfirmationMail({ email: email, confirm_token: neuerToken }).catch(function () {});
+    return res.json({ ok: true, status: 'confirmation_resent' });
+  }
+
+  var row = {
+    id: uuid(),
+    email: email,
+    confirm_token: crypto.randomBytes(24).toString('hex'),
+    confirm_token_expires: new Date(now.getTime() + CONFIRM_TOKEN_GUELTIG_MS).toISOString(),
+    unsubscribe_token: crypto.randomBytes(24).toString('hex'),
+    consent_given_at: nowIso,
+    consent_ip: req.ip || null,
+    created_at: nowIso
+  };
+  db.prepare(
+    'INSERT INTO subscribers (id, email, confirm_token, confirm_token_expires, unsubscribe_token, consent_given_at, consent_ip, created_at) ' +
+    'VALUES (?,?,?,?,?,?,?,?)'
+  ).run(row.id, row.email, row.confirm_token, row.confirm_token_expires, row.unsubscribe_token, row.consent_given_at, row.consent_ip, row.created_at);
+
+  mailer.sendConfirmationMail(row).catch(function (err) {
+    console.error('[newsletter] Bestätigungsmail-Fehler: ' + err.message);
+  });
+  res.json({ ok: true, status: 'confirmation_sent' });
+});
+
+app.get('/api/newsletter/confirm', function (req, res) {
+  var token = String(req.query.token || '');
+  var sub = db.prepare('SELECT * FROM subscribers WHERE confirm_token = ?').get(token);
+  if (!sub) {
+    return res.status(404).send(brandSeite('Link ungültig', 'Dieser Bestätigungslink ist ungültig oder wurde bereits verwendet.'));
+  }
+  if (new Date(sub.confirm_token_expires).getTime() < Date.now()) {
+    return res.status(410).send(brandSeite('Link abgelaufen', 'Dieser Bestätigungslink ist abgelaufen. Bitte melde dich erneut auf der Seite an.'));
+  }
+  db.prepare("UPDATE subscribers SET status = 'confirmed', confirmed_at = ?, confirm_token = NULL WHERE id = ?")
+    .run(new Date().toISOString(), sub.id);
+  res.send(brandSeite('Angemeldet', 'Deine Anmeldung zum Pflege-Faktencheck-Newsletter ist bestätigt. Du erhältst künftig eine Mail, wenn eine mögliche Rechtsänderung erkannt wird.'));
+});
+
+app.get('/api/newsletter/unsubscribe', function (req, res) {
+  var token = String(req.query.token || '');
+  var sub = db.prepare('SELECT * FROM subscribers WHERE unsubscribe_token = ?').get(token);
+  if (!sub) {
+    return res.status(404).send(brandSeite('Link ungültig', 'Dieser Abmelde-Link ist ungültig.'));
+  }
+  if (sub.status !== 'unsubscribed') {
+    db.prepare("UPDATE subscribers SET status = 'unsubscribed', unsubscribed_at = ? WHERE id = ?")
+      .run(new Date().toISOString(), sub.id);
+  }
+  res.send(brandSeite('Abgemeldet', 'Du erhältst keine weiteren Newsletter-Mails von Pflege-Faktencheck mehr.'));
 });
 
 app.get('/health', function (req, res) {

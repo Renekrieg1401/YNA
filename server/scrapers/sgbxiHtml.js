@@ -41,7 +41,7 @@ function sha256(text) {
 async function crawl(fact) {
   var res;
   try {
-    res = await fetch(fact.source_url, { headers: { 'User-Agent': 'Pflege-Fakten-Crawler/1.0 (+r.krieg.home@gmail.com)' } });
+    res = await fetch(fact.source_url, { headers: { 'User-Agent': 'Pflege-Fakten-Crawler/1.0 (+pflegefaktencheck@gmail.com)' } });
   } catch (err) {
     return { changed: false, snapshot: null, hash: null, httpStatus: null, error: 'fetch_failed: ' + err.message };
   }

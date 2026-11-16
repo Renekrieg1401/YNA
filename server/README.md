@@ -84,7 +84,7 @@ dieses Server-Baus.
 | `mdbund_pdf` | Binärhash der PDF-Datei (`scrapers/mdBundPdf.js`) | Wie `bmg_pdf` | Nein |
 
 Jeder erkannte Fund erzeugt einen `draft` mit Status `pending_review` und
-löst eine E-Mail an `r.krieg.home@gmail.com` aus. Erst wenn René im
+löst eine E-Mail an `pflegefaktencheck@gmail.com` aus. Erst wenn René im
 Admin-Panel `approve` mit `effectiveDate`+`newValue`+`prosText`+`consText`
 aufruft, wird der Fund jemals öffentlich sichtbar — und auch dann erst **ab
 dem gesetzten Stichtag** (s. u.). Vor dem Stichtag bleibt `value` in

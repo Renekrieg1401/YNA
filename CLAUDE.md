@@ -36,7 +36,7 @@ Informationsseite, kein PIN-Gate).
   eigenständiges, nicht-kommerzielles Informationsangebot von René Krieg
   (Privatperson, kein Unternehmen) — Impressum/Datenschutz entsprechend
   mit Renés privater Identität befüllt (Hohenfelsstraße 34, 35232
-  Dautphetal, r.krieg.home@gmail.com), nicht mit AERIS-Firmendaten.
+  Dautphetal, pflegefaktencheck@gmail.com), nicht mit AERIS-Firmendaten.
 - Die Bronze/Navy-Farboptik (AERIS-Design-Tokens) bleibt bewusst erhalten —
   das war eine reine Design-Entscheidung, keine Eigentumsaussage, und wurde
   nicht zurückgenommen.
