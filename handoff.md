@@ -1,5 +1,19 @@
 # Handoff — Pflege-Faktencheck (ex Pflege-Fakten / YNA Digital), 2026-11-15
 
+## Nachtrag 2026-11-16 (5) — Flyer-Download: iOS-Safari öffnete nur Vorschau statt Download
+René-Fund: Button "Flyer herunterladen" zeigte die PDF nur in der Safari-
+Vorschau an, kein echter Download. Root Cause: der HTML `download`-
+Attribut-Weg wird von iOS Safari grundsätzlich ignoriert (bekannte
+WebKit-Einschränkung, kein Code-Fehler in `index.html`). Fix serverseitig
+in `/etc/nginx/sites-available/pflege-faktencheck` (NICHT im Git-Repo,
+Backup vor Änderung angelegt: `pflege-faktencheck.bak-20261116-135411`):
+neue `location = /flyer-pflege-faktencheck.pdf`-Block mit
+`add_header Content-Disposition "attachment; filename=..."` — erzwingt
+den Download browserübergreifend, unabhängig vom HTML-Attribut.
+Verifiziert: `curl -I` zeigt den Header, Playwright-Test löst einen
+echten `download`-Event mit korrektem Dateinamen aus. `nginx -t` +
+`systemctl reload nginx` sauber durchgelaufen.
+
 ## Nachtrag 2026-11-16 (4) — Dashboard: Bundesland/Stadt + Zugriffsquelle ergänzt
 René-Aufträge "nicht nur Herkunftsland sondern auch Bundesland und Bezirke"
 und "von wo aus die Seite aufgerufen wurde — direkt, Suche oder Social
