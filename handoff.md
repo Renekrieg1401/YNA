@@ -25,11 +25,16 @@ IP-Weitergabe) und für die kostenlose Variante entschieden.
   korrektes Rendering aller neuen Bereiche, 0 Konsolenfehler. Testzeilen
   danach wieder aus dem echten Log entfernt — ehrlicher Nullpunkt
   (0 Aufrufe) wiederhergestellt, kein Datenbestand verfälscht.
-- **[OFFEN]:** Stadt→Bundesland-Tabelle deckt die ~80 größten deutschen
-  Städte ab, nicht jede kleinere Stadt — bei Besuchen aus kleineren Orten
-  zeigt Bundesland ggf. "Unbekannt (keine Stadtauflösung)", obwohl
-  `geoip-lite` durchaus eine Stadt gefunden hat, die nur nicht in der
-  Tabelle steht. Bei Bedarf Tabelle erweitern.
+- **[ERGÄNZUNG 2026-11-16, René-Auftrag "Unbekannt-Quote senken"]:**
+  Stadt→Bundesland-Tabelle von ~80 auf 383 deutsche Städte erweitert
+  (alle 16 Bundesländer, bis in mittelgroße Städte). Duplikat-Check
+  (0 Treffer) + Funktionstest auf dem Server (Flensburg/Cottbus/
+  Kaiserslautern korrekt aufgelöst, unbekannte Stadt liefert weiterhin
+  `null` statt Rateergebnis) bestanden, `node --check` sauber, deployed.
+- **[OFFEN]:** Tabelle deckt jetzt 383 Städte ab, aber nicht jeden der
+  >2.000 deutschen Orte — bei sehr kleinen Gemeinden zeigt Bundesland
+  weiterhin ggf. "Unbekannt (keine Stadtauflösung)", obwohl `geoip-lite`
+  einen Stadtnamen gefunden hat, der nur nicht in der Tabelle steht.
 
 ## Nachtrag 2026-11-16 (1) — Notfall-Overlay Mobile-Überlauf behoben
 René-Fund: "Overlay in Notfall auf dem Smartphone innerhalb zu groß, man

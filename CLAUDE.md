@@ -103,8 +103,8 @@ René-Auftrag: Besucher-Zahlen/Regionen/12-Monats-Prognose überwachen.
   (René-Entscheidung nach Rückfrage: kostenlose Variante statt
   kostenpflichtigem Drittanbieter) — feinste erreichbare Stufe ist der
   Stadtname. Bundesland wird daraus über eine verifizierte Stadt→
-  Bundesland-Tabelle (`STADT_ZU_BUNDESLAND` in `stats-aggregate.js`, ~80
-  größte deutsche Städte) abgeleitet, NICHT über den opaken numerischen
+  Bundesland-Tabelle (`STADT_ZU_BUNDESLAND` in `stats-aggregate.js`, 383
+  deutsche Städte, erweitert 2026-11-16) abgeleitet, NICHT über den opaken numerischen
   geoip-lite-Regioncode (dessen Kodierung nicht zuverlässig dokumentiert
   ist). Zugriffsquelle (Direkt/Suchmaschine/Social Media/Sonstige
   Verweise) wird aus dem ohnehin bereits geloggten HTTP-Referer-Header

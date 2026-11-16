@@ -81,6 +81,118 @@ var STADT_ZU_BUNDESLAND = {
   'Potsdam':'Brandenburg'
 };
 
+// Erweiterung (René-Auftrag 2026-11-16 Nachtrag: "Unbekannt-Quote senken") -- zusätzlich
+// zu den größten Städten jetzt auch deutlich kleinere, aber oeffentlich eindeutig bekannte
+// Mittelstädte je Bundesland, um mehr real aufgeloeste geoip-lite-Staedte abzudecken.
+Object.assign(STADT_ZU_BUNDESLAND, {
+  // Baden-Württemberg
+  'Esslingen am Neckar':'Baden-Württemberg','Ludwigsburg':'Baden-Württemberg','Tübingen':'Baden-Württemberg',
+  'Villingen-Schwenningen':'Baden-Württemberg','Konstanz':'Baden-Württemberg','Göppingen':'Baden-Württemberg',
+  'Ravensburg':'Baden-Württemberg','Offenburg':'Baden-Württemberg','Sindelfingen':'Baden-Württemberg',
+  'Böblingen':'Baden-Württemberg','Aalen':'Baden-Württemberg','Friedrichshafen':'Baden-Württemberg',
+  'Waiblingen':'Baden-Württemberg','Schwäbisch Gmünd':'Baden-Württemberg','Rastatt':'Baden-Württemberg',
+  'Baden-Baden':'Baden-Württemberg','Bruchsal':'Baden-Württemberg','Lörrach':'Baden-Württemberg',
+  'Singen (Hohentwiel)':'Baden-Württemberg','Fellbach':'Baden-Württemberg','Backnang':'Baden-Württemberg',
+  'Leonberg':'Baden-Württemberg','Ettlingen':'Baden-Württemberg','Kehl':'Baden-Württemberg',
+  'Weinheim':'Baden-Württemberg','Nürtingen':'Baden-Württemberg','Tuttlingen':'Baden-Württemberg',
+  'Rottweil':'Baden-Württemberg','Biberach an der Riß':'Baden-Württemberg','Schwäbisch Hall':'Baden-Württemberg',
+  'Crailsheim':'Baden-Württemberg','Mosbach':'Baden-Württemberg','Neckarsulm':'Baden-Württemberg',
+  'Freudenstadt':'Baden-Württemberg',
+  // Bayern
+  'Bamberg':'Bayern','Bayreuth':'Bayern','Aschaffenburg':'Bayern','Landshut':'Bayern',
+  'Kempten (Allgäu)':'Bayern','Rosenheim':'Bayern','Neu-Ulm':'Bayern','Schweinfurt':'Bayern',
+  'Passau':'Bayern','Freising':'Bayern','Straubing':'Bayern','Memmingen':'Bayern','Dachau':'Bayern',
+  'Garmisch-Partenkirchen':'Bayern','Starnberg':'Bayern','Weiden in der Oberpfalz':'Bayern',
+  'Amberg':'Bayern','Hof':'Bayern','Coburg':'Bayern','Ansbach':'Bayern','Kulmbach':'Bayern',
+  'Forchheim':'Bayern','Günzburg':'Bayern','Neumarkt in der Oberpfalz':'Bayern','Traunstein':'Bayern',
+  'Deggendorf':'Bayern','Bad Kissingen':'Bayern','Marktredwitz':'Bayern','Bad Reichenhall':'Bayern',
+  'Lindau (Bodensee)':'Bayern','Schwabach':'Bayern','Erding':'Bayern',
+  // Nordrhein-Westfalen
+  'Lünen':'Nordrhein-Westfalen','Gütersloh':'Nordrhein-Westfalen','Witten':'Nordrhein-Westfalen',
+  'Iserlohn':'Nordrhein-Westfalen','Hürth':'Nordrhein-Westfalen','Castrop-Rauxel':'Nordrhein-Westfalen',
+  'Marl':'Nordrhein-Westfalen','Dinslaken':'Nordrhein-Westfalen','Troisdorf':'Nordrhein-Westfalen',
+  'Datteln':'Nordrhein-Westfalen','Herford':'Nordrhein-Westfalen','Detmold':'Nordrhein-Westfalen',
+  'Minden':'Nordrhein-Westfalen','Gummersbach':'Nordrhein-Westfalen','Viersen':'Nordrhein-Westfalen',
+  'Dormagen':'Nordrhein-Westfalen','Rheine':'Nordrhein-Westfalen','Lüdenscheid':'Nordrhein-Westfalen',
+  'Ibbenbüren':'Nordrhein-Westfalen','Ahlen':'Nordrhein-Westfalen','Grevenbroich':'Nordrhein-Westfalen',
+  'Kamp-Lintfort':'Nordrhein-Westfalen','Bergkamen':'Nordrhein-Westfalen','Wesel':'Nordrhein-Westfalen',
+  'Unna':'Nordrhein-Westfalen','Lippstadt':'Nordrhein-Westfalen','Soest':'Nordrhein-Westfalen',
+  'Arnsberg':'Nordrhein-Westfalen','Werne':'Nordrhein-Westfalen','Bocholt':'Nordrhein-Westfalen',
+  'Gladbeck':'Nordrhein-Westfalen','Kempen':'Nordrhein-Westfalen','Willich':'Nordrhein-Westfalen',
+  'Monheim am Rhein':'Nordrhein-Westfalen','Langenfeld (Rheinland)':'Nordrhein-Westfalen',
+  'Meerbusch':'Nordrhein-Westfalen','Erftstadt':'Nordrhein-Westfalen','Brühl':'Nordrhein-Westfalen',
+  'Hennef (Sieg)':'Nordrhein-Westfalen','Düren':'Nordrhein-Westfalen','Jülich':'Nordrhein-Westfalen',
+  'Eschweiler':'Nordrhein-Westfalen','Stolberg (Rheinland)':'Nordrhein-Westfalen','Bergheim':'Nordrhein-Westfalen',
+  'Kerpen':'Nordrhein-Westfalen','Pulheim':'Nordrhein-Westfalen','Wermelskirchen':'Nordrhein-Westfalen',
+  'Velbert':'Nordrhein-Westfalen','Ratingen':'Nordrhein-Westfalen','Haan':'Nordrhein-Westfalen',
+  'Hilden':'Nordrhein-Westfalen','Mettmann':'Nordrhein-Westfalen','Heiligenhaus':'Nordrhein-Westfalen',
+  'Werdohl':'Nordrhein-Westfalen','Plettenberg':'Nordrhein-Westfalen','Attendorn':'Nordrhein-Westfalen',
+  'Olpe':'Nordrhein-Westfalen','Finnentrop':'Nordrhein-Westfalen','Schwerte':'Nordrhein-Westfalen',
+  'Holzwickede':'Nordrhein-Westfalen','Waltrop':'Nordrhein-Westfalen','Selm':'Nordrhein-Westfalen',
+  'Ennepetal':'Nordrhein-Westfalen','Wetter (Ruhr)':'Nordrhein-Westfalen','Gevelsberg':'Nordrhein-Westfalen',
+  'Schwelm':'Nordrhein-Westfalen','Breckerfeld':'Nordrhein-Westfalen',
+  // Hessen
+  'Hanau':'Hessen','Gießen':'Hessen','Marburg':'Hessen','Fulda':'Hessen','Rüsselsheim am Main':'Hessen',
+  'Bad Homburg vor der Höhe':'Hessen','Wetzlar':'Hessen','Hofheim am Taunus':'Hessen',
+  'Limburg an der Lahn':'Hessen','Dreieich':'Hessen','Oberursel (Taunus)':'Hessen','Langen (Hessen)':'Hessen',
+  'Neu-Isenburg':'Hessen','Friedberg (Hessen)':'Hessen','Bensheim':'Hessen','Gelnhausen':'Hessen',
+  'Korbach':'Hessen','Lampertheim':'Hessen','Viernheim':'Hessen','Rodgau':'Hessen','Eschborn':'Hessen',
+  'Bad Vilbel':'Hessen','Maintal':'Hessen','Michelstadt':'Hessen',
+  // Niedersachsen
+  'Celle':'Niedersachsen','Hameln':'Niedersachsen','Lüneburg':'Niedersachsen','Wilhelmshaven':'Niedersachsen',
+  'Garbsen':'Niedersachsen','Langenhagen':'Niedersachsen','Nordhorn':'Niedersachsen','Emden':'Niedersachsen',
+  'Delmenhorst':'Niedersachsen','Cuxhaven':'Niedersachsen','Peine':'Niedersachsen','Lingen (Ems)':'Niedersachsen',
+  'Wolfenbüttel':'Niedersachsen','Goslar':'Niedersachsen','Stade':'Niedersachsen',
+  'Buchholz in der Nordheide':'Niedersachsen','Melle':'Niedersachsen','Verden (Aller)':'Niedersachsen',
+  'Walsrode':'Niedersachsen','Uelzen':'Niedersachsen','Nienburg (Weser)':'Niedersachsen',
+  'Papenburg':'Niedersachsen','Leer (Ostfriesland)':'Niedersachsen','Wunstorf':'Niedersachsen',
+  'Bad Pyrmont':'Niedersachsen','Northeim':'Niedersachsen','Einbeck':'Niedersachsen',
+  'Hann. Münden':'Niedersachsen','Diepholz':'Niedersachsen','Vechta':'Niedersachsen','Meppen':'Niedersachsen',
+  // Sachsen
+  'Zwickau':'Sachsen','Plauen':'Sachsen','Görlitz':'Sachsen','Freiberg':'Sachsen','Bautzen':'Sachsen',
+  'Pirna':'Sachsen','Radebeul':'Sachsen','Riesa':'Sachsen','Hoyerswerda':'Sachsen','Zittau':'Sachsen',
+  'Meißen':'Sachsen','Delitzsch':'Sachsen','Torgau':'Sachsen','Grimma':'Sachsen',
+  'Döbeln':'Sachsen','Weißwasser/O.L.':'Sachsen','Annaberg-Buchholz':'Sachsen','Marienberg':'Sachsen',
+  'Limbach-Oberfrohna':'Sachsen','Werdau':'Sachsen','Glauchau':'Sachsen','Reichenbach im Vogtland':'Sachsen',
+  // Schleswig-Holstein
+  'Flensburg':'Schleswig-Holstein','Neumünster':'Schleswig-Holstein','Norderstedt':'Schleswig-Holstein',
+  'Elmshorn':'Schleswig-Holstein','Pinneberg':'Schleswig-Holstein','Itzehoe':'Schleswig-Holstein',
+  'Rendsburg':'Schleswig-Holstein','Ahrensburg':'Schleswig-Holstein','Wedel':'Schleswig-Holstein',
+  'Reinbek':'Schleswig-Holstein','Bad Oldesloe':'Schleswig-Holstein','Geesthacht':'Schleswig-Holstein',
+  'Schleswig':'Schleswig-Holstein','Husum':'Schleswig-Holstein','Eutin':'Schleswig-Holstein',
+  'Heide':'Schleswig-Holstein','Glückstadt':'Schleswig-Holstein','Ratzeburg':'Schleswig-Holstein',
+  // Rheinland-Pfalz
+  'Kaiserslautern':'Rheinland-Pfalz','Worms':'Rheinland-Pfalz','Neuwied':'Rheinland-Pfalz',
+  'Speyer':'Rheinland-Pfalz','Neustadt an der Weinstraße':'Rheinland-Pfalz','Bad Kreuznach':'Rheinland-Pfalz',
+  'Frankenthal (Pfalz)':'Rheinland-Pfalz','Landau in der Pfalz':'Rheinland-Pfalz','Zweibrücken':'Rheinland-Pfalz',
+  'Andernach':'Rheinland-Pfalz','Idar-Oberstein':'Rheinland-Pfalz','Pirmasens':'Rheinland-Pfalz',
+  'Bingen am Rhein':'Rheinland-Pfalz','Montabaur':'Rheinland-Pfalz','Lahnstein':'Rheinland-Pfalz',
+  // Sachsen-Anhalt
+  'Dessau-Roßlau':'Sachsen-Anhalt','Wittenberg (Lutherstadt)':'Sachsen-Anhalt','Halberstadt':'Sachsen-Anhalt',
+  'Stendal':'Sachsen-Anhalt','Wernigerode':'Sachsen-Anhalt','Schönebeck (Elbe)':'Sachsen-Anhalt',
+  'Bitterfeld-Wolfen':'Sachsen-Anhalt','Merseburg':'Sachsen-Anhalt','Zeitz':'Sachsen-Anhalt',
+  'Naumburg (Saale)':'Sachsen-Anhalt','Sangerhausen':'Sachsen-Anhalt','Burg':'Sachsen-Anhalt',
+  // Thüringen
+  'Gera':'Thüringen','Weimar':'Thüringen','Gotha':'Thüringen','Nordhausen':'Thüringen',
+  'Eisenach':'Thüringen','Suhl':'Thüringen','Mühlhausen/Thüringen':'Thüringen','Altenburg':'Thüringen',
+  'Pößneck':'Thüringen','Saalfeld/Saale':'Thüringen','Apolda':'Thüringen','Sondershausen':'Thüringen',
+  'Arnstadt':'Thüringen',
+  // Brandenburg
+  'Cottbus':'Brandenburg','Brandenburg an der Havel':'Brandenburg','Frankfurt (Oder)':'Brandenburg',
+  'Oranienburg':'Brandenburg','Falkensee':'Brandenburg','Eberswalde':'Brandenburg',
+  'Königs Wusterhausen':'Brandenburg','Bernau bei Berlin':'Brandenburg','Rathenow':'Brandenburg',
+  'Neuruppin':'Brandenburg','Schwedt/Oder':'Brandenburg','Senftenberg':'Brandenburg',
+  'Luckenwalde':'Brandenburg','Teltow':'Brandenburg','Spremberg':'Brandenburg','Fürstenwalde/Spree':'Brandenburg',
+  // Mecklenburg-Vorpommern
+  'Schwerin':'Mecklenburg-Vorpommern','Neubrandenburg':'Mecklenburg-Vorpommern','Stralsund':'Mecklenburg-Vorpommern',
+  'Greifswald':'Mecklenburg-Vorpommern','Wismar':'Mecklenburg-Vorpommern','Güstrow':'Mecklenburg-Vorpommern',
+  'Waren (Müritz)':'Mecklenburg-Vorpommern','Neustrelitz':'Mecklenburg-Vorpommern','Anklam':'Mecklenburg-Vorpommern',
+  'Bergen auf Rügen':'Mecklenburg-Vorpommern','Pasewalk':'Mecklenburg-Vorpommern','Parchim':'Mecklenburg-Vorpommern',
+  // Saarland
+  'Neunkirchen (Saar)':'Saarland','Homburg':'Saarland','Völklingen':'Saarland','Merzig':'Saarland',
+  'St. Ingbert':'Saarland','Saarlouis':'Saarland','Lebach':'Saarland','Dillingen/Saar':'Saarland'
+});
+
 function bundeslandFuerStadt(stadt) {
   return STADT_ZU_BUNDESLAND[stadt] || null;
 }
