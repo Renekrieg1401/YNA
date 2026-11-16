@@ -194,6 +194,30 @@
   #rk-result{margin-top:22px}
   @media (max-width:560px){.rk-form{grid-template-columns:1fr}}
 
+  .nl-section{max-width:880px;margin:0 auto 40px;padding:28px 24px;background:var(--glass);
+    backdrop-filter:blur(14px) saturate(160%);-webkit-backdrop-filter:blur(14px) saturate(160%);
+    border:1px solid var(--glass-border);border-radius:var(--radius-md)}
+  .nl-section h2{margin:0 0 8px;font-size:1.25rem}
+  .nl-section p{color:var(--text-muted);font-size:15px;margin:0 0 20px}
+  .nl-form{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+  .nl-field{flex:1;min-width:220px}
+  .nl-field label{display:block;font-family:var(--font-mono);font-size:12px;text-transform:uppercase;
+    letter-spacing:.05em;color:var(--text-muted);margin-bottom:8px}
+  .nl-field input[type=email]{width:100%;font-family:var(--font-body);font-size:16px;color:var(--ink);
+    background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-sm);padding:13px 14px;
+    min-height:48px;box-sizing:border-box}
+  .nl-field input[type=email]:focus-visible{outline:none;box-shadow:var(--focus)}
+  .nl-submit{font-family:var(--font-body);font-weight:700;font-size:15px;color:var(--on-primary);
+    background:linear-gradient(135deg,#6B4423,#B87333,#E8C39E);border:0;border-radius:99px;
+    padding:13px 24px;min-height:48px;cursor:pointer;-webkit-appearance:none;appearance:none;white-space:nowrap}
+  .nl-submit:hover{transform:translateY(-1px)}
+  .nl-submit:disabled{opacity:.6;cursor:default;transform:none}
+  .nl-consent{display:flex;gap:10px;align-items:flex-start;margin-top:14px;font-size:13.5px;color:var(--text-muted)}
+  .nl-consent input{margin-top:3px;flex-shrink:0;width:18px;height:18px}
+  .nl-status{margin-top:12px;font-size:14px}
+  .nl-status.ok{color:var(--ink)}
+  .nl-status.err{color:var(--coral-300, #e07a6b)}
+
   .checklist{display:grid;gap:10px;margin-top:24px}
   .check-item{display:flex;gap:14px;align-items:flex-start;background:var(--glass);backdrop-filter:blur(16px) saturate(170%);-webkit-backdrop-filter:blur(16px) saturate(170%);
     border:1px solid var(--glass-border);border-radius:var(--radius-sm);padding:16px 18px;box-shadow:var(--shadow)}
@@ -2727,6 +2751,23 @@
 
 </main>
 
+<section class="nl-section" aria-labelledby="nl-heading">
+  <h2 id="nl-heading"><span data-i18n="de">Newsletter: Rechtsänderungen per Mail</span><span data-i18n="en" hidden>Newsletter: legal changes by email</span></h2>
+  <p><span data-i18n="de">Wir beobachten SGB-XI-Gesetzestext, BMG und MD Bund automatisch. Bei einer erkannten möglichen Änderung bekommst du eine Mail — unverändert im Wortlaut der Quelle.</span><span data-i18n="en" hidden>We monitor the SGB XI statute text, the Federal Ministry of Health and MD Bund automatically. If a possible change is detected, you get an email — unchanged in the source's own wording.</span></p>
+  <form class="nl-form" id="nl-form" onsubmit="return nlAbonnieren(event)">
+    <div class="nl-field">
+      <label for="nl-email"><span data-i18n="de">E-Mail-Adresse</span><span data-i18n="en" hidden>Email address</span></label>
+      <input type="email" id="nl-email" name="email" required autocomplete="email" placeholder="name@beispiel.de">
+    </div>
+    <button type="submit" class="nl-submit" id="nl-submit-btn"><span data-i18n="de">Abonnieren</span><span data-i18n="en" hidden>Subscribe</span></button>
+  </form>
+  <label class="nl-consent" for="nl-consent">
+    <input type="checkbox" id="nl-consent" required>
+    <span><span data-i18n="de">Ich stimme zu, dass meine E-Mail-Adresse zum Versand dieses Newsletters gespeichert wird (Art. 6 Abs. 1 lit. a DSGVO). Jederzeit per 1-Klick-Link in jeder Mail abbestellbar. Details: <a href="#" onclick="openDatenschutz();return false;" class="nl-ds-link">Datenschutzerklärung</a>.</span><span data-i18n="en" hidden>I agree that my email address will be stored to send this newsletter (Art. 6(1)(a) GDPR). Unsubscribe anytime via a 1-click link in every email. Details: <a href="#" onclick="openDatenschutz();return false;" class="nl-ds-link">privacy policy</a>.</span></span>
+  </label>
+  <div class="nl-status" id="nl-status" role="status" aria-live="polite"></div>
+</section>
+
 <footer>
   <div class="disclaimer">Diese Seite bietet allgemeine Informationen und ersetzt keine individuelle Sozial- oder Rechtsberatung. Für eine verbindliche Einschätzung wenden Sie sich an Ihre Pflegekasse oder einen Pflegestützpunkt in Ihrer Nähe.</div>
   <div class="sources">Hilfetelefone: Bürgertelefon Pflege (030) 340 60 66-02 · Alzheimer-Telefon 030 – 259 37 95 14 · NAKOS 030 – 31 01 89 60 · TelefonSeelsorge 0800 111 0 111 / 116 123.</div>
@@ -3260,6 +3301,58 @@
     onScroll();
   })();
   calcEigenanteil();
+
+  // Newsletter-Anmeldung (René-Auftrag 2026-11-16) -- sendet an den eigenen
+  // Fact-Change-Radar-Server (server/server.js, per Nginx unter /api/ erreichbar).
+  // Double-Opt-In: Server verschickt Bestaetigungsmail, hier nur Zwischenstatus.
+  function nlAbonnieren(ev){
+    ev.preventDefault();
+    var emailEl = document.getElementById('nl-email');
+    var consentEl = document.getElementById('nl-consent');
+    var btn = document.getElementById('nl-submit-btn');
+    var statusEl = document.getElementById('nl-status');
+    statusEl.className = 'nl-status';
+    statusEl.textContent = '';
+
+    if (!consentEl.checked) {
+      statusEl.className = 'nl-status err';
+      statusEl.textContent = document.documentElement.lang === 'en'
+        ? 'Please confirm consent first.' : 'Bitte zuerst der Einwilligung zustimmen.';
+      return false;
+    }
+
+    btn.disabled = true;
+    fetch('/api/newsletter/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: emailEl.value, consent: true })
+    }).then(function(r){ return r.json().then(function(d){ return { ok: r.ok, data: d }; }); })
+      .then(function(res){
+        btn.disabled = false;
+        if (!res.ok) {
+          statusEl.className = 'nl-status err';
+          statusEl.textContent = document.documentElement.lang === 'en'
+            ? 'Something went wrong — please try again later.' : 'Da ist etwas schiefgelaufen — bitte später erneut versuchen.';
+          return;
+        }
+        statusEl.className = 'nl-status ok';
+        if (res.data.status === 'already_confirmed') {
+          statusEl.textContent = document.documentElement.lang === 'en'
+            ? 'This address is already subscribed.' : 'Diese Adresse ist bereits angemeldet.';
+        } else {
+          statusEl.textContent = document.documentElement.lang === 'en'
+            ? 'Almost done — please check your inbox and confirm.' : 'Fast fertig — bitte E-Mail-Postfach prüfen und Anmeldung bestätigen.';
+          emailEl.value = '';
+          consentEl.checked = false;
+        }
+      }).catch(function(){
+        btn.disabled = false;
+        statusEl.className = 'nl-status err';
+        statusEl.textContent = document.documentElement.lang === 'en'
+          ? 'No connection — please try again later.' : 'Keine Verbindung — bitte später erneut versuchen.';
+      });
+    return false;
+  }
 
   // Verweildauer-Messung (René-Auftrag 2026-11-16) -- bewusst OHNE Drittanbieter-
   // Analytics/Tracking-Pixel: einmalig beim Verlassen der Seite die vergangene Zeit

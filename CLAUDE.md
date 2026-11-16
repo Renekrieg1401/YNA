@@ -112,6 +112,15 @@ René-Auftrag: Besucher-Zahlen/Regionen/12-Monats-Prognose überwachen.
   Alle Erweiterungen live mit synthetischen Testzeilen (Berlin/Nürnberg,
   Google/Facebook/Direkt/Forum-Referer) verifiziert, danach aus dem echten
   Log wieder entfernt (ehrlicher Nullpunkt, kein Datenbestand verfälscht).
+- **Newsletter live deployed (2026-11-16):** Crawler-/Newsletter-Server
+  (`server/`) läuft auf `/opt/pflege-fakten-server/` als systemd-Dienst
+  `pflege-fakten-server` (Port 4100, Nginx-Reverse-Proxy `/api/`+`/admin`),
+  wöchentlicher Crawl per `pflege-fakten-crawl.timer` (Mo 03:00). Formular
+  live auf der Webseite vor dem Footer. Double-Opt-In + Willkommensmail
+  nach Bestätigung funktionieren End-to-End — **SMTP-App-Passwort für
+  `pflegefaktencheck@gmail.com` fehlt noch**, bis dahin werden Mails nicht
+  tatsächlich verschickt (Code läuft fehlerfrei, nur Versand fehlt).
+  Details: `handoff.md` Nachtrag (8).
 - **Quellcode im Repo:** `dashboard/index.html` (Frontend),
   `stats-aggregate.js` (Aggregator, 1:1-Kopie dessen was auf dem Server
   unter `/opt/pflege-fakten-stats/` läuft — bei künftigen Änderungen

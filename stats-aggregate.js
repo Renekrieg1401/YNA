@@ -263,12 +263,10 @@ function parseZeile(line) {
 // Bekannte eigene IP(s) -- Rene-Auftrag 2026-11-16 "meine IP als bekannt markieren und
 // ausschliessen", damit das eigene Testen/Verifizieren nicht als echter Publikums-
 // Aufruf gezaehlt wird. Per Umgebungsvariable konfigurierbar (kommagetrennt), da sich
-// eine private IP durch den Internetanbieter aendern kann. KORREKTUR: 79.207.63.73
-// ist tatsaechlich die Sandbox-IP von Claude waehrend der Verifikation, NICHT Renés
-// eigenes Geraet (Fehlannahme beim ersten Anlegen dieser Liste) -- bleibt trotzdem
-// sinnvoll ausgeschlossen (ist ebenfalls kein echter Publikums-Aufruf), René muss aber
-// seine ECHTE IP separat per BEKANNTE_IPS ergaenzen, wenn er sein eigenes Geraet
-// ebenfalls ausschliessen will.
+// eine private IP durch den Internetanbieter aendern kann. 79.207.63.73 ist Renés
+// echte Heimnetz-IP (diese Session laeuft lokal auf seinem Mac, jeder Curl-/Playwright-
+// Testaufruf lief darueber) -- fruehere Notiz "das ist Claudes Sandbox" war ein Irrtum,
+// hiermit korrigiert.
 var BEKANNTE_IPS = (process.env.BEKANNTE_IPS || '79.207.63.73').split(',').map(function (s) { return s.trim(); }).filter(Boolean);
 
 function istEchterSeitenaufruf(e) {

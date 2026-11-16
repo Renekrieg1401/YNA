@@ -1,5 +1,59 @@
 # Handoff — Pflege-Faktencheck (ex Pflege-Fakten / YNA Digital), 2026-11-15
 
+## Nachtrag 2026-11-16 (8) — Newsletter live deployed + echter IP-Irrtum korrigiert
+René-Auftrag "jetzt komplett fertigstellen" (Newsletter) + Korrektur eines
+eigenen Fehlers aus Nachtrag (6)/(7).
+
+- **Korrektur:** `79.207.63.73` ist entgegen meiner vorherigen (falschen)
+  Aussage **tatsächlich Renés echte IP** (diese Session läuft lokal auf
+  seinem Mac, jeder Curl-/Playwright-Testaufruf lief über seinen echten
+  Internetanschluss) — der Kommentar "das ist Claudes Sandbox" in
+  `stats-aggregate.js` war ein Irrtum, jetzt korrigiert. Grund für die
+  "Connection refused"-Fehler beim API-Test: Fail2Ban hatte genau diese IP
+  gerade gesperrt (eigene Scanner-Test-Simulation) — entsperrt + zur
+  `ignoreip`-Liste in `jail.local` hinzugefügt, damit das nicht wieder
+  passiert.
+- **Server-Deployment (devops-infra, nicht im Git-Repo):** `server/`-Code
+  nach `/opt/pflege-fakten-server/` deployed, `npm install` (0
+  Schwachstellen), eigene `.env` (PORT 4100, `JWT_SECRET`/`ADMIN_PIN_HASH`
+  frisch generiert — PIN wurde René im Chat mitgeteilt, nicht gespeichert).
+  Neuer systemd-Service `pflege-fakten-server` (dauerhaft, `node server.js`)
+  + neuer systemd-Timer `pflege-fakten-crawl` (wöchentlich Montag 03:00,
+  `node crawl.js`) — Testlauf durchgeführt, 6/7 Facts erfolgreich geprüft
+  (1 toter Seed-Link `leistungen.pflegehilfsmittel`, 404 — vorbestehendes
+  Datenproblem, nicht Teil dieses Auftrags). Nginx um `location /api/`
+  (Reverse-Proxy zu `127.0.0.1:4100`, inkl. Bot-Blocking) und `location
+  /admin` ergänzt.
+- **Newsletter-Formular live auf der Webseite:** Neue Sektion vor dem
+  Footer (E-Mail-Feld + DSGVO-Einwilligungs-Checkbox + "Abonnieren"-Button,
+  bronze gestaltet analog bestehendem Markenstil). JS postet an
+  `/api/newsletter/subscribe`. End-to-End mit echter Test-Adresse gegen
+  die Live-API verifiziert: Anmeldung → DB-Eintrag korrekt → Bestätigungs-
+  Link funktioniert → Abmelde-Link funktioniert. Test-Abonnent danach aus
+  der echten Datenbank gelöscht (0 reale Abonnenten, ehrlicher Start).
+- **[OFFEN — nur René kann das]:** Echtes Gmail-App-Passwort für
+  `pflegefaktencheck@gmail.com` fehlt noch (`SMTP_USER`/`SMTP_APP_PASSWORD`
+  in `/opt/pflege-fakten-server/.env` sind leer) — ohne das werden weder
+  Bestätigungsmails noch der automatische Rechtsänderungs-Newsletter
+  tatsächlich verschickt (Code läuft fehlerfrei, loggt nur
+  "missing_smtp_credentials"). Schritte: bei `pflegefaktencheck@gmail.com`
+  einloggen → https://myaccount.google.com/apppasswords → App-Passwort
+  erzeugen → Wert in `.env` auf dem Server eintragen → `systemctl restart
+  pflege-fakten-server`.
+- **Willkommensmail (René-Auftrag, direkt im Anschluss):** Neue
+  `mailer.sendWelcomeMail()` — wird im `/api/newsletter/confirm`-Endpunkt
+  direkt nach erfolgreicher Bestätigung ausgelöst. Erklärt was künftig
+  kommt (automatische SGB-XI/BMG/MD-Bund-Beobachtung, Original-Wortlaut,
+  noch nicht redaktionell geprüft, kein fester Rhythmus) + Abmelde-Link.
+  End-to-End erneut getestet (Anmeldung → Bestätigung → Log zeigt
+  korrekten "SMTP fehlt"-Hinweis statt Absturz), Test-Abonnent danach
+  wieder gelöscht.
+- **[OFFEN]:** Toter Seed-Link `leistungen.pflegehilfsmittel` (404) sollte
+  bei Gelegenheit durch eine aktuelle BMG-Quelle ersetzt werden. Admin-PIN
+  wurde nur im Chat mitgeteilt, nicht in einer Datei gespeichert — falls
+  René ihn vergisst: `node scripts/hash-pin.js <neue-pin>` auf dem Server,
+  Hash in `.env` eintragen, Service neu starten.
+
 ## Nachtrag 2026-11-16 (6) — Diagramm-Fix, Verweildauer, Bot-Blocking, Firewall-Lücke geschlossen
 René-Funde/Aufträge in einer Reihe: "Balkendiagramm nicht lesbar", "Verweildauer
 ergänzen", "Bots blockieren", "meine IP ausschließen", "Firewall-Frage".

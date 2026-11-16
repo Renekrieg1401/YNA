@@ -111,6 +111,48 @@ async function sendConfirmationMail(subscriber) {
   }
 }
 
+async function sendWelcomeMail(subscriber) {
+  var transport = buildTransport();
+  var siteUrl = process.env.SITE_URL || 'https://pflege-faktencheck.de';
+  var unsubUrl = siteUrl + '/api/newsletter/unsubscribe?token=' + subscriber.unsubscribe_token;
+  var html = brandWrap(
+    '<p>Willkommen! Deine Anmeldung zum Pflege-Faktencheck-Newsletter ist bestätigt.</p>' +
+    '<p style="font-weight:700;margin:20px 0 8px">Was du künftig bekommst:</p>' +
+    '<p>Wir beobachten automatisch den SGB-XI-Gesetzestext, Dokumente des ' +
+    'Bundesgesundheitsministeriums und Richtlinien des MD Bund. Wird dort eine mögliche ' +
+    'Änderung erkannt, bekommst du eine Mail mit dem Original-Wortlaut der Quelle und einem ' +
+    'Link zum direkten Nachlesen.</p>' +
+    '<p style="color:#9CADC9;font-size:13px;background:#1A2536;border:1px solid rgba(124,147,184,.3);' +
+    'border-radius:10px;padding:14px 16px;margin:16px 0">Wichtig: Diese Mails zeigen eine ' +
+    'automatisch erkannte, noch NICHT redaktionell geprüfte mögliche Änderung — keine fertige ' +
+    'Rechtsberatung. Die öffentliche Seite zeigt einen Wert erst nach manueller Prüfung an.</p>' +
+    '<p>Wie oft das passiert, hängt davon ab, wie oft sich die Quellen tatsächlich ändern — ' +
+    'kein fester Rhythmus, keine zusätzlichen Mails außer bei einem echten Fund.</p>' +
+    '<hr style="border:none;border-top:1px solid rgba(124,147,184,.25);margin:24px 0">' +
+    '<p style="color:#9CADC9;font-size:11px">Fragen? ' + (process.env.NOTIFY_TO || 'pflegefaktencheck@gmail.com') + '. ' +
+    '<a href="' + unsubUrl + '" style="color:#9CADC9">Newsletter abmelden</a></p>'
+  );
+  var text = 'Willkommen beim Pflege-Faktencheck-Newsletter! Du bekommst künftig eine Mail, ' +
+    'wenn im SGB-XI-Gesetzestext, bei BMG-Dokumenten oder MD-Bund-Richtlinien eine mögliche ' +
+    'Änderung automatisch erkannt wird -- Original-Wortlaut, noch nicht redaktionell geprüft. ' +
+    'Abmelden: ' + unsubUrl;
+
+  if (!transport) {
+    console.error('[mailer] SMTP fehlt -- Willkommensmail NICHT gesendet an ' + subscriber.email);
+    return { sent: false, reason: 'missing_smtp_credentials' };
+  }
+  try {
+    await transport.sendMail({
+      from: process.env.SMTP_USER, to: subscriber.email,
+      subject: 'Willkommen beim Pflege-Faktencheck-Newsletter', html: html, text: text
+    });
+    return { sent: true };
+  } catch (err) {
+    console.error('[mailer] Willkommensmail fehlgeschlagen für ' + subscriber.email + ': ' + err.message);
+    return { sent: false, reason: err.message };
+  }
+}
+
 function snapshotAuszug(fact, draft) {
   if (fact.source_type === 'sgbxi_html' && draft.source_snapshot) {
     var text = draft.source_snapshot.slice(0, 500);
@@ -166,6 +208,7 @@ async function broadcastLegalChange(fact, draft) {
 module.exports = {
   notifyNewDraft: notifyNewDraft,
   sendConfirmationMail: sendConfirmationMail,
+  sendWelcomeMail: sendWelcomeMail,
   broadcastLegalChange: broadcastLegalChange,
   zufallsToken: zufallsToken
 };

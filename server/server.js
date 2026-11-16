@@ -274,6 +274,9 @@ app.get('/api/newsletter/confirm', function (req, res) {
   }
   db.prepare("UPDATE subscribers SET status = 'confirmed', confirmed_at = ?, confirm_token = NULL WHERE id = ?")
     .run(new Date().toISOString(), sub.id);
+  mailer.sendWelcomeMail(sub).catch(function (err) {
+    console.error('[newsletter] Willkommensmail-Fehler: ' + err.message);
+  });
   res.send(brandSeite('Angemeldet', 'Deine Anmeldung zum Pflege-Faktencheck-Newsletter ist bestätigt. Du erhältst künftig eine Mail, wenn eine mögliche Rechtsänderung erkannt wird.'));
 });
 
