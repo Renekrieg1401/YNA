@@ -117,10 +117,10 @@ René-Auftrag: Besucher-Zahlen/Regionen/12-Monats-Prognose überwachen.
   `pflege-fakten-server` (Port 4100, Nginx-Reverse-Proxy `/api/`+`/admin`),
   wöchentlicher Crawl per `pflege-fakten-crawl.timer` (Mo 03:00). Formular
   live auf der Webseite vor dem Footer. Double-Opt-In + Willkommensmail
-  nach Bestätigung funktionieren End-to-End — **SMTP-App-Passwort für
-  `pflegefaktencheck@gmail.com` fehlt noch**, bis dahin werden Mails nicht
-  tatsächlich verschickt (Code läuft fehlerfrei, nur Versand fehlt).
-  Details: `handoff.md` Nachtrag (8).
+  **voll funktionsfähig inkl. echtem SMTP-Versand** — mit René selbst als
+  Test-Abonnent komplett Ende-zu-Ende verifiziert (echte Bestätigungsmail +
+  echte Willkommensmail beide angekommen und bestätigt). Details:
+  `handoff.md` Nachtrag (8).
 - **Quellcode im Repo:** `dashboard/index.html` (Frontend),
   `stats-aggregate.js` (Aggregator, 1:1-Kopie dessen was auf dem Server
   unter `/opt/pflege-fakten-stats/` läuft — bei künftigen Änderungen

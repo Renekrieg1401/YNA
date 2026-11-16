@@ -31,15 +31,18 @@ eigenen Fehlers aus Nachtrag (6)/(7).
   die Live-API verifiziert: Anmeldung → DB-Eintrag korrekt → Bestätigungs-
   Link funktioniert → Abmelde-Link funktioniert. Test-Abonnent danach aus
   der echten Datenbank gelöscht (0 reale Abonnenten, ehrlicher Start).
-- **[OFFEN — nur René kann das]:** Echtes Gmail-App-Passwort für
-  `pflegefaktencheck@gmail.com` fehlt noch (`SMTP_USER`/`SMTP_APP_PASSWORD`
-  in `/opt/pflege-fakten-server/.env` sind leer) — ohne das werden weder
-  Bestätigungsmails noch der automatische Rechtsänderungs-Newsletter
-  tatsächlich verschickt (Code läuft fehlerfrei, loggt nur
-  "missing_smtp_credentials"). Schritte: bei `pflegefaktencheck@gmail.com`
-  einloggen → https://myaccount.google.com/apppasswords → App-Passwort
-  erzeugen → Wert in `.env` auf dem Server eintragen → `systemctl restart
-  pflege-fakten-server`.
+- **SMTP ERLEDIGT (2026-11-16, direkt im Anschluss):** Erstes App-Passwort
+  wurde von Google abgelehnt (535 BadCredentials) — Ursache: 2-Schritt-
+  Verifizierung bei `pflegefaktencheck@gmail.com` lief zunächst nur über
+  einen Passkey, ohne Telefonnummer/Authenticator als Zweitmethode (bei
+  reinem Passkey blendet Google App-Passwörter komplett aus). René hat
+  eine Telefonnummer als Zweitmethode ergänzt, neues App-Passwort erzeugt
+  — `SMTP_USER`/`SMTP_APP_PASSWORD` in `/opt/pflege-fakten-server/.env`
+  jetzt gesetzt, `node -e "transport.verify()"` bestätigt erfolgreichen
+  SMTP-Login. **Kompletter echter Flow Ende-zu-Ende von René selbst
+  bestätigt:** Anmeldung → echte Bestätigungsmail erhalten → Bestätigungs-
+  Link geklickt → echte Willkommensmail erhalten. Test-Abonnent danach aus
+  der echten Datenbank gelöscht (0 reale Abonnenten).
 - **Willkommensmail (René-Auftrag, direkt im Anschluss):** Neue
   `mailer.sendWelcomeMail()` — wird im `/api/newsletter/confirm`-Endpunkt
   direkt nach erfolgreicher Bestätigung ausgelöst. Erklärt was künftig
