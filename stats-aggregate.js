@@ -31,7 +31,10 @@ var LAUNCH_DATE = '2026-11-15'; // Domain-Live-Schaltung, s. handoff.md Nachtrag
 // statt einer geschoenten/erfundenen Vorgeschichte.
 var LOG_START = '2026-11-16T04:26:00Z';
 
-var LOG_RE = /^(\S+) \S+ \S+ \[([^\]]+)\] "(\S+) (\S+) \S+" (\d{3}) (\d+) "([^"]*)" "([^"]*)"/;
+// Accept-Language-Gruppe (9) ist optional -- aeltere Logzeilen von vor der
+// Format-Erweiterung 2026-11-16 haben sie nicht, das ist KEIN Bot-Signal fuer diese
+// Zeilen (undefined != leerer String, s. parseZeile).
+var LOG_RE = /^(\S+) \S+ \S+ \[([^\]]+)\] "(\S+) (\S+) \S+" (\d{3}) (\d+) "([^"]*)" "([^"]*)"(?: "([^"]*)")?/;
 var IPV4_RE = /^(\d{1,3}\.){3}\d{1,3}$/;
 var IPV6_RE = /^[0-9a-fA-F:]+$/;
 
@@ -218,7 +221,16 @@ function quelleFuerReferer(referer) {
 // Bot-/Crawler-Erkennung: grobe, konservative Liste bekannter Nicht-Menschen-User-Agents --
 // zieht die Aufrufzahlen NICHT kuenstlich hoch (waere bei einer "Monetarisierungs-
 // Ueberwachung" grimmig gesagt: Selbstbetrug ueber die eigene Reichweite).
-var BOT_RE = /bot|crawl|spider|slurp|bingpreview|facebookexternalhit|ahrefs|semrush|mj12|petalbot|yandex|baidu|duckduckbot|ia_archiver|uptime|monitor|pingdom|curl\/|python-requests|headlesschrome|aiohttp|axios\/|go-http-client|okhttp|libwww-perl|wget\/|scrapy|node-fetch|java\/|apache-httpclient/i;
+var BOT_RE = /bot|crawl|spider|slurp|bingpreview|facebookexternalhit|ahrefs|semrush|mj12|petalbot|yandex|baidu|duckduckbot|ia_archiver|uptime|monitor|pingdom|curl\/|python-requests|headlesschrome|aiohttp|axios\/|go-http-client|okhttp|libwww-perl|wget\/|scrapy|node-fetch|java\/|apache-httpclient|compatible;|checker|research/i;
+
+// Echte Browser senden IMMER einen User-Agent, der mit "Mozilla/" beginnt (historische
+// Konvention seit den 1990ern, bis heute ausnahmslos eingehalten) -- Rene-Fund 2026-11-16:
+// zwei Bots ("understory/0.1 (CT research...)") hatten GAR KEIN "Mozilla/"-Praefix und
+// wurden von BOT_RE bisher nicht erkannt. Harte Positiv-Pruefung statt weiterer Schluessel-
+// woerter schliesst diese ganze Klasse ab.
+function hatEchtesBrowserPraefix(userAgent) {
+  return /^Mozilla\//.test(userAgent || '');
+}
 
 // Bekannte Cloud-/CDN-IP-Bereiche (Rene-Fund 2026-11-16: "iPhone"-UA aus einem
 // Rechenzentrum ist offensichtlich kein echter Mensch, egal was der User-Agent
@@ -239,8 +251,17 @@ var CLOUD_IP_PREFIXE = [
   /^172\.6[4-9]\./, /^172\.7[01]\./,          // Cloudflare 172.64.0.0/13 (grob)
   /^140\.248\./                               // Fastly (WHOIS-verifiziert)
 ];
+
+// Einzeln per WHOIS bestaetigte Hosting-/VPS-Anbieter-IPs, die sich als normaler
+// Browser ausgeben (kein Bot-UA-Muster, sonst waeren sie schon oben erfasst) -- bei
+// jedem neuen Fund hier ergaenzen (Rene-Fund 2026-11-16: ausnahmslos jede bisher
+// gepruefte "unauffaellige" Nicht-DE-IP stellte sich als Hosting-Rechenzentrum heraus).
+var BEKANNTE_HOSTING_IPS = [
+  '216.38.230.121', // Sundance International LLC (AS40355, Hosting-ASN)
+  '147.93.155.10'   // Contabo GmbH (deutscher VPS-Anbieter)
+];
 function istCloudHostingIp(ip) {
-  return CLOUD_IP_PREFIXE.some(function (re) { return re.test(ip); });
+  return CLOUD_IP_PREFIXE.some(function (re) { return re.test(ip); }) || BEKANNTE_HOSTING_IPS.indexOf(ip) !== -1;
 }
 
 // Verweildauer (Rene-Auftrag 2026-11-16): Beacon-Request /beacon-dauer?ms=<N> wird
@@ -256,8 +277,17 @@ function parseZeile(line) {
   return {
     ip: m[1], zeit: m[2], methode: m[3], pfad: m[4],
     status: parseInt(m[5], 10), bytes: parseInt(m[6], 10),
-    referer: m[7], userAgent: m[8]
+    referer: m[7], userAgent: m[8],
+    acceptLanguage: m[9] === undefined ? null : m[9]
   };
+}
+
+// Fehlender Accept-Language-Header ist ein starkes Bot-Signal -- echte Browser senden
+// ihn ausnahmslos automatisch mit jedem Request. 'null' (altes Log-Format vor der
+// Erweiterung 2026-11-16) zaehlt NICHT als verdaechtig, nur ein tatsaechlich leerer
+// String bei einer Zeile im neuen Format.
+function hatFehlendenAcceptLanguage(e) {
+  return e.acceptLanguage === '';
 }
 
 // Bekannte eigene IP(s) -- Rene-Auftrag 2026-11-16 "meine IP als bekannt markieren und
@@ -269,10 +299,34 @@ function parseZeile(line) {
 // hiermit korrigiert.
 var BEKANNTE_IPS = (process.env.BEKANNTE_IPS || '79.207.63.73').split(',').map(function (s) { return s.trim(); }).filter(Boolean);
 
+// User-Agent-Rotation pro IP (Rene-Fund 2026-11-16): dieselbe IP schickte innerhalb
+// kurzer Zeit zwei unterschiedliche Windows/Chrome-Kombinationen -- ein echtes
+// einzelnes Geraet wechselt niemals mitten in einer Sitzung Betriebssystem UND
+// Browserversion. Klassisches Scraper-Muster (rotierender UA-Pool). Wird einmal pro
+// Lauf in main() befuellt, bevor gefiltert wird.
+var ROTIERENDE_UA_IPS = {};
+function findeRotierendeUaIps(eintraege) {
+  var uaProIp = {};
+  eintraege.forEach(function (e) {
+    if (e.methode !== 'GET' || e.status !== 200) return;
+    if (e.pfad !== '/' && e.pfad !== '/index.html') return;
+    if (!uaProIp[e.ip]) uaProIp[e.ip] = {};
+    uaProIp[e.ip][e.userAgent] = true;
+  });
+  var ergebnis = {};
+  Object.keys(uaProIp).forEach(function (ip) {
+    if (Object.keys(uaProIp[ip]).length > 1) ergebnis[ip] = true;
+  });
+  return ergebnis;
+}
+
 function istEchterSeitenaufruf(e) {
+  if (ROTIERENDE_UA_IPS[e.ip]) return false;
   if (e.methode !== 'GET') return false;
   if (e.status !== 200) return false;
   if (BOT_RE.test(e.userAgent)) return false;
+  if (!hatEchtesBrowserPraefix(e.userAgent)) return false;
+  if (hatFehlendenAcceptLanguage(e)) return false;
   if (istCloudHostingIp(e.ip)) return false;
   if (BEKANNTE_IPS.indexOf(e.ip) !== -1) return false;
   // Nur echte Dokument-Aufrufe zaehlen, keine Assets/Favicons/robots.txt etc.
@@ -294,6 +348,7 @@ function main() {
   }
   var zeilen = raw.split('\n').filter(Boolean);
   var eintraege = zeilen.map(parseZeile).filter(Boolean);
+  ROTIERENDE_UA_IPS = findeRotierendeUaIps(eintraege);
   var aufrufe = eintraege.filter(istEchterSeitenaufruf);
 
   var proTag = {}; // YYYY-MM-DD -> count
@@ -340,7 +395,8 @@ function main() {
   var verweildauerListe = [];
   eintraege.forEach(function (e) {
     if (e.methode !== 'GET' || BOT_RE.test(e.userAgent)) return;
-    if (istCloudHostingIp(e.ip) || BEKANNTE_IPS.indexOf(e.ip) !== -1) return;
+    if (!hatEchtesBrowserPraefix(e.userAgent) || hatFehlendenAcceptLanguage(e)) return;
+    if (istCloudHostingIp(e.ip) || BEKANNTE_IPS.indexOf(e.ip) !== -1 || ROTIERENDE_UA_IPS[e.ip]) return;
     var m = VERWEILDAUER_RE.exec(e.pfad);
     if (!m) return;
     var ms = parseInt(m[1], 10);

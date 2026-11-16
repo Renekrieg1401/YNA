@@ -1,5 +1,44 @@
 # Handoff — Pflege-Faktencheck (ex Pflege-Fakten / YNA Digital), 2026-11-15
 
+## Nachtrag 2026-11-16 (9) — Alle verbliebenen Bot-Signale ausgebaut
+René-Fund "immer noch nur USA/Thailand/Belgien" + Auftrag "alle noch
+möglichen Nicht-Mensch-Signale einbauen". Jede verbliebene Nicht-DE-IP per
+WHOIS einzeln geprüft (ausnahmslos Bot oder Hosting-Rechenzentrum, kein
+einziger nachgewiesener echter Mensch):
+- `136.65.80.251` — Google Cloud, UA explizit "CMS-Checker/1.0" (Scanner).
+- `27.145.179.200` — UA "understory/0.1 (CT research...)", kein
+  "Mozilla/"-Präfix (kein echter Browser-String überhaupt).
+- `216.38.230.121` — Sundance International LLC (AS40355, Hosting-ASN).
+- `147.93.155.10` — Contabo GmbH (deutscher VPS-Anbieter).
+- `205.169.39.157` — CenturyLink (echter US-Provider), aber **zwei
+  unterschiedliche Windows/Chrome-Versionen von derselben IP** innerhalb
+  kurzer Zeit — klassisches UA-Rotations-Muster eines Scrapers.
+
+**Neue Filter in `stats-aggregate.js`:**
+1. `hatEchtesBrowserPraefix()` — User-Agent muss mit "Mozilla/" beginnen
+   (Konvention aller echten Browser seit den 1990ern), fängt rohe
+   Nicht-Browser-Tools ohne jede Tarnung.
+2. `BOT_RE` um `compatible;`, `checker`, `research` erweitert.
+3. `findeRotierendeUaIps()` — IPs mit >1 verschiedenem User-Agent am selben
+   Tag werden komplett ausgeschlossen (echtes Gerät wechselt nie Browser/OS
+   mitten in einer Sitzung).
+4. `BEKANNTE_HOSTING_IPS` — einzeln WHOIS-bestätigte Hosting-IPs ohne
+   erkennbares Bot-UA-Muster (Sundance, Contabo).
+5. **Accept-Language-Header:** Neues eigenes Nginx-Log-Format `pfk_log`
+   (`/etc/nginx/conf.d/pflege-faktencheck-botblock.conf`, nicht im Repo)
+   protokolliert jetzt zusätzlich `$http_accept_language` — echte Browser
+   senden diesen Header immer automatisch, viele Bots nicht.
+   `hatFehlendenAcceptLanguage()` schließt Zeilen mit leerem Header aus
+   (alte Logzeilen vor der Umstellung werden NICHT bestraft, da dort das
+   Feld technisch fehlt statt leer ist — sauber unterschieden).
+- **Ergebnis:** Gesamtaufrufe heute nach allen Filtern: **0** — jeder
+  bisherige Log-Treffer war nachweislich Bot/Hosting/eigener Test, kein
+  einziger echter fremder Besuch. Live verifiziert (Playwright mit
+  realistischer UA + Accept-Language-Header), 0 Konsolenfehler.
+- **[OFFEN]:** Keine Burst-/Zeitfenster-Erkennung (mehrere Aufrufe derselben
+  IP in sehr kurzer Zeit) umgesetzt — wäre die nächste sinnvolle
+  Erweiterung, aber noch keine konkrete Beweislage dafür gefunden.
+
 ## Nachtrag 2026-11-16 (8) — Newsletter live deployed + echter IP-Irrtum korrigiert
 René-Auftrag "jetzt komplett fertigstellen" (Newsletter) + Korrektur eines
 eigenen Fehlers aus Nachtrag (6)/(7).
