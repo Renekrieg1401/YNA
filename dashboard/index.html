@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Pflege-Faktencheck — Monetarisierungs-Dashboard</title>
+<style>
+  /* Internes Admin-Dashboard (René-Auftrag 2026-11-16) -- bewusst NICHT im Konsumenten-
+     Design der oeffentlichen Seite, sondern als eigenstaendiges Analyse-Tool erkennbar
+     (analog iris-hub/iris-monitor-Praezedenzfall), Farbwerte dennoch aus derselben
+     Bronze/Navy-Palette (index.html :root) fuer Wiedererkennbarkeit. Nur per HTTP-Basic-
+     Auth erreichbar (/dashboard/), nicht von der oeffentlichen Seite verlinkt. */
+  :root{
+    --cream:#131B27; --paper:#1A2536; --card:#253349; --line:rgba(124,147,184,.22);
+    --ink:#E7E2D6; --muted:#9CADC9; --bronze1:#6B4423; --bronze2:#B87333; --bronze3:#E8C39E;
+    --danger:#D9736B; --ok:#6BBF8A;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--cream);color:var(--ink);font-family:-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.5}
+  .wrap{max-width:1040px;margin:0 auto;padding:28px 20px 60px}
+  header{display:flex;align-items:center;gap:12px;margin-bottom:6px;flex-wrap:wrap}
+  header svg{width:34px;height:34px;flex-shrink:0}
+  h1{font-size:1.3rem;margin:0;font-weight:800}
+  .sub{color:var(--muted);font-size:.85rem;margin:0 0 26px}
+  .refresh-badge{display:inline-flex;align-items:center;gap:6px;font-size:.72rem;color:var(--muted);
+    background:rgba(124,147,184,.1);border:1px solid var(--line);border-radius:999px;padding:4px 10px;margin-left:auto}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--ok)}
+  .refresh-btn{display:inline-flex;align-items:center;gap:6px;font-size:.8rem;font-weight:700;color:var(--ink);
+    background:linear-gradient(135deg,var(--bronze1),var(--bronze2));border:none;border-radius:999px;
+    padding:10px 16px;min-height:44px;cursor:pointer;-webkit-appearance:none;appearance:none}
+  .refresh-btn:active{transform:scale(.97)}
+  .refresh-btn svg{width:15px;height:15px;transition:transform .4s ease}
+  .refresh-btn.spin svg{transform:rotate(360deg)}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:28px}
+  .kpi{background:linear-gradient(135deg,var(--card),#1E2B40);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+  .kpi .label{font-size:.72rem;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+  .kpi .value{font-size:1.7rem;font-weight:800}
+  .kpi .value.bronze{background:linear-gradient(135deg,var(--bronze1),var(--bronze2),var(--bronze3));
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  section{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 22px;margin-bottom:20px}
+  section h2{font-size:1rem;margin:0 0 4px}
+  section p.hint{color:var(--muted);font-size:.82rem;margin:0 0 16px}
+  .chart-wrap{overflow-x:auto}
+  svg.chart{display:block;min-width:600px}
+  .bar{fill:var(--bronze2)}
+  .bar:hover{fill:var(--bronze3)}
+  .axis-text{fill:var(--muted);font-size:10px}
+  .land-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--line);font-size:.88rem}
+  .land-row:last-child{border-bottom:none}
+  .land-name{width:150px;flex-shrink:0}
+  .land-bar-wrap{flex:1;background:rgba(124,147,184,.1);border-radius:6px;height:16px;overflow:hidden}
+  .land-bar{height:100%;background:linear-gradient(90deg,var(--bronze1),var(--bronze2))}
+  .land-count{width:50px;text-align:right;color:var(--muted);flex-shrink:0}
+  .empty-note{background:rgba(217,115,107,.1);border:1px solid rgba(217,115,107,.35);border-radius:10px;
+    padding:14px 16px;font-size:.88rem;color:var(--ink);line-height:1.6}
+  .empty-note strong{color:var(--danger)}
+  footer{color:var(--muted);font-size:.78rem;text-align:center;margin-top:30px}
+  table{width:100%;border-collapse:collapse;font-size:.85rem}
+  th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--line)}
+  th{color:var(--muted);font-weight:600;font-size:.75rem;text-transform:uppercase}
+  td.num{text-align:right;font-variant-numeric:tabular-nums}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <svg viewBox="0 0 100 100" aria-hidden="true">
+      <defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#6B4423"/><stop offset="50%" stop-color="#B87333"/><stop offset="100%" stop-color="#E8C39E"/>
+      </linearGradient></defs>
+      <circle cx="50" cy="50" r="48" fill="#131B27"/>
+      <path d="M50 74 C30 60,18 48,18 34 C18 23,27 15,36 15 C43 15,48 19,50 24 C52 19,57 15,64 15 C73 15,82 23,82 34 C82 48,70 60,50 74 Z"
+        fill="none" stroke="url(#g)" stroke-width="6" stroke-linejoin="round"/>
+      <path d="M36 48 L46 58 L66 36" fill="none" stroke="url(#g)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <div>
+      <h1>Monetarisierungs-Dashboard</h1>
+    </div>
+    <button type="button" class="refresh-btn" id="refresh-btn" aria-label="Jetzt aktualisieren">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+      Aktualisieren
+    </button>
+    <span class="refresh-badge"><span class="dot"></span> <span id="refresh-text">lädt …</span></span>
+  </header>
+  <p class="sub">Pflege-Faktencheck — Aufrufe, Regionen, 12-Monats-Prognose. Datenquelle: eigenes Server-Zugriffsprotokoll (keine Drittanbieter-Analytics, kein Tracking-Pixel).</p>
+
+  <div class="kpis">
+    <div class="kpi"><div class="label">Gesamtaufrufe</div><div class="value bronze" id="kpi-gesamt">—</div></div>
+    <div class="kpi"><div class="label">Eindeutige Besucher-IPs</div><div class="value" id="kpi-ips">—</div></div>
+    <div class="kpi"><div class="label">Heute</div><div class="value" id="kpi-heute">—</div></div>
+    <div class="kpi"><div class="label">Datenerfassung seit</div><div class="value" id="kpi-seit" style="font-size:1rem">—</div></div>
+  </div>
+
+  <section>
+    <h2>Aufrufe pro Tag</h2>
+    <p class="hint">Echte, serverseitig gezählte Seitenaufrufe (Bots/Crawler herausgefiltert) — noch keine Daten, bis echte Besuche eintreffen.</p>
+    <div id="chart-container" class="chart-wrap"><p class="hint" id="chart-empty">Noch keine Aufrufe erfasst.</p></div>
+  </section>
+
+  <section>
+    <h2>Regionen</h2>
+    <p class="hint">Herkunftsland der Besucher-IP (offline GeoIP, keine Weitergabe an Dritte).</p>
+    <div id="land-container"><p class="hint">Noch keine Aufrufe erfasst.</p></div>
+  </section>
+
+  <section>
+    <h2>12-Monats-Prognose</h2>
+    <p class="hint" id="prognose-hint"></p>
+    <div id="prognose-container"></div>
+  </section>
+
+  <footer>Zuletzt aktualisiert: <span id="footer-zeit">—</span> · Aktualisiert sich automatisch alle 60 Sekunden · Nur für René sichtbar (HTTP-Basic-Auth)</footer>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  var LAND_NAMEN = { DE:'Deutschland', AT:'Österreich', CH:'Schweiz', US:'USA', GB:'Vereinigtes Königreich',
+    FR:'Frankreich', NL:'Niederlande', PL:'Polen', IT:'Italien', ES:'Spanien', unbekannt:'Unbekannt/Privat-IP' };
+
+  function landName(code){ return LAND_NAMEN[code] || code; }
+
+  function renderBalkenChart(tage){
+    var el = document.getElementById('chart-container');
+    var empty = document.getElementById('chart-empty');
+    if (!tage.length) { if (empty) empty.style.display='block'; return; }
+    if (empty) empty.style.display='none';
+    var w = Math.max(600, tage.length*34), h = 180, padL=34, padB=24;
+    var max = Math.max.apply(null, tage.map(function(t){return t.aufrufe;})) || 1;
+    var barW = (w-padL-10)/tage.length*0.7;
+    var svg = '<svg class="chart" viewBox="0 0 '+w+' '+(h)+'" width="'+w+'" height="'+h+'">';
+    tage.forEach(function(t, i){
+      var x = padL + i*((w-padL-10)/tage.length);
+      var barH = (t.aufrufe/max) * (h-padB-10);
+      var y = h-padB-barH;
+      svg += '<rect class="bar" x="'+x+'" y="'+y+'" width="'+barW+'" height="'+Math.max(barH,1)+'"><title>'+t.datum+': '+t.aufrufe+'</title></rect>';
+      svg += '<text class="axis-text" x="'+(x+barW/2)+'" y="'+(h-6)+'" text-anchor="middle">'+t.datum.slice(5)+'</text>';
+    });
+    svg += '</svg>';
+    el.innerHTML = svg;
+  }
+
+  function renderLaender(liste, gesamt){
+    var el = document.getElementById('land-container');
+    if (!liste.length) { el.innerHTML = '<p class="hint">Noch keine Aufrufe erfasst.</p>'; return; }
+    var max = liste[0].aufrufe || 1;
+    el.innerHTML = liste.map(function(l){
+      var pct = Math.round((l.aufrufe/max)*100);
+      return '<div class="land-row"><div class="land-name">'+landName(l.land)+'</div>'+
+        '<div class="land-bar-wrap"><div class="land-bar" style="width:'+pct+'%"></div></div>'+
+        '<div class="land-count">'+l.aufrufe+'</div></div>';
+    }).join('');
+  }
+
+  function renderPrognose(p, hinweis){
+    var hintEl = document.getElementById('prognose-hint');
+    var cEl = document.getElementById('prognose-container');
+    if (!p) {
+      hintEl.innerHTML = '<strong style="color:var(--danger)">Noch keine Prognose möglich.</strong> ' + hinweis;
+      cEl.innerHTML = '';
+      return;
+    }
+    hintEl.textContent = 'Hochrechnung auf Basis des Tagesdurchschnitts der letzten 14 Tage — einfache lineare Fortschreibung, keine saisonale Anpassung.';
+    cEl.innerHTML = '<table><thead><tr><th>Monat ab heute</th><th class="num">Geschätzte kumulierte Aufrufe</th></tr></thead><tbody>' +
+      p.map(function(m){ return '<tr><td>+'+m.monat+'</td><td class="num">'+m.geschaetzteAufrufe.toLocaleString('de-DE')+'</td></tr>'; }).join('') +
+      '</tbody></table>';
+  }
+
+  function laden(){
+    fetch('stats.json', { cache: 'no-store' }).then(function(r){ return r.json(); }).then(function(d){
+      document.getElementById('kpi-gesamt').textContent = d.gesamtAufrufe.toLocaleString('de-DE');
+      document.getElementById('kpi-ips').textContent = d.eindeutigeBesucherIps.toLocaleString('de-DE');
+      var heute = new Date().toISOString().slice(0,10);
+      var heuteEintrag = d.aufrufeProTag.filter(function(t){return t.datum===heute;})[0];
+      document.getElementById('kpi-heute').textContent = heuteEintrag ? heuteEintrag.aufrufe : '0';
+      document.getElementById('kpi-seit').textContent = new Date(d.datenerfassungSeit).toLocaleString('de-DE', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+      renderBalkenChart(d.aufrufeProTag);
+      renderLaender(d.aufrufeProLand, d.gesamtAufrufe);
+      renderPrognose(d.prognose, d.prognoseHinweis);
+      document.getElementById('footer-zeit').textContent = new Date(d.generiertAm).toLocaleString('de-DE');
+      document.getElementById('refresh-text').textContent = 'live';
+    }).catch(function(e){
+      document.getElementById('refresh-text').textContent = 'Fehler: ' + e.message;
+    });
+  }
+  var btn = document.getElementById('refresh-btn');
+  btn.addEventListener('click', function(){
+    btn.classList.add('spin');
+    laden();
+    setTimeout(function(){ btn.classList.remove('spin'); }, 450);
+  });
+  // Beim Zurueckkehren aus dem Hintergrund (u.a. "Zum Home-Bildschirm"-PWA auf iOS pausiert
+  // setInterval im Hintergrund und aktualisiert beim Wiederoeffnen nicht automatisch neu) --
+  // zusaetzlich zum Button jetzt auch automatisch bei visibilitychange neu laden.
+  document.addEventListener('visibilitychange', function(){
+    if (document.visibilityState === 'visible') laden();
+  });
+  laden();
+  setInterval(laden, 60000);
+})();
+</script>
+</body>
+</html>

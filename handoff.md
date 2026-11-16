@@ -1,5 +1,76 @@
 # Handoff — Pflege-Faktencheck (ex Pflege-Fakten / YNA Digital), 2026-11-15
 
+## Nachtrag 2026-11-16 (1) — Notfall-Overlay Mobile-Überlauf behoben
+René-Fund: "Overlay in Notfall auf dem Smartphone innerhalb zu groß, man
+muss hin und her wischen". Live bei 375px Breite reproduziert: `.cm-body`
+brauchte 489px, hatte nur 336px — Root Cause: `.cm-row` (flex, kein
+flex-wrap) enthält bei "Seelische Krise" zwei nebeneinander liegende
+Telefon-Pills (TelefonSeelsorge, zwei Nummern), die zusammen breiter als
+der verfügbare Platz sind. Fix: `flex-wrap:wrap` auf `.cm-row` +
+`overflow-x:hidden` auf `.cm-body` als Verteidigungslinie. Verifiziert
+lokal UND live (scrollWidth=clientWidth=336 nach Fix), Screenshot bestätigt
+sauberen Zeilenumbruch, 0 Konsolenfehler. Deploy per `scp` auf
+`/var/www/pflege-fakten/index.html` (Root aus echter Nginx-Config gelesen).
+
+## Nachtrag 2026-11-16 (2) — Monetarisierungs-Dashboard (Besucher/Regionen/Prognose)
+René-Auftrag: "Dashboard zur Monetarisierungsüberwachung — Aufrufe,
+Regionen, 12-Monats-Prognose, fortlaufend aktualisiert, in Safari zeigen".
+
+- **Echte Datengrundlage geschaffen, keine erfunden:** Server lief bisher
+  mit EINEM geteilten Nginx-Default-Log für ALLE vhosts (AERIS, Arcus/AIM
+  usw.) ohne Host-Trennung — eine zuverlässige Zuordnung "das war wirklich
+  diese Domain" war technisch nicht möglich. Neue `access_log`-Direktive
+  (`/var/log/nginx/pflege-faktencheck-access.log`) in der Site-Config seit
+  2026-11-16 04:26 UTC. Bewusst KEIN Backfill aus der alten geteilten
+  Historie (11 Treffer darin waren teils eigene curl/Playwright-
+  Verifikationsabrufe aus früheren Nachträgen dieser Session, nicht von
+  echtem Publikum unterscheidbar — ein ehrlicher Nullpunkt heute ist
+  besser als eine geschönte Vorgeschichte).
+- **`stats-aggregate.js`** (`/opt/pflege-fakten-stats/`, Node, läuft als
+  `systemd`-Timer alle 5 Minuten): parst das eigene Log, filtert Bots/
+  Crawler per User-Agent-Heuristik heraus, zählt nur echte `GET /` bzw.
+  `/index.html` mit Status 200, löst Herkunftsland per `geoip-lite`
+  OFFLINE auf (kein externer API-Call pro Besucher-IP, keine zusätzlichen
+  Kosten, keine IP-Weitergabe an Dritte). `npm audit` zeigte 2
+  Schwachstellen in einer `geoip-lite`-Abhängigkeit (IPv6-Parsing/ReDoS)
+  — behoben via `npm audit fix --force`, zusätzlich eigene IP-Format-
+  Validierung vor jedem `geoip.lookup()`-Aufruf als zweite Verteidigungslinie.
+- **Prognose-Sperre (grimmiges Framing statt erfundener Zahl):** Unter 14
+  Tagen echter Beobachtung zeigt das Dashboard explizit "noch keine
+  seriöse 12-Monats-Prognose möglich" samt Begründung, keine Platzhalter-
+  Zahl. Ab 14 Tagen: einfache lineare Fortschreibung aus dem 14-Tage-
+  Durchschnitt, als "keine saisonale Anpassung" gekennzeichnet.
+- **Zugriffsschutz:** Dashboard unter `https://pflege-faktencheck.de/
+  dashboard/`, per HTTP-Basic-Auth geschützt (`/opt/pflege-fakten-stats/
+  .htpasswd`, Nutzer `rene`, zufällig generiertes Passwort — NICHT im
+  Git-Repo, René hat es im Chat erhalten). Nicht von der öffentlichen
+  Seite verlinkt (Demo-Gate-Policy: Admin-Tools unsichtbar für normale
+  Besucher).
+- **René-Nachtrag "Aktualisieren-Button fehlt" (PWA/Home-Bildschirm
+  aktualisiert nicht automatisch):** manueller Button ergänzt + zusätzlich
+  automatisches Neuladen bei `visibilitychange` (deckt den Fall "App aus
+  dem Hintergrund zurückgeholt" zusätzlich zum expliziten Klick ab).
+- **Verifikation:** `node --check` auf dem Aggregator, Playwright lokal
+  (Mock-Daten, 375px Mobile-Breite, 0 horizontaler Überlauf, Klick auf
+  Aktualisieren-Button fehlerfrei) UND live gegen die echte Basic-Auth-
+  geschützte URL (0 Konsolenfehler, `stats.json` liefert korrekt
+  strukturierte, ehrliche Null-Werte — Domain hat schlicht noch keine
+  echten Besucher seit Beginn der eigenen Protokollierung).
+- In Safari geöffnet (Credentials in der URL eingebettet, da nur für René
+  bestimmt).
+
+**[OFFEN]:**
+- Aktuell 0 echte Daten (Log-Erfassung läuft erst seit wenigen Minuten) —
+  Dashboard füllt sich organisch, nichts weiter zu tun.
+- Kein automatisches Deploy-Skript für `stats-aggregate.js`/`dashboard/
+  index.html` — bei künftigen Änderungen manuell per `scp` auf
+  `/opt/pflege-fakten-stats/` synchronisieren (Pfade in CLAUDE.md notiert).
+- Monetarisierung selbst (Werbung/Affiliate/Spenden) ist technisch noch
+  nicht angebunden — dieses Dashboard ist reine Beobachtungs-Infrastruktur
+  für eine künftige Entscheidung, keine Umsatz-Anzeige (es gibt noch
+  keinen Umsatz auf dieser bewusst nicht-kommerziellen Seite).
+- Kein zweiter unabhängiger Review-Lauf (Komplexitäts-Gate, Claude direkt).
+
 ## Nachtrag 2026-11-15 (6) — Mobile-Header-Bug behoben, Google Search Console verifiziert
 René-Fund (echter iPhone-Screenshot): Zahnrad-Einstellungen-Icon strandete
 bei schmalen Viewports (≤395px) isoliert auf einer 3. Header-Zeile mit

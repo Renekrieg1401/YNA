@@ -67,3 +67,35 @@ Diff.
 - Fachinhalte (SGB-XI-Bezüge in den ~28 Themen-Abschnitten) NICHT
   primärquellen-verifiziert — vor Praxiseinsatz mit `legal-compliance`
   gegenprüfen.
+
+## Monetarisierungs-Dashboard (Genesis 2026-11-16)
+René-Auftrag: Besucher-Zahlen/Regionen/12-Monats-Prognose überwachen.
+- Eigenes, isoliertes Nginx-Access-Log für diese Domain seit 2026-11-16
+  04:26 UTC (`access_log /var/log/nginx/pflege-faktencheck-access.log` in
+  der Site-Config) — vorher lief ALLES auf dem Server im geteilten
+  Default-Log ohne Host-Trennung, keine zuverlässige Zuordnung möglich.
+  Bewusst KEIN Backfill aus der Vorgeschichte (eigene Verifikations-
+  Abrufe darin nicht von echtem Publikum unterscheidbar).
+- `stats-aggregate.js` (`/opt/pflege-fakten-stats/` auf dem Server) parst
+  das Log alle 5 Minuten (systemd-Timer `pflege-fakten-stats.timer`),
+  filtert Bots/Crawler heraus, löst Land per `geoip-lite` offline auf
+  (keine externe API, kein Tracking-Pixel), schreibt `public/stats.json`.
+- **Prognose-Sperre (bewusst, "grimmiges Framing"):** Unter 14 Tagen
+  echter Daten zeigt das Dashboard explizit "noch keine seriöse Prognose
+  möglich" statt einer erfundenen Zahl.
+- Dashboard unter `https://pflege-faktencheck.de/dashboard/` — per
+  HTTP-Basic-Auth geschützt (`/opt/pflege-fakten-stats/.htpasswd`,
+  Nutzer `rene`), nicht von der öffentlichen Seite verlinkt. **Passwort
+  NICHT im Git-Repo** — bei Bedarf per SSH neu setzen: `htpasswd -bc
+  /opt/pflege-fakten-stats/.htpasswd rene '<neues-passwort>'` auf
+  `212.132.117.130`, danach `systemctl reload nginx` NICHT nötig (nur
+  bei Config-Änderung).
+- Manueller "Aktualisieren"-Button + automatisches Neuladen bei
+  `visibilitychange` ergänzt (René-Fund: "Zum Home-Bildschirm"-Aufruf auf
+  iOS pausiert `setInterval` im Hintergrund, aktualisiert beim
+  Wiederöffnen nicht automatisch).
+- **Quellcode im Repo:** `dashboard/index.html` (Frontend),
+  `stats-aggregate.js` (Aggregator, 1:1-Kopie dessen was auf dem Server
+  unter `/opt/pflege-fakten-stats/` läuft — bei künftigen Änderungen
+  beide Stellen synchron halten, kein automatisches Deploy-Skript dafür
+  angelegt).
