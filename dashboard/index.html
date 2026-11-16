@@ -90,6 +90,7 @@
     <div class="kpi"><div class="label">Gesamtaufrufe</div><div class="value bronze" id="kpi-gesamt">—</div></div>
     <div class="kpi"><div class="label">Eindeutige Besucher-IPs</div><div class="value" id="kpi-ips">—</div></div>
     <div class="kpi"><div class="label">Heute</div><div class="value" id="kpi-heute">—</div></div>
+    <div class="kpi"><div class="label">Ø Verweildauer</div><div class="value" id="kpi-verweildauer">—</div></div>
     <div class="kpi"><div class="label">Datenerfassung seit</div><div class="value" id="kpi-seit" style="font-size:1rem">—</div></div>
   </div>
 
@@ -146,19 +147,37 @@
     var empty = document.getElementById('chart-empty');
     if (!tage.length) { if (empty) empty.style.display='block'; return; }
     if (empty) empty.style.display='none';
-    var w = Math.max(600, tage.length*34), h = 180, padL=34, padB=24;
+    // Feste Breite pro Tag statt Gesamtbreite/Anzahl-Tage -- verhindert, dass bei sehr
+    // wenigen Datenpunkten (z.B. genau 1 Tag) ein einziger Balken die komplette Flaeche
+    // fuellt und wie ein reines Farbfeld statt einem Diagramm aussieht.
+    var pxProTag = 50, barMaxW = 34;
+    var w = Math.max(200, tage.length*pxProTag), h = 180, padL=34, padB=24;
     var max = Math.max.apply(null, tage.map(function(t){return t.aufrufe;})) || 1;
-    var barW = (w-padL-10)/tage.length*0.7;
+    var barW = Math.min(barMaxW, (w-padL-10)/tage.length*0.7);
     var svg = '<svg class="chart" viewBox="0 0 '+w+' '+(h)+'" width="'+w+'" height="'+h+'">';
     tage.forEach(function(t, i){
       var x = padL + i*((w-padL-10)/tage.length);
-      var barH = (t.aufrufe/max) * (h-padB-10);
+      var barH = (t.aufrufe/max) * (h-padB-30);
       var y = h-padB-barH;
       svg += '<rect class="bar" x="'+x+'" y="'+y+'" width="'+barW+'" height="'+Math.max(barH,1)+'"><title>'+t.datum+': '+t.aufrufe+'</title></rect>';
+      svg += '<text class="axis-text" x="'+(x+barW/2)+'" y="'+(y-6)+'" text-anchor="middle" style="font-weight:700">'+t.aufrufe+'</text>';
       svg += '<text class="axis-text" x="'+(x+barW/2)+'" y="'+(h-6)+'" text-anchor="middle">'+t.datum.slice(5)+'</text>';
     });
     svg += '</svg>';
     el.innerHTML = svg;
+    var hintEl = document.getElementById('chart-wenig-tage-hint');
+    if (tage.length < 3) {
+      if (!hintEl) {
+        hintEl = document.createElement('p');
+        hintEl.id = 'chart-wenig-tage-hint';
+        hintEl.className = 'hint';
+        hintEl.style.marginTop = '8px';
+        el.parentNode.appendChild(hintEl);
+      }
+      hintEl.textContent = 'Noch zu wenige Tage für einen aussagekräftigen Verlauf — ab 3 Tagen wird ein Trend sichtbar.';
+    } else if (hintEl) {
+      hintEl.remove();
+    }
   }
 
   function renderBalkenListe(containerId, liste, nameFn){
@@ -221,6 +240,15 @@
       var heute = new Date().toISOString().slice(0,10);
       var heuteEintrag = d.aufrufeProTag.filter(function(t){return t.datum===heute;})[0];
       document.getElementById('kpi-heute').textContent = heuteEintrag ? heuteEintrag.aufrufe : '0';
+      var vwEl = document.getElementById('kpi-verweildauer');
+      if (d.verweildauerDurchschnittSekunden === null || !d.verweildauerAnzahlMessungen) {
+        vwEl.textContent = '—';
+        vwEl.title = 'Noch keine Messung vorhanden';
+      } else {
+        var s = d.verweildauerDurchschnittSekunden;
+        vwEl.textContent = (s >= 60 ? Math.floor(s/60)+'m '+(s%60)+'s' : s+'s');
+        vwEl.title = 'Basis: ' + d.verweildauerAnzahlMessungen + ' Messung(en)';
+      }
       document.getElementById('kpi-seit').textContent = new Date(d.datenerfassungSeit).toLocaleString('de-DE', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
       renderBalkenChart(d.aufrufeProTag);
       renderLaender(d.aufrufeProLand);

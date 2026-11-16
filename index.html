@@ -3260,6 +3260,26 @@
     onScroll();
   })();
   calcEigenanteil();
+
+  // Verweildauer-Messung (René-Auftrag 2026-11-16) -- bewusst OHNE Drittanbieter-
+  // Analytics/Tracking-Pixel: einmalig beim Verlassen der Seite die vergangene Zeit
+  // seit Seitenaufruf per Beacon an einen bereits bestehenden Nginx-Log-Eintrag
+  // senden (kein neuer Server, keine Cookies, keine personenbezogene Kennung -- nur
+  // eine Zahl in Millisekunden). Degradiert sauber, falls sendBeacon fehlt.
+  (function(){
+    if (!navigator.sendBeacon) return;
+    var gesendet = false;
+    function sendeDauer(){
+      if (gesendet) return;
+      gesendet = true;
+      var ms = Math.round(performance.now());
+      navigator.sendBeacon('/beacon-dauer?ms=' + ms);
+    }
+    document.addEventListener('visibilitychange', function(){
+      if (document.visibilityState === 'hidden') sendeDauer();
+    });
+    window.addEventListener('pagehide', sendeDauer);
+  })();
 </script>
 </body>
 </html>

@@ -1,5 +1,57 @@
 # Handoff — Pflege-Faktencheck (ex Pflege-Fakten / YNA Digital), 2026-11-15
 
+## Nachtrag 2026-11-16 (6) — Diagramm-Fix, Verweildauer, Bot-Blocking, Firewall-Lücke geschlossen
+René-Funde/Aufträge in einer Reihe: "Balkendiagramm nicht lesbar", "Verweildauer
+ergänzen", "Bots blockieren", "meine IP ausschließen", "Firewall-Frage".
+
+- **Balkendiagramm-Fix:** Bei nur 1 Tag Daten füllte ein einziger Balken die
+  komplette Fläche (sah wie ein Farbfeld aus). Fix: feste Breite pro Tag
+  (max. 34px) statt Gesamtbreite/Anzahl-Tage, Werte-Label über jedem Balken,
+  Hinweistext unter 3 Tagen ("noch zu wenige Tage für einen Trend").
+- **Verweildauer:** Neu per `navigator.sendBeacon('/beacon-dauer?ms=...')`
+  beim Verlassen der Seite (`index.html`) — landet als normale Logzeile im
+  bestehenden Nginx-Log (neue `location = /beacon-dauer { return 204; }`),
+  kein neuer Server, kein Tracking-Pixel. `stats-aggregate.js` berechnet
+  Durchschnitt (Obergrenze 2h gegen offen gelassene Tabs), neue Dashboard-
+  KPI "Ø Verweildauer".
+- **Echter Befund (René-Frage "warum USA mehr als Deutschland"):** Von den
+  heutigen Aufrufen war NUR 1 ein eindeutig echter Mensch — der Rest Bots,
+  die sich als Browser tarnen (Python/aiohttp von Google Cloud, "iPhone
+  Safari"-UA von einem AWS-Server in Virginia, mehrere "iPhone Safari"-UAs
+  über Cloudflare-IP-Bereich — Letzteres bewusst NICHT geblockt, da dort
+  auch echtes Apple iCloud Private Relay läuft, eine Blockade würde echte
+  deutsche Leser mit Datenschutz-Feature fälschlich aussperren).
+- **Bot-Blocking (echtes 403, nicht nur Statistik-Filter):** Neue, isolierte
+  `/etc/nginx/conf.d/pflege-faktencheck-botblock.conf` (betrifft nur dieses
+  Silo) blockt bekannte Scraper-Signaturen (aiohttp/python-requests/curl/
+  wget/scrapy/axios/okhttp/go-http-client/libwww-perl/node-fetch/leerer
+  User-Agent/headlesschrome) — Googlebot/Bingbot/echte Browser bewusst NICHT
+  blockiert (sonst keine Suchmaschinen-Indexierung mehr möglich). Zusätzlich
+  die beiden konkret identifizierten AWS/GCP-IPs direkt per `deny` gesperrt.
+  Verifiziert: aiohttp/curl → 403, Googlebot/echter Browser → 200.
+- **Stats-Aggregator-Erweiterung:** `istCloudHostingIp()` (AWS/GCP-Bereiche,
+  bewusst NICHT Cloudflare wegen Private-Relay) + `BEKANNTE_IPS`-Liste
+  (konfigurierbar per `BEKANNTE_IPS`-Env-Var) schließen zusätzlich aus der
+  Zählung aus, was nicht schon beim Nginx-Blocking abgefangen wird.
+- **Korrektur (Selbstkorrektur, wichtig):** Die als "Renés eigene IP" markierte
+  79.207.63.73 ist tatsächlich die Sandbox-IP von Claude während der
+  Verifikation, NICHT Renés eigenes Gerät — fälschliche Annahme beim ersten
+  Anlegen der Liste. Bleibt trotzdem sinnvoll ausgeschlossen (auch kein
+  echter Publikums-Aufruf), aber René muss seine ECHTE IP separat ergänzen,
+  falls sein eigenes Gerät auch ausgeschlossen werden soll.
+- **Firewall-Fund:** UFW (port-basiert) deckt diese Domain automatisch mit ab.
+  Fail2Ban-Jail `aeris-scanners` beobachtete bisher NUR das alte, geteilte
+  Nginx-Log — seit der eigenen `access_log`-Direktive für diese Domain (s.
+  Nachtrag 2) sah dieser Jail pflege-faktencheck.de gar nicht mehr. Behoben:
+  `/var/log/nginx/pflege-faktencheck-access.log` als zweiten `logpath` in
+  `jail.local` ergänzt (generischer Filter: wp-admin/.env/phpmyadmin/admin —
+  kein AERIS-spezifischer Inhalt, unbedenklich). Live mit simuliertem
+  Scanner-Angriff verifiziert (Sperre griff), danach eigene Test-IP wieder
+  entsperrt.
+- **[OFFEN]:** Renés echte eigene IP noch nicht bekannt/eingetragen. Cloudflare-
+  Bereich (mögliche Bots über Private-Relay-Pfad) bleibt ungelöst — bräuchte
+  echtes ASN-/Reputations-Lookup für eine sauberere Trennung.
+
 ## Nachtrag 2026-11-16 (5) — Flyer-Download: iOS-Safari öffnete nur Vorschau statt Download
 René-Fund: Button "Flyer herunterladen" zeigte die PDF nur in der Safari-
 Vorschau an, kein echter Download. Root Cause: der HTML `download`-

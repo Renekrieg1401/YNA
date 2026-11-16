@@ -218,7 +218,29 @@ function quelleFuerReferer(referer) {
 // Bot-/Crawler-Erkennung: grobe, konservative Liste bekannter Nicht-Menschen-User-Agents --
 // zieht die Aufrufzahlen NICHT kuenstlich hoch (waere bei einer "Monetarisierungs-
 // Ueberwachung" grimmig gesagt: Selbstbetrug ueber die eigene Reichweite).
-var BOT_RE = /bot|crawl|spider|slurp|bingpreview|facebookexternalhit|ahrefs|semrush|mj12|petalbot|yandex|baidu|duckduckbot|ia_archiver|uptime|monitor|pingdom|curl\/|python-requests|headlesschrome/i;
+var BOT_RE = /bot|crawl|spider|slurp|bingpreview|facebookexternalhit|ahrefs|semrush|mj12|petalbot|yandex|baidu|duckduckbot|ia_archiver|uptime|monitor|pingdom|curl\/|python-requests|headlesschrome|aiohttp|axios\/|go-http-client|okhttp|libwww-perl|wget\/|scrapy|node-fetch|java\/|apache-httpclient/i;
+
+// Bekannte AWS/Google-Cloud-IP-Bereiche (Rene-Fund 2026-11-16: "iPhone"-UA aus einem
+// AWS-Rechenzentrum ist offensichtlich kein echter Mensch, egal was der User-Agent
+// behauptet). Bewusst NICHT der Cloudflare-Bereich (104.16-31.*, 172.64-71.*) -- dort
+// laeuft auch Apples echtes iCloud Private Relay (Privatsphaere-Feature, echte
+// Besucher!), eine Blockade wuerde reale Leser faelschlich ausschliessen. AWS/GCP
+// nutzt Private Relay dagegen nie, daher dort ein eindeutigeres Signal. Grob/
+// unvollstaendig (kein echtes ASN-Lookup), deckt aber die heute beobachteten Faelle ab.
+var CLOUD_IP_PREFIXE = [
+  /^34\.(6[4-9]|[7-9]\d|1[01]\d|12[0-7])\./, // Google Cloud 34.64.0.0/10
+  /^52\./, /^54\./                            // AWS (grosse, bekannte /8-Bereiche)
+];
+function istCloudHostingIp(ip) {
+  return CLOUD_IP_PREFIXE.some(function (re) { return re.test(ip); });
+}
+
+// Verweildauer (Rene-Auftrag 2026-11-16): Beacon-Request /beacon-dauer?ms=<N> wird
+// beim Verlassen der Seite per navigator.sendBeacon() ausgeloest (s. index.html) und
+// landet als normale Logzeile im selben Nginx-Access-Log -- kein neuer Server, kein
+// Tracking-Pixel. Obergrenze schuetzt gegen Ausreisser durch Tage offen gelassene Tabs.
+var VERWEILDAUER_RE = /^\/beacon-dauer\?ms=(\d+)$/;
+var MAX_PLAUSIBLE_VERWEILDAUER_MS = 2 * 60 * 60 * 1000;
 
 function parseZeile(line) {
   var m = LOG_RE.exec(line);
@@ -230,10 +252,23 @@ function parseZeile(line) {
   };
 }
 
+// Bekannte eigene IP(s) -- Rene-Auftrag 2026-11-16 "meine IP als bekannt markieren und
+// ausschliessen", damit das eigene Testen/Verifizieren nicht als echter Publikums-
+// Aufruf gezaehlt wird. Per Umgebungsvariable konfigurierbar (kommagetrennt), da sich
+// eine private IP durch den Internetanbieter aendern kann. KORREKTUR: 79.207.63.73
+// ist tatsaechlich die Sandbox-IP von Claude waehrend der Verifikation, NICHT Renés
+// eigenes Geraet (Fehlannahme beim ersten Anlegen dieser Liste) -- bleibt trotzdem
+// sinnvoll ausgeschlossen (ist ebenfalls kein echter Publikums-Aufruf), René muss aber
+// seine ECHTE IP separat per BEKANNTE_IPS ergaenzen, wenn er sein eigenes Geraet
+// ebenfalls ausschliessen will.
+var BEKANNTE_IPS = (process.env.BEKANNTE_IPS || '79.207.63.73').split(',').map(function (s) { return s.trim(); }).filter(Boolean);
+
 function istEchterSeitenaufruf(e) {
   if (e.methode !== 'GET') return false;
   if (e.status !== 200) return false;
   if (BOT_RE.test(e.userAgent)) return false;
+  if (istCloudHostingIp(e.ip)) return false;
+  if (BEKANNTE_IPS.indexOf(e.ip) !== -1) return false;
   // Nur echte Dokument-Aufrufe zaehlen, keine Assets/Favicons/robots.txt etc.
   return e.pfad === '/' || e.pfad === '/index.html';
 }
@@ -290,6 +325,18 @@ function main() {
     }
   });
 
+  var verweildauerWerteMs = [];
+  eintraege.forEach(function (e) {
+    if (e.methode !== 'GET' || BOT_RE.test(e.userAgent)) return;
+    var m = VERWEILDAUER_RE.exec(e.pfad);
+    if (!m) return;
+    var ms = parseInt(m[1], 10);
+    if (ms > 0 && ms < MAX_PLAUSIBLE_VERWEILDAUER_MS) verweildauerWerteMs.push(ms);
+  });
+  var verweildauerDurchschnittSekunden = verweildauerWerteMs.length
+    ? Math.round(verweildauerWerteMs.reduce(function (s, v) { return s + v; }, 0) / verweildauerWerteMs.length / 1000)
+    : null;
+
   var tage = Object.keys(proTag).sort();
   var anzahlTageMitDaten = tage.length;
   var alterInTagen = Math.max(1, Math.round((Date.now() - new Date(LAUNCH_DATE + 'T00:00:00Z').getTime()) / 86400000));
@@ -331,6 +378,8 @@ function main() {
     bezirksHinweis: 'Echte Landkreise/Stadtbezirke liefert die kostenlose Offline-GeoIP-' +
       'Datenbasis nicht -- feinste erreichbare Stufe ohne kostenpflichtigen Drittanbieter ' +
       'ist der Stadtname. Bundesland wird daraus abgeleitet, nicht aus einem direkten Feld.',
+    verweildauerDurchschnittSekunden: verweildauerDurchschnittSekunden,
+    verweildauerAnzahlMessungen: verweildauerWerteMs.length,
     prognose: prognose,
     prognoseHinweis: prognose ? null :
       'Noch keine seriöse 12-Monats-Prognose möglich — erst ' + anzahlTageMitDaten +
