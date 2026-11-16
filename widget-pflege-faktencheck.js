@@ -82,7 +82,6 @@ function baueBalkenChart(widget, tage) {
   var reihe = widget.addStack();
   reihe.layoutHorizontally();
   reihe.bottomAlignContent();
-  reihe.size = new Size(0, 38);
   tage.forEach(function (t, i) {
     if (i > 0) reihe.addSpacer(5);
     var spalte = reihe.addStack();
@@ -215,13 +214,27 @@ async function main() {
   }
 
   var family = config.widgetFamily || "small";
-  if (family === "large" || family === "extraLarge") {
-    baueGrossesWidget(widget, data || {}, fehler);
-  } else if (family === "medium") {
-    baueMittleresWidget(widget, data || {}, fehler);
-  } else {
-    baueKleinesWidget(widget, data || {}, fehler);
+  try {
+    if (family === "large" || family === "extraLarge") {
+      baueGrossesWidget(widget, data || {}, fehler);
+    } else if (family === "medium") {
+      baueMittleresWidget(widget, data || {}, fehler);
+    } else {
+      baueKleinesWidget(widget, data || {}, fehler);
+    }
+  } catch (bauFehler) {
+    var fehlerZeile = widget.addText("Bau-Fehler: " + bauFehler.message);
+    fehlerZeile.font = Font.systemFont(10);
+    fehlerZeile.textColor = Color.red();
   }
+
+  // Debug-Zeile (temporaer, zur Diagnose) -- zeigt die von Scriptable tatsaechlich
+  // erkannte Widget-Groesse. Nach Bestaetigung, dass "large"/"medium" korrekt
+  // ankommt, kann diese Zeile wieder entfernt werden.
+  widget.addSpacer(6);
+  var debugZeile = widget.addText("[erkannte Größe: " + family + "]");
+  debugZeile.font = Font.systemFont(8);
+  debugZeile.textColor = Color.red();
 
   if (config.runsInWidget) {
     Script.setWidget(widget);
