@@ -32,13 +32,16 @@
   Original-Referenzbild, komplett danach neu gebaut, mit "Ok" bestätigt.
   Lehre: bei Grafikaufträgen ohne explizite Vorlage erst nachfragen, nicht
   selbst komponieren (Autonomie-Ausnahme "Design, Effekte, Funktionen").
-- **[OFFEN]:** Strato-SEO-Audit-XML (3 angebliche defekte Links, 57 %/43 %
-  kurze/doppelte Titel, 94 % kurze Headings) wird gerade vom neuen
-  `seo-technisch`-Agenten gegen die echte Live-Seite verifiziert — bei einer
-  Single-Page-App mit nur einer echten HTML-Seite sind diese Prozentwerte
-  höchstwahrscheinlich größtenteils Fehlalarme (Tool zählt vermutlich PDF/
-  Word-Dateien oder interne Abschnitte als eigene "Seiten"). Ergebnis noch
-  nicht final dokumentiert, Fortsetzung folgt nach Abschluss des Agentenlaufs.
+- **Strato-SEO-Audit verifiziert und abgeschlossen** (`seo-technisch`-Agent,
+  Commit `9445880`): Von 7 Befunden waren **5 Fehlalarme** — "3 defekte
+  Links" (eigener Bot-Schutz blockt UA-lose Crawler mit 403, alle 26 echten
+  Links einzeln mit Browser-UA getestet: 200), "43% fehlende Descriptions"
+  (real 0%, es gibt genau 1 vollständige Description), "57%/43% Titel-
+  Stats" (es existiert nur 1 Titel, Duplikate bei 1 Seite unmöglich).
+  **1 echter Fund:** 0 `<h1>`-Tags auf der ganzen Seite — behoben, Hero-
+  Headline auf `<h1>` umgestellt, visuell unverändert. **1 nicht
+  code-behebbar:** Backlinks/Social-Media = 0 ist real, aber reine
+  manuelle/externe Arbeit (Renés Entscheidung, kein Fachagenten-Auftrag).
 
 ## Nachtrag 2026-11-17 (19) — OG-Meta-Tags + Base64-Vorlagen ausgelagert
 René-Frage "Hast du weiter Ideen?" (2.) → 2 verifizierte Funde: fehlende
