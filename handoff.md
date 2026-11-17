@@ -1,5 +1,51 @@
 # Handoff — Pflege-Faktencheck (ex Pflege-Fakten / YNA Digital), 2026-11-15
 
+## Nachtrag 2026-11-17 (23) — Kritischer Mobile-Test (Auflösung/Größen/Anordnung) + Header verschlankt
+René-Auftrag "kritischer Test und Analyse für Auflösung, Größen,
+Anordnung für Smartphones". Methode: programmatischer Sweep über ALLE
+34 Themen bei 320/360/375/390/414/430px (reale iPhone-SE bis Pro-Max-
+Breiten) per `document.documentElement.scrollWidth` vs. `clientWidth`
+in Safari (Playwright/Chrome lokal nicht verfügbar) — kein Stichproben-
+Screenshot-Raten, sondern vollständige, reproduzierbare Messung.
+**3 echte Bugs gefunden, alle behoben:**
+1. **`table.data` (Thema "Pflegegeld & Leistungen") überlief bei
+   ≤414px um bis zu 60px** — 3-spaltige Tabelle mit `width:100%`, aber
+   `table-layout:auto` ignoriert die 100%-Grenze bei zu langen
+   Spaltenköpfen. Fix: neues `.table-scroll`-Wrapper-Muster, Tabellen
+   werden per JS beim Laden automatisch hineingesetzt (DRY, gilt auch
+   für künftige Tabellen) — Tabelle bleibt lesbar, wird innerhalb der
+   Karte horizontal scrollbar statt die ganze Seite zu verbreitern.
+2. **Dekorative `.blob`-Hintergrundelemente** (`position:absolute`,
+   `right:-150px`/`left:-130px` u. a.) erzeugten bei bestimmten
+   Themen (gefunden bei "gdb") 7–22px horizontales Seiten-Overflow —
+   die Verkleinerung bei ≤680px (Breakpoint von 2026-11-15) reduzierte
+   nur die Blob-Größe, nicht den negativen Positions-Offset. Fix:
+   `html,body{overflow-x:hidden}` als globaler Schutz — zusätzlich
+   `body{max-width:100vw}`.
+3. **`a.tel`-Telefonbuttons** (Alzheimer-Telefon etc.) mit
+   `white-space:nowrap` liefen bei ≤360px (z. B. kleinere Android-
+   Geräte) aus dem Rahmen. Fix: neue `@media (max-width:380px)`-Regel
+   erlaubt Umbruch + minimal kleinere Schrift — Telefonnummer bleibt
+   vollständig lesbar statt abgeschnitten.
+- **Nach allen 3 Fixes: 0px Overflow bei JEDEM der 34 Themen auf JEDER
+  der 6 getesteten Breiten** — live gegen die echte Domain
+  gegengeprüft (nicht nur lokal), bestätigt.
+- **Zusätzlich im selben Commit (René-Direktive "Ratgeber im Header
+  entfernen und Header schmälern"):** „Ratgeber · Pflege"-Badge aus dem
+  Header entfernt, vertikales Innenpolster 14px→9px, Header-Höhe
+  63px→49px (Desktop) bzw. 121px→91px (Mobile), `--header-h`-Scroll-
+  Offset-Variable entsprechend 148px→126px nachgezogen, damit
+  Sprung-Navigation weiterhin exakt passt.
+- Commit `9ec8d6e` (Commit-Message deckt nur die Header-Änderung ab,
+  enthält technisch aber beide Themen — hier zur Vollständigkeit
+  nachgetragen).
+- **[OFFEN, nicht kritisch]:** Touch-Target-Größe der neuen Quiz-
+  Radiobuttons (Erschöpfungs-Selbstcheck) noch nicht einzeln gegen die
+  44×44px-Richtlinie gemessen (native `<input type=radio>`, vermutlich
+  <44px, aber mit anklickbarem `<label>` drumherum) — kein im Test
+  gefundener Fehlalarm, da das Element beim Test zufällig ausgeblendet
+  war (anderes Thema aktiv), einfach noch nicht nachgeholt.
+
 ## Nachtrag 2026-11-17 (22) — 4 Ideen umgesetzt: Selbstcheck, Kalender, Checklisten, Wohnraum-Demenz
 René-Frage "weitere Ideen, vielleicht ZBI-22" + Folgefrage zu demenz-
 gerechtem Wohnraum → 4 Punkte gewählt ("eigene Fragenkatalog und
