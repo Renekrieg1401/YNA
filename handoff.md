@@ -1,5 +1,15 @@
 # Handoff — Pflege-Faktencheck (ex Pflege-Fakten / YNA Digital), 2026-11-15
 
+## Nachtrag 2026-11-17 (21) — Teilen-Zähler fürs Dashboard
+René-Wunsch: Dashboard soll zeigen, wie oft die Teilen-Buttons geklickt
+werden. Neues `navigator.sendBeacon('/beacon-share?plattform=X')` pro
+Klick (analog beacon-geladen/beacon-dauer-Muster), neue Nginx-Location,
+`stats-aggregate.js` wertet pro Plattform aus (gleiche Bot-Filter wie
+überall sonst), neue Dashboard-Sektion „Teilen in sozialen Medien".
+Mit synthetischen Log-Zeilen auf dem Server verifiziert (echte Browser-
+Session + Share-Klick → gezählt), danach Testdaten aus dem echten Log
+entfernt. Commit `32ebc5b`.
+
 ## Nachtrag 2026-11-17 (20) — Teilen-Buttons, SEO-Phrasing, Dashboard-Erweiterung, neuer Agent
 - **Teilen-Buttons** (Commit `3d5baf0`): WhatsApp/Facebook/X/Threads über echte
   Web-Intent-URLs (alle 4 live getestet). Instagram hat KEINE offizielle
