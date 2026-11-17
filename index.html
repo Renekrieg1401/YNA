@@ -66,14 +66,14 @@
     --glass-strong:rgba(37,51,73,.9);
     --glass-border:rgba(124,147,184,.3);
     --ease:cubic-bezier(.22,1,.36,1);
-    --header-h:148px;
+    --header-h:126px;
   }
   *{box-sizing:border-box}
-  html{scroll-behavior:smooth;background:#131B27!important}
+  html{scroll-behavior:smooth;background:#131B27!important;overflow-x:hidden}
   body{
     margin:0;color:#E7E2D6!important;font-family:var(--font-body);font-size:18px;line-height:1.65;
     -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
-    position:relative;
+    position:relative;overflow-x:hidden;max-width:100vw;
     background:#131B27!important;
   }
   h1,h2,h3{font-family:var(--font-display);line-height:1.18;letter-spacing:-.01em;margin:0}
@@ -117,7 +117,7 @@
   header.nav{position:sticky;top:0;z-index:50;background:rgba(19,27,39,.72);
     backdrop-filter:blur(22px) saturate(180%);-webkit-backdrop-filter:blur(22px) saturate(180%);
     border-bottom:1px solid rgba(124,147,184,.5);box-shadow:0 14px 32px -22px rgba(0,0,0,.28)}
-  .nav-inner{max-width:1180px;margin:0 auto;padding:14px 32px;display:flex;align-items:center;gap:28px;flex-wrap:wrap}
+  .nav-inner{max-width:1180px;margin:0 auto;padding:9px 32px;display:flex;align-items:center;gap:28px;flex-wrap:wrap}
   /* Bugfix (2026-11-15, frontend-ui): unter ~400px reichte der 28px-Gap nicht fuer
      Badge+Notfall+Zahnrad auf einer Zeile -- das Zahnrad brach allein auf eine 3.
      Zeile um und wurde durch sein eigenes margin-left:auto dort voll nach rechts
@@ -590,6 +590,8 @@
   footer .sources{font-size:13.5px;margin-bottom:14px}
   footer a{font-weight:600}
 
+  .table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-top:16px}
+  .table-scroll table.data{margin-top:0;min-width:420px}
   @media (max-width:680px){
     body{font-size:17px}
     .cols-2,.cols-3{grid-template-columns:1fr}
@@ -599,6 +601,9 @@
     .step{grid-template-columns:38px 1fr}
     .blob{filter:blur(34px)}
     .blob-1,.blob-2,.blob-3,.blob-4{width:260px;height:260px}
+  }
+  @media (max-width:380px){
+    a.tel{white-space:normal;font-size:1.02rem;padding:11px 16px 11px 14px}
   }
   @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
   /* AERIS-Remap: die alte Light-Erzwingung bei prefers-color-scheme:dark entfaellt -- Dunkel (AERIS-
@@ -641,7 +646,6 @@
       </svg>
       <span class="header-brand"><span class="main aeris-wortmarke">Pflege-Faktencheck</span></span>
     </button>
-    <span class="badge">Ratgeber · Pflege</span>
     <button type="button" class="notfall-btn" onclick="openNotfall()">
       <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3L2 20h20L12 3z"/><line x1="12" y1="9" x2="12" y2="13.5"/><circle cx="12" cy="16.5" r=".6" fill="currentColor" stroke="none"/></svg>
       Notfall
@@ -3686,6 +3690,18 @@
   calcEigenanteil();
   renderErschoepfungsQuiz('de');
   renderErschoepfungsQuiz('en');
+
+  // Mobile-Fix (René-Auftrag 2026-11-17, kritischer Mobile-Test): table.data
+  // war bei <=420px Viewport-Breite zu schmal fuer 3 Spalten und erzeugte
+  // horizontales Overflow. Jede Tabelle wird jetzt in einen eigenen
+  // scrollbaren Wrapper gesetzt, statt die Spalten unlesbar abzuschneiden.
+  document.querySelectorAll('table.data').forEach(function(t){
+    if (t.parentElement.classList.contains('table-scroll')) return;
+    var wrap = document.createElement('div');
+    wrap.className = 'table-scroll';
+    t.parentNode.insertBefore(wrap, t);
+    wrap.appendChild(t);
+  });
 
   // Newsletter-Anmeldung (René-Auftrag 2026-11-16) -- sendet an den eigenen
   // Fact-Change-Radar-Server (server/server.js, per Nginx unter /api/ erreichbar).
