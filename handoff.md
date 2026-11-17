@@ -1,5 +1,13 @@
 # Handoff — Pflege-Faktencheck (ex Pflege-Fakten / YNA Digital), 2026-11-15
 
+## Nachtrag 2026-11-17 (26) — Drucken-Button entfernt
+René-Direktive 1:1 umgesetzt: Button + zugehöriges CSS (Basis-Styles,
+Mobile-Breakpoint-Position) entfernt. Textverweis im Antrags-Fahrplan
+("...oder ausgedruckt über den Drucken-Button unten links") korrigiert,
+da er sonst ins Leere gezeigt hätte. `@media print`-Regel fürs browser-
+native Drucken (Cmd+P) bewusst beibehalten, nur die Referenz auf den
+entfernten Button daraus gestrichen. Commit `0eb4244`, live verifiziert.
+
 ## Nachtrag 2026-11-17 (25) — Neuer Abschnitt "Über mich"
 René-Auftrag: Kurzbiografie über ihn selbst für die Seite. Fakten
 direkt erfragt statt erraten (echte biografische Angaben über eine
