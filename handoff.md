@@ -1,5 +1,45 @@
 # Handoff — Pflege-Faktencheck (ex Pflege-Fakten / YNA Digital), 2026-11-15
 
+## Nachtrag 2026-11-17 (20) — Teilen-Buttons, SEO-Phrasing, Dashboard-Erweiterung, neuer Agent
+- **Teilen-Buttons** (Commit `3d5baf0`): WhatsApp/Facebook/X/Threads über echte
+  Web-Intent-URLs (alle 4 live getestet). Instagram hat KEINE offizielle
+  Web-Freigabe-URL (verifizierte Plattform-Einschränkung) — nutzt
+  `navigator.share()` auf Mobilgeräten, sonst Link-kopieren-Fallback mit
+  sichtbarer Bestätigung statt eines vorgetäuschten Intents.
+- **SEO-Frage ehrlich beantwortet:** Breite Begriffe ("Pflege", "Pflegeheim")
+  sind ohne Werbung nicht erreichbar (dominiert von Großportalen) — René
+  wählte "nur Long-Tail stärken" statt des größeren Multi-URL-Umbaus.
+  Long-Tail-Begriffe (ambulante Pflege, Pflegeheim-Kosten, Pflegegrad
+  beantragen) natürlich in Meta-Description + Start-Hub-Text eingearbeitet,
+  keine Keyword-Stapelung (Commit `4cb2e61`).
+- **Dashboard erweitert** (Commit `62b29b3`): Download-Zähler für Flyer/
+  Vorlagen (Daten wurden schon geloggt, nur nie ausgewertet) + Newsletter-
+  Abonnentenzahl (per `sqlite3`-CLI aus der separaten Newsletter-DB
+  gelesen). Live verifiziert.
+- **Neue Governance-Rolle `seo-technisch`** (René-Direktive nach einem
+  Strato-SEO-Audit-Ergebnis): read-only Fachagent, Abteilung Marketing &
+  Marke, verifiziert externe SEO-Tool-Befunde IMMER gegen die echte
+  Live-Seite statt sie blind umzusetzen (Single-Page-Apps erzeugen bei
+  generischen Crawlern bekannte Fehlalarme). Datei `~/.claude/agents/
+  seo-technisch.md`, registriert in Root-`CLAUDE.md` Agenten-Organigramm.
+  **Technische Einschränkung (wie schon bei anderen neuen Rollen 2026-08-21
+  dokumentiert):** neue Agent-Typen werden vom Agent-Tool erst nach einem
+  Session-Neustart erkannt — der erste Einsatz lief übergangsweise als
+  `general-purpose` mit vollständig eingebetteter Rollenbeschreibung.
+- **René-Korrekturschleife beim OG-Bild (wichtig fürs Gedächtnis):** 1. Entwurf
+  hatte einen selbst erfundenen Glow-Ring statt des echten Logos — korrigiert
+  per echtem SVG-Rendering. 2. Entwurf: René zeigte das TATSÄCHLICHE
+  Original-Referenzbild, komplett danach neu gebaut, mit "Ok" bestätigt.
+  Lehre: bei Grafikaufträgen ohne explizite Vorlage erst nachfragen, nicht
+  selbst komponieren (Autonomie-Ausnahme "Design, Effekte, Funktionen").
+- **[OFFEN]:** Strato-SEO-Audit-XML (3 angebliche defekte Links, 57 %/43 %
+  kurze/doppelte Titel, 94 % kurze Headings) wird gerade vom neuen
+  `seo-technisch`-Agenten gegen die echte Live-Seite verifiziert — bei einer
+  Single-Page-App mit nur einer echten HTML-Seite sind diese Prozentwerte
+  höchstwahrscheinlich größtenteils Fehlalarme (Tool zählt vermutlich PDF/
+  Word-Dateien oder interne Abschnitte als eigene "Seiten"). Ergebnis noch
+  nicht final dokumentiert, Fortsetzung folgt nach Abschluss des Agentenlaufs.
+
 ## Nachtrag 2026-11-17 (19) — OG-Meta-Tags + Base64-Vorlagen ausgelagert
 René-Frage "Hast du weiter Ideen?" (2.) → 2 verifizierte Funde: fehlende
 OpenGraph/Twitter-Tags, 387 KB eingebettete Vorlagen-Base64. Beide gewählt
