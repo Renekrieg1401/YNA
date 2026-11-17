@@ -1,5 +1,37 @@
 # Handoff — Pflege-Faktencheck (ex Pflege-Fakten / YNA Digital), 2026-11-15
 
+## Nachtrag 2026-11-17 (22) — 4 Ideen umgesetzt: Selbstcheck, Kalender, Checklisten, Wohnraum-Demenz
+René-Frage "weitere Ideen, vielleicht ZBI-22" + Folgefrage zu demenz-
+gerechtem Wohnraum → 4 Punkte gewählt ("eigene Fragenkatalog und
+Kalender und checklisten" + Wohnraum-Ergänzung), sequenziell umgesetzt:
+- **ZBI-22 ehrlich abgelehnt, Alternative gebaut:** Der Zarit Burden
+  Interview ist urheberrechtlich geschützt, exklusiv über Mapi Research
+  Trust/ePROVIDE lizenziert (primärquellen-verifiziert) — Nachbau wäre
+  echte Urheberrechtsverletzung gewesen. Stattdessen eigenes, 7-Fragen-
+  Erschöpfungs-Selbstcheck-Instrument (0–14 Punkte, 3 Bänder), reine
+  Browser-Berechnung, im Thema "Wenn die Kraft nachlässt" verankert.
+  Commit `3ae06aa`.
+- **Demenzspezifische Wohnraum-Gestaltung** ergänzt (Spiegel-Angst, Licht
+  nach Tageszeit, sichere Rundwege, Bild-Orientierung, Gefahrenquellen,
+  Ruheinseln) — Fund: bisher nur 1 Satz zu Demenz im bestehenden Thema.
+  Gegen mehrere Praxisquellen verifiziert. Commit `4fdd0c4`.
+- **Checklisten-Familie erweitert:** 2 neue PDFs (Pflegedienst-
+  Erstgespräch, Krankenhausentlassung — § 39 Abs. 1a SGB V-Entlass-
+  management primärquellen-verifiziert), per `reportlab` erzeugt (Chrome/
+  Playwright lokal nicht verfügbar). Commit `923a66e`.
+- **Fristen-Kalender (ICS)** mit 2 verifizierten Fristen (Entlastungs-
+  betrag-Übertrag bis 30.06., Verhinderungspflege-Jahresbudget verfällt
+  31.12.). **Validierungs-Zwischenfall:** Beim lokalen Testen in
+  Calendar.app wurden die Test-Termine versehentlich real importiert —
+  sofort erkannt, beide Termine gezielt entfernt, per Screenshot in
+  beiden Monaten als leer verifiziert, kein anderer Termin betroffen.
+  Commit `097da3d`.
+- **Dashboard-Nachtrag (René-Wunsch "Kalenderfunktion-Zähler"):**
+  Download-Zähler-Infrastruktur auf `fristen-kalender.ics` + beide neuen
+  Checklisten erweitert (gleicher Mechanismus wie Flyer/Vorlagen).
+  Commit `e8dede9`.
+- Alle Deploys live byte-identisch verifiziert.
+
 ## Nachtrag 2026-11-17 (21) — Teilen-Zähler fürs Dashboard
 René-Wunsch: Dashboard soll zeigen, wie oft die Teilen-Buttons geklickt
 werden. Neues `navigator.sendBeacon('/beacon-share?plattform=X')` pro
