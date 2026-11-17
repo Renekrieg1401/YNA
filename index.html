@@ -3492,6 +3492,7 @@
   }
 
   function shareUrl(plattform, btn){
+    if (navigator.sendBeacon) navigator.sendBeacon('/beacon-share?plattform=' + encodeURIComponent(plattform));
     var seite = 'https://pflege-faktencheck.de/';
     var text = 'Pflege-Faktencheck — kostenloser Ratgeber zu Pflegegrad, Pflegegeld & mehr, jeder Betrag geprüft.';
     var url = encodeURIComponent(seite);

@@ -139,6 +139,12 @@
   </section>
 
   <section>
+    <h2>Teilen in sozialen Medien</h2>
+    <p class="hint">Klicks auf die Teilen-Buttons (WhatsApp/Facebook/X/Threads/Instagram) — misst den Klick, nicht ob der Beitrag tatsächlich veröffentlicht wurde.</p>
+    <div id="teilen-container"></div>
+  </section>
+
+  <section>
     <h2>12-Monats-Prognose</h2>
     <p class="hint" id="prognose-hint"></p>
     <div id="prognose-container"></div>
@@ -260,6 +266,15 @@
       '</tbody></table>';
   }
 
+  function renderTeilen(liste){
+    var el = document.getElementById('teilen-container');
+    var namen = { whatsapp:'WhatsApp', facebook:'Facebook', twitter:'X', threads:'Threads', instagram:'Instagram' };
+    if (!liste || !liste.length) { el.innerHTML = '<p class="hint">Noch keine Daten.</p>'; return; }
+    el.innerHTML = '<table><thead><tr><th>Plattform</th><th class="num">Klicks</th></tr></thead><tbody>' +
+      liste.map(function(t){ return '<tr><td>'+(namen[t.plattform]||t.plattform)+'</td><td class="num">'+t.anzahl+'</td></tr>'; }).join('') +
+      '</tbody></table>';
+  }
+
   function renderPrognose(p, hinweis){
     var hintEl = document.getElementById('prognose-hint');
     var cEl = document.getElementById('prognose-container');
@@ -296,6 +311,7 @@
         ? '—' : d.newsletterBestaetigteAbonnenten.toLocaleString('de-DE');
       if (d.newsletterBestaetigteAbonnenten === null) nlEl.title = 'Newsletter-Datenbank nicht erreichbar';
       renderDownloads(d.downloadsProDatei || []);
+      renderTeilen(d.teilenProPlattform || []);
       renderBalkenChart(d.aufrufeProTag);
       renderLaender(d.aufrufeProLand);
       renderBundeslaender(d.aufrufeProBundesland || []);
