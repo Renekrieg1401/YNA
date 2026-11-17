@@ -1,5 +1,29 @@
 # Handoff — Pflege-Faktencheck (ex Pflege-Fakten / YNA Digital), 2026-11-15
 
+## Nachtrag 2026-11-17 (19) — OG-Meta-Tags + Base64-Vorlagen ausgelagert
+René-Frage "Hast du weiter Ideen?" (2.) → 2 verifizierte Funde: fehlende
+OpenGraph/Twitter-Tags, 387 KB eingebettete Vorlagen-Base64. Beide gewählt
+("Alles"):
+- **OpenGraph/Twitter-Card-Tags ergänzt** (Commit `e5af242`). Neues
+  `og-image.png` (1200×630). **René-Korrekturschleife (wichtig für
+  künftige Design-Aufträge):** erster Entwurf hatte einen selbst
+  erfundenen Gradient-Glow-Ring statt des echten Logos — René korrigierte
+  "Kein Glow Kreis original logo verwenden", per SVG-Rendering (`qlmanage`)
+  1:1 das echte Herz+Haken-Logo nachgezogen (Commit `411e859`). Danach
+  zeigte René das TATSÄCHLICHE Original-Referenzdesign ("Das ist das
+  original") — komplett neu nach dieser Vorlage gebaut (Logo oben links,
+  Bronze-Ring-Dekoration oben rechts, Titel mit Halbgeviertstrich,
+  Domain-Zeile unten), von René mit "Ok" bestätigt (Commit `6d40964`).
+  Lehre: bei Grafik-/Bildaufträgen ohne explizite Vorlage zuerst nachfragen
+  statt selbst zu komponieren — exakt der Autonomie-Ausnahme-Fall aus der
+  Root-Governance ("Design, Effekte, Funktionen").
+- **Pflegetagebuch-Vorlagen (PDF+Word) aus Base64 ausgelagert** (Commit
+  `3f9bd3c`) — waren direkt in `index.html` eingebettet (~390 KB bei
+  JEDEM Seitenaufruf, auch ohne Download). Jetzt echte Dateien
+  (`vorlage-pflegetagebuch.pdf`/`.docx`), analog zum Flyer-Muster.
+  `index.html` live 788 KB → 396 KB, Downloads byte-identisch gegen die
+  vormals eingebetteten Originale verifiziert.
+
 ## Nachtrag 2026-11-17 (18) — Offene Punkte aus (17) erledigt: Newsletter-Auto-Löschung
 René-Auftrag "Offenes erledigen" zu den 2 in (17) genannten offenen Punkten:
 - **stats.json-Einzelereignisse:** bewusst NICHT entfernt — die Liste ist ein
