@@ -1,5 +1,16 @@
 # Handoff — Pflege-Faktencheck (ex Pflege-Fakten / YNA Digital), 2026-11-15
 
+## Nachtrag 2026-11-17 (25) — Neuer Abschnitt "Über mich"
+René-Auftrag: Kurzbiografie über ihn selbst für die Seite. Fakten
+direkt erfragt statt erraten (echte biografische Angaben über eine
+reale Person werden nie erfunden): examinierter Pflegefachmann,
+ambulanter Dienst, Motivation aus dem Berufsalltag (Betroffene kennen
+ihre Ansprüche oft nicht). Nach Rückmeldung 2x überarbeitet ("viele"→
+"einige Jahre", persönlicher/wärmer/klientennäher). Als neues Thema
+in der Werkzeuge-Gruppe verankert (`id="ueber-mich"`), DE+EN,
+Kontakthinweis am Ende. Overflow-Sweep über alle jetzt 35 Themen bei
+320–430px erneut grün. Commit `9797794`, live byte-identisch verifiziert.
+
 ## Nachtrag 2026-11-17 (24) — Teilen-Text präziser gefasst
 René-Auftrag "kurzer, prägnanter Social-Media-Text für die Teilen-
 Buttons". 3 Varianten vorgelegt (sachlich/plakativ/kurz-direkt), René
