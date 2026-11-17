@@ -537,23 +537,10 @@
   #back-to-top:active{transform:translateY(0) scale(.96)}
   @media (max-width:680px){
     #back-to-top{right:14px;width:46px;height:46px;bottom:calc(14px + env(safe-area-inset-bottom, 0px))}
-    #print-btn{left:14px;width:46px;height:46px;bottom:calc(14px + env(safe-area-inset-bottom, 0px))}
   }
 
-  #print-btn{
-    position:fixed; left:18px; bottom:calc(18px + env(safe-area-inset-bottom, 0px));
-    width:48px;height:48px;border-radius:99px;flex-shrink:0;
-    display:flex;align-items:center;justify-content:center;
-    background:rgba(37,51,73,.82);backdrop-filter:blur(14px) saturate(160%);-webkit-backdrop-filter:blur(14px) saturate(160%);
-    color:var(--ink);border:1px solid var(--glass-border);
-    box-shadow:0 14px 28px -10px rgba(0,0,0,.3);
-    cursor:pointer;-webkit-appearance:none;appearance:none;z-index:40;
-    transition:transform .3s var(--ease), background .25s ease}
-  #print-btn:hover{background:var(--primary);color:var(--on-primary);transform:translateY(-3px) scale(1.05)}
-  #print-btn:active{transform:translateY(0) scale(.96)}
-
   @media print{
-    header.nav, #back-to-top, #go-back-btn, #print-btn, .next-nav, .bg-blobs, .legal-row, .entry-grid, dialog,
+    header.nav, #back-to-top, #go-back-btn, .next-nav, .bg-blobs, .legal-row, .entry-grid, dialog,
     .sidebar, .sidebar-overlay, .menu-btn, .search-wrap, .motivate, .contact-btn{display:none!important}
     html, body{background:#fff!important}
     main{padding-top:0!important;max-width:100%}
@@ -2966,7 +2953,7 @@
     <p class="eyebrow"><span class="icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg></span><span data-i18n="de">Werkzeuge · Antrags-Fahrplan</span><span data-i18n="en" hidden>Tools · Application roadmap</span></p>
 
     <h2 class="title"><span data-i18n="de">Mein Antrags-Fahrplan</span><span data-i18n="en" hidden>My application roadmap</span></h2>
-    <p class="lead"><span data-i18n="de">Zum Abhaken — auf dem Bildschirm oder ausgedruckt über den Drucken-Button unten links.</span><span data-i18n="en" hidden>To tick off — on screen or printed using the print button at the bottom left.</span></p>
+    <p class="lead"><span data-i18n="de">Zum Abhaken — direkt auf dem Bildschirm.</span><span data-i18n="en" hidden>To tick off — right here on screen.</span></p>
     <div class="checklist">
       <div class="check-item"><input type="checkbox" id="fp1"><label for="fp1">
         <span data-i18n="de"><b>Pflegetagebuch führen</b>Ein bis zwei Wochen vor dem Antrag den täglichen Hilfebedarf notieren — erleichtert die Begutachtung erheblich.</span>
@@ -3701,9 +3688,6 @@
   <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
 </button>
 
-<button type="button" id="print-btn" onclick="window.print()" aria-label="Aktuelles Thema drucken">
-  <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-</button>
 
 <script>
   (function(){
