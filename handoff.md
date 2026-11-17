@@ -1,5 +1,31 @@
 # Handoff — Pflege-Faktencheck (ex Pflege-Fakten / YNA Digital), 2026-11-15
 
+## Nachtrag 2026-11-17 (17) — 3 Ideen umgesetzt: FAQ-Schema, Datenschutz-Fix, Kurzgeschichten
+René-Frage "Hast du weitere Ideen?" → 4 Vorschläge gemacht, er wählte "Alles".
+Sequenziell abgearbeitet, jeweils committed+deployed+verifiziert:
+- **(15) FAQ-Schema.org-Markup:** JSON-LD FAQPage für die 3 bestehenden
+  FAQ-Blöcke (Pflegegrad, Demenz, allgemeine Fragen) ergänzt — reine
+  Metadaten, keine sichtbare Änderung. Commit `3174383`.
+- **(16) Datenschutzerklärung aktualisiert — echter Fund, kein Platzhalter:**
+  Die vermutete Lücke "AGB/Barrierefreiheit sind Platzhalter" (Manifest
+  15.11.) erwies sich bei Prüfung als veraltet — beide Texte sind bereits
+  vollständig. Stattdessen echter Fund: die Datenschutzerklärung behauptete
+  "kein Tracking, keine Analyse-Cookies", obwohl seitdem Newsletter
+  (E-Mail+consent_ip-Speicherung), Statistik-Dashboard (geoip-Aggregation)
+  und 2 JS-Beacons dazugekommen waren — keines davon dokumentiert. Neue
+  Fassung ergänzt Logfile-Rotation (14 Tage), Reichweitenstatistik-Zweck,
+  Newsletter-Datenverarbeitung (Art. 6 Abs. 1 lit. a), erweiterte
+  Rechtsgrundlagen. Von `legal-compliance` gegen echten Code/DB-Zustand
+  geprüft (Beacon-Zweck, stats-aggregate.js-Ausgabeformat, Newsletter-
+  Schema, Logrotate-Config), 2 Präzisierungen eingearbeitet. Commit `b272d49`.
+- **(17) Kurzgeschichten-Format ausgeweitet:** Nach Demenz-Vorbild je eine
+  fiktive Beispielgeschichte bei Verhinderungs-/Kurzzeitpflege, Hospiz &
+  Palliativversorgung, Pflege-WG ergänzt — keine neuen Fakten, nur
+  Veranschaulichung. `legal-compliance`-Würde-/Framing-Check bestanden
+  (insbesondere die sensible Hospiz-Geschichte ohne Angstmachen/
+  Verharmlosung). Commit `2905fc5`.
+- Alle 3 Deploys live unter pflege-faktencheck.de byte-identisch verifiziert.
+
 ## Nachtrag 2026-11-17 (14) — Demenz-Thema umfassend ausgebaut (Medizin, Pflege, Familie, FAQ)
 René-Auftrag per XML-Spec: Demenz-Abschnitt sollte Medizin (S3-Leitlinie),
 Pflege (DNQP), personzentrierten Umgang (Kitwood/IVA) abdecken; per
