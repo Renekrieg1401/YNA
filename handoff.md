@@ -1,5 +1,14 @@
 # Handoff — Pflege-Faktencheck (ex Pflege-Fakten / YNA Digital), 2026-11-15
 
+## Nachtrag 2026-11-17 (24) — Teilen-Text präziser gefasst
+René-Auftrag "kurzer, prägnanter Social-Media-Text für die Teilen-
+Buttons". 3 Varianten vorgelegt (sachlich/plakativ/kurz-direkt), René
+wählte "Sachlich". Neuer Text ersetzt den bisherigen generischeren:
+"Pflegegrad, Pflegegeld, Entlastungsbetrag & mehr — kostenlos erklärt,
+jeder Betrag gegen das echte Gesetz geprüft." Live gegen die echte
+Domain verifiziert (WhatsApp-Link enthält den neuen Text korrekt).
+Commit `eac7ae7`.
+
 ## Nachtrag 2026-11-17 (23) — Kritischer Mobile-Test (Auflösung/Größen/Anordnung) + Header verschlankt
 René-Auftrag "kritischer Test und Analyse für Auflösung, Größen,
 Anordnung für Smartphones". Methode: programmatischer Sweep über ALLE
