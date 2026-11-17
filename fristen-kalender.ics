@@ -1,0 +1,26 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Pflege-Faktencheck//Fristen-Kalender//DE
+CALSCALE:GREGORIAN
+BEGIN:VEVENT
+UID:entlastungsbetrag-frist@pflege-faktencheck.de
+DTSTAMP:20261117T000000Z
+DTSTART;VALUE=DATE:20270601
+RRULE:FREQ=YEARLY
+SUMMARY:Entlastungsbetrag: Restbudget bis 30.06. nutzen
+DESCRIPTION:Nicht verbrauchte Entlastungsbetraege (131 EUR/Monat) aus dem 
+ Vorjahr koennen bis zum Ende des ersten Halbjahrs uebertragen werden -- da
+ nach verfallen sie (Paragraph 45b SGB XI). Details: https://pflege-faktenc
+ heck.de/
+END:VEVENT
+BEGIN:VEVENT
+UID:verhinderungspflege-frist@pflege-faktencheck.de
+DTSTAMP:20261117T000000Z
+DTSTART;VALUE=DATE:20261201
+RRULE:FREQ=YEARLY
+SUMMARY:Verhinderungs-/Kurzzeitpflege-Budget verfaellt zum Jahresende
+DESCRIPTION:Das gemeinsame Jahresbudget (bis 3.539 EUR) fuer Verhinderungs
+ - und Kurzzeitpflege wird NICHT ins naechste Jahr uebertragen und verfaell
+ t am 31.12. Details: https://pflege-faktencheck.de/
+END:VEVENT
+END:VCALENDAR
