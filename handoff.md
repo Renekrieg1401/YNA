@@ -1,5 +1,47 @@
 # Handoff — Pflege-Faktencheck (ex Pflege-Fakten / YNA Digital), 2026-11-15
 
+## Nachtrag 2026-11-17 (14) — Demenz-Thema umfassend ausgebaut (Medizin, Pflege, Familie, FAQ)
+René-Auftrag per XML-Spec: Demenz-Abschnitt sollte Medizin (S3-Leitlinie),
+Pflege (DNQP), personzentrierten Umgang (Kitwood/IVA) abdecken; per
+Folgeauftrag erweitert um Verlaufsformen im Alltag, Familiendynamik-
+Frühwarnzeichen (inkl. fiktiver Kurzgeschichten) und ein „Was tun wenn"-FAQ.
+- **Vorgehen:** Erst Recherche + Vorschau (`demenz-vorschau.html`, Scratchpad)
+  in Safari gezeigt, NICHT direkt live geschaltet — René wählte "legal-
+  compliance gegenprüfen lassen" statt direkter Übernahme.
+- **1. Agentenlauf (`legal-compliance`):** Epidemiologie (Alzheimer ~65 %,
+  vaskulär ~15 %), MMST/DemTect/Biomarker, Cholinesterase-Hemmer/Memantin-
+  Zulassungsgrenzen, DNQP-Kernaussage, Kitwood-Bedürfnisse, IVA-4-Schritte
+  alle ✅ bestätigt. 2 Formfehler gefunden: beide Quell-Links zeigten nur auf
+  Organisations-Startseiten statt konkrete Dokumente — behoben
+  (`register.awmf.org/de/leitlinien/detail/038-013`,
+  `dnqp.de/expertenstandards-und-auditinstrumente/`, beide live 200 OK
+  verifiziert).
+- **René-Folgeauftrag (mid-turn):** Verlaufsformen, Familiendynamik,
+  Kurzgeschichten, FAQ "Was tun/Wer hilft/Was darf ich" ergänzt — 3 neue
+  Blöcke (`dz-verlauf`, `dz-familie`, `dz-was-tun`), DE+EN.
+- **2. Agentenlauf (`legal-compliance`, nur neue Blöcke):** Verlaufsformen
+  ✅, Familiendynamik/Würde-Framing ✅, Kurzgeschichten-Kennzeichnung ✅.
+  **Echter Rechtsfehler gefunden:** neue FAQ "Ohne Vorsorgevollmacht dürfen
+  auch Ehepartner nicht automatisch entscheiden" widersprach der bereits
+  korrekten Aussage im bestehenden Abschnitt „Vorsorge & Vollmacht" zum
+  Ehegatten-Notvertretungsrecht (§ 1358 BGB, seit 2023, max. 6 Monate, nur
+  medizinisch) — behoben, jetzt widerspruchsfrei zur bestehenden Seite.
+  Zusätzlich "im Vollbesitz ihrer geistigen Kräfte" durch die präzisen
+  Rechtsbegriffe Geschäftsfähigkeit (Vollmacht) / Einwilligungsfähigkeit
+  (Patientenverfügung) ersetzt.
+- **Deploy:** Commit `ac8c0fb` (Repo `Renekrieg1401/YNA`, gepusht). Server-
+  Backup vor Deploy (`index.html.bak-20261117-*`), per `scp` auf
+  `/var/www/pflege-fakten/index.html`, live unter `pflege-faktencheck.de`
+  mit echtem Browser-UA verifiziert (200, byte-identisch zum Commit).
+  Eigener curl-Test ohne Browser-UA bekam zunächst 403 — kein Bug, sondern
+  der bestehende Bot-Filter (`$pfk_bad_bot`) griff korrekt gegen den
+  eigenen Test-Request selbst.
+- **[OFFEN]:** `demenz-vorschau.html` im Scratchpad war nur Arbeitskopie,
+  nicht Teil des Repos. Die Domain `pflege-faktencheck.de` ist entgegen dem
+  älteren Stand weiter oben in dieser Datei inzwischen bereits registriert
+  und per Let's-Encrypt-Zertifikat live (kein offener Punkt mehr, nur hier
+  noch nicht nachgetragen gewesen).
+
 ## Nachtrag 2026-11-16 (13) — JS-Lade-Signal als weitere Bot-Barriere
 René-Frage "welche Barrieren ohne echte Nutzer zu blockieren" + Freigabe
 ("Ok") für die empfohlene Option: ein per JavaScript beim Seitenaufruf

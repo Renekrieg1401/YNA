@@ -126,3 +126,22 @@ René-Auftrag: Besucher-Zahlen/Regionen/12-Monats-Prognose überwachen.
   unter `/opt/pflege-fakten-stats/` läuft — bei künftigen Änderungen
   beide Stellen synchron halten, kein automatisches Deploy-Skript dafür
   angelegt).
+
+## Demenz-Thema (ausgebaut 2026-11-17)
+`index.html`-Abschnitt `id="demenz"` jetzt 7 Unterkapitel statt nur
+Begutachtung: Medizin (S3-Leitlinie DGPPN/DGN), Verlaufsformen im Alltag,
+Pflege/DNQP-Beziehungsgestaltung, Kommunikation/Kitwood/Integrative
+Validation, Familiendynamik (inkl. fiktiver Kurzgeschichten), FAQ
+„Was tun/Wer hilft/Was darf ich". Zweifach durch `legal-compliance`
+primärquellen-geprüft, ein echter Rechtsfehler (§ 1358 BGB-Ehegatten-
+Notvertretungsrecht) dabei gefunden und behoben. `index.html` wird — wie
+`stats-aggregate.js` oben — separat per `scp` auf
+`/var/www/pflege-fakten/index.html` deployed, kein Git-Pull auf dem
+Server. Details: `handoff.md` Nachtrag (14).
+
+## Domain-Status-Korrektur
+`pflege-faktencheck.de` ist entgegen dem älteren Genesis-Vermerk oben in
+dieser Datei inzwischen registriert und per Let's-Encrypt-Zertifikat live
+(verifiziert 2026-11-17) — der Abschnitt „Rename 2026-11-15" oben
+(„Domain noch NICHT registriert") ist damit veraltet, aber zu
+Historienzwecken unverändert belassen.
