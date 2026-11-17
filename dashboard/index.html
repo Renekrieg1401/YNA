@@ -91,6 +91,7 @@
     <div class="kpi"><div class="label">Eindeutige Besucher-IPs</div><div class="value" id="kpi-ips">—</div></div>
     <div class="kpi"><div class="label">Heute</div><div class="value" id="kpi-heute">—</div></div>
     <div class="kpi"><div class="label">Ø Verweildauer</div><div class="value" id="kpi-verweildauer">—</div></div>
+    <div class="kpi"><div class="label">Newsletter-Abonnenten</div><div class="value bronze" id="kpi-newsletter">—</div></div>
     <div class="kpi"><div class="label">Datenerfassung seit</div><div class="value" id="kpi-seit" style="font-size:1rem">—</div></div>
   </div>
 
@@ -129,6 +130,12 @@
     <h2>Verweildauer je Aufruf</h2>
     <p class="hint">Zeit, Land und Dauer der letzten einzelnen Aufrufe (keine IP-Adresse gespeichert/angezeigt, wie überall sonst in diesem Dashboard).</p>
     <div id="verweildauer-liste-container"><p class="hint">Noch keine Messung vorhanden.</p></div>
+  </section>
+
+  <section>
+    <h2>Downloads</h2>
+    <p class="hint">Echte Downloads von Flyer und Vorlagen (dieselben Bot-Filter wie bei den Seitenaufrufen).</p>
+    <div id="downloads-container"></div>
   </section>
 
   <section>
@@ -240,6 +247,19 @@
       '</tbody></table>';
   }
 
+  function renderDownloads(liste){
+    var el = document.getElementById('downloads-container');
+    var namen = {
+      '/flyer-pflege-faktencheck.pdf': 'Flyer (PDF)',
+      '/vorlage-pflegetagebuch.pdf': 'Pflegetagebuch-Vorlage (PDF)',
+      '/vorlage-pflegetagebuch.docx': 'Pflegetagebuch-Vorlage (Word)'
+    };
+    if (!liste || !liste.length) { el.innerHTML = '<p class="hint">Noch keine Daten.</p>'; return; }
+    el.innerHTML = '<table><thead><tr><th>Datei</th><th class="num">Downloads</th></tr></thead><tbody>' +
+      liste.map(function(d){ return '<tr><td>'+(namen[d.datei]||d.datei)+'</td><td class="num">'+d.downloads+'</td></tr>'; }).join('') +
+      '</tbody></table>';
+  }
+
   function renderPrognose(p, hinweis){
     var hintEl = document.getElementById('prognose-hint');
     var cEl = document.getElementById('prognose-container');
@@ -271,6 +291,11 @@
         vwEl.title = 'Basis: ' + d.verweildauerAnzahlMessungen + ' Messung(en)';
       }
       document.getElementById('kpi-seit').textContent = new Date(d.datenerfassungSeit).toLocaleString('de-DE', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+      var nlEl = document.getElementById('kpi-newsletter');
+      nlEl.textContent = (d.newsletterBestaetigteAbonnenten === null || d.newsletterBestaetigteAbonnenten === undefined)
+        ? '—' : d.newsletterBestaetigteAbonnenten.toLocaleString('de-DE');
+      if (d.newsletterBestaetigteAbonnenten === null) nlEl.title = 'Newsletter-Datenbank nicht erreichbar';
+      renderDownloads(d.downloadsProDatei || []);
       renderBalkenChart(d.aufrufeProTag);
       renderLaender(d.aufrufeProLand);
       renderBundeslaender(d.aufrufeProBundesland || []);

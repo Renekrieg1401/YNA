@@ -19,6 +19,7 @@
 var fs = require('fs');
 var path = require('path');
 var geoip = require('geoip-lite');
+var execFileSync = require('child_process').execFileSync;
 
 var LOG_PATH = '/var/log/nginx/pflege-faktencheck-access.log';
 var OUT_PATH = path.join(__dirname, 'public', 'stats.json');
@@ -30,6 +31,11 @@ var LAUNCH_DATE = '2026-11-15'; // Domain-Live-Schaltung, s. handoff.md Nachtrag
 // Abrufe (curl/Playwright) nicht von echtem Publikum unterscheidbar. Ehrlicher Nullpunkt
 // statt einer geschoenten/erfundenen Vorgeschichte.
 var LOG_START = '2026-11-16T04:26:00Z';
+
+// René-Auftrag 2026-11-17: Downloads + Newsletter-Wachstum zusaetzlich zu den
+// reinen Besucherzahlen im Dashboard zeigen.
+var DOWNLOAD_PFADE = ['/flyer-pflege-faktencheck.pdf', '/vorlage-pflegetagebuch.pdf', '/vorlage-pflegetagebuch.docx'];
+var NEWSLETTER_DB_PATH = process.env.NEWSLETTER_DB_PATH || '/opt/pflege-fakten-server/pflege-fakten.db';
 
 // Accept-Language-Gruppe (9) ist optional -- aeltere Logzeilen von vor der
 // Format-Erweiterung 2026-11-16 haben sie nicht, das ist KEIN Bot-Signal fuer diese
@@ -441,6 +447,29 @@ function istEchterSeitenaufruf(e) {
   return e.pfad === '/' || e.pfad === '/index.html';
 }
 
+function istEchterDownload(e) {
+  if (ROTIERENDE_UA_IPS[e.ip]) return false;
+  if (!JS_AUSGEFUEHRT_IPS[e.ip]) return false;
+  if (e.methode !== 'GET') return false;
+  if (e.status !== 200) return false;
+  if (BOT_RE.test(e.userAgent)) return false;
+  if (!hatEchtesBrowserPraefix(e.userAgent)) return false;
+  if (hatFehlendenAcceptLanguage(e)) return false;
+  if (istCloudHostingIp(e.ip)) return false;
+  if (BEKANNTE_IPS.indexOf(e.ip) !== -1) return false;
+  return DOWNLOAD_PFADE.indexOf(e.pfad) !== -1;
+}
+
+function zaehleBestaetigteAbonnenten() {
+  try {
+    var out = execFileSync('sqlite3', [NEWSLETTER_DB_PATH, "SELECT COUNT(*) FROM subscribers WHERE status='confirmed';"], { encoding: 'utf8', timeout: 5000 });
+    var n = parseInt(String(out).trim(), 10);
+    return isNaN(n) ? null : n;
+  } catch (e) {
+    return null;
+  }
+}
+
 function parseNginxZeit(zeit) {
   // Format: 15/Nov/2026:18:07:21 +0000
   var monate = { Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11 };
@@ -529,6 +558,11 @@ function main() {
     ? Math.round(verweildauerWerteMs.reduce(function (s, v) { return s + v; }, 0) / verweildauerWerteMs.length / 1000)
     : null;
 
+  var downloadsProDatei = {};
+  eintraege.filter(istEchterDownload).forEach(function (e) {
+    downloadsProDatei[e.pfad] = (downloadsProDatei[e.pfad] || 0) + 1;
+  });
+
   var tage = Object.keys(proTag).sort();
   var anzahlTageMitDaten = tage.length;
   var alterInTagen = Math.max(1, Math.round((Date.now() - new Date(LAUNCH_DATE + 'T00:00:00Z').getTime()) / 86400000));
@@ -573,6 +607,8 @@ function main() {
     verweildauerDurchschnittSekunden: verweildauerDurchschnittSekunden,
     verweildauerAnzahlMessungen: verweildauerWerteMs.length,
     verweildauerJeAufruf: verweildauerListe,
+    downloadsProDatei: DOWNLOAD_PFADE.map(function (p) { return { datei: p, downloads: downloadsProDatei[p] || 0 }; }),
+    newsletterBestaetigteAbonnenten: zaehleBestaetigteAbonnenten(),
     prognose: prognose,
     prognoseHinweis: prognose ? null :
       'Noch keine seriöse 12-Monats-Prognose möglich — erst ' + anzahlTageMitDaten +
