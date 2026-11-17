@@ -1,5 +1,21 @@
 # Handoff — Pflege-Faktencheck (ex Pflege-Fakten / YNA Digital), 2026-11-15
 
+## Nachtrag 2026-11-17 (18) — Offene Punkte aus (17) erledigt: Newsletter-Auto-Löschung
+René-Auftrag "Offenes erledigen" zu den 2 in (17) genannten offenen Punkten:
+- **stats.json-Einzelereignisse:** bewusst NICHT entfernt — die Liste ist ein
+  echtes, genutztes Dashboard-Feature (`dashboard/index.html` zeigt eine
+  Zeit/Land/Dauer-Tabelle), enthält keine IP/Kennung, und die
+  Datenschutzerklärung beschreibt sie bereits präzise seit (16). Entfernen
+  hätte ein funktionierendes Feature ohne echten Compliance-Gewinn gekostet.
+- **Newsletter-Löschung automatisiert:** neues `server/cleanup-newsletter.js`
+  (Muster von `crawl.js` übernommen) löscht abgemeldete Datensätze nach 30
+  Tagen, nie bestätigte Anmeldungen 7 Tage nach Linkablauf. Neuer täglicher
+  systemd-Timer `pflege-fakten-cleanup.timer` auf dem Server eingerichtet
+  und aktiviert. Mit synthetischen Testdaten verifiziert (alter Fall
+  gelöscht, frischer Fall korrekt erhalten, Testdaten danach entfernt —
+  Live-DB hatte zum Testzeitpunkt 0 echte Abonnenten). Datenschutzerklärung
+  (Punkt 5+9) mit den konkreten Fristen aktualisiert. Commit `b2fff03`.
+
 ## Nachtrag 2026-11-17 (17) — 3 Ideen umgesetzt: FAQ-Schema, Datenschutz-Fix, Kurzgeschichten
 René-Frage "Hast du weitere Ideen?" → 4 Vorschläge gemacht, er wählte "Alles".
 Sequenziell abgearbeitet, jeweils committed+deployed+verifiziert:
