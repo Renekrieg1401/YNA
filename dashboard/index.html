@@ -42,6 +42,13 @@
   section{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 22px;margin-bottom:20px}
   section h2{font-size:1rem;margin:0 0 4px}
   section p.hint{color:var(--muted);font-size:.82rem;margin:0 0 16px}
+  details.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:0;margin-bottom:20px;overflow:hidden}
+  details.card summary{list-style:none;cursor:pointer;padding:20px 22px;font-size:1rem;font-weight:600;color:var(--ink);display:flex;align-items:center;gap:10px;user-select:none}
+  details.card summary::-webkit-details-marker{display:none}
+  details.card summary::before{content:'▸';color:var(--bronze2);font-size:.85rem;transition:transform .15s ease}
+  details.card[open] summary::before{transform:rotate(90deg)}
+  details.card .details-body{padding:0 22px 20px}
+  details.card .details-body p.hint{color:var(--muted);font-size:.82rem;margin:0 0 16px}
   .chart-wrap{overflow-x:auto}
   svg.chart{display:block;min-width:600px}
   .bar{fill:var(--bronze2)}
@@ -126,11 +133,13 @@
     <div id="verweise-container" style="margin-top:14px"></div>
   </section>
 
-  <section>
-    <h2>Verweildauer je Aufruf</h2>
-    <p class="hint">Zeit, Land und Dauer der letzten einzelnen Aufrufe (keine IP-Adresse gespeichert/angezeigt, wie überall sonst in diesem Dashboard).</p>
-    <div id="verweildauer-liste-container"><p class="hint">Noch keine Messung vorhanden.</p></div>
-  </section>
+  <details class="card">
+    <summary>Verweildauer je Aufruf</summary>
+    <div class="details-body">
+      <p class="hint">Zeit, Land und Dauer der letzten einzelnen Aufrufe (keine IP-Adresse gespeichert/angezeigt, wie überall sonst in diesem Dashboard).</p>
+      <div id="verweildauer-liste-container"><p class="hint">Noch keine Messung vorhanden.</p></div>
+    </div>
+  </details>
 
   <section>
     <h2>Downloads</h2>
