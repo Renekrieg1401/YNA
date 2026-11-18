@@ -388,6 +388,46 @@ function istAppleRelayIp(ip) {
   return APPLE_RELAY_RANGES.some(function (bereich) { return (ipInt & bereich.maske) === bereich.netz; });
 }
 
+// Rene-Fund 2026-11-18: Laender-Statistik zeigte fuer Private-Relay-Besuche oft "US"
+// statt dem echten Egress-Land, weil geoip-lite die Fastly-/Akamai-Bloecke anders
+// geolokalisiert als Apples eigene Liste. Apples CSV liefert pro Bereich ein echtes
+// Laenderkuerzel mit -- separat gebuendelt (apple-private-relay-laender.txt), damit
+// genau diese IPs ihr echtes Land statt des CDN-Standardlandes bekommen.
+var APPLE_RELAY_LAENDER = (function () {
+  var pfad = path.join(__dirname, 'apple-private-relay-laender.txt');
+  var zeilen;
+  try { zeilen = fs.readFileSync(pfad, 'utf8').split('\n'); } catch (e) { return []; }
+  var ergebnis = [];
+  zeilen.forEach(function (zeile) {
+    var z = zeile.trim();
+    if (!z) return;
+    var kommaTeile = z.split(',');
+    if (kommaTeile.length !== 2 || kommaTeile[0].indexOf('/') === -1) return;
+    var teile = kommaTeile[0].split('/');
+    var ipTeile = teile[0].split('.').map(Number);
+    if (ipTeile.length !== 4 || ipTeile.some(function (n) { return isNaN(n) || n < 0 || n > 255; })) return;
+    var netzInt = ((ipTeile[0] << 24) | (ipTeile[1] << 16) | (ipTeile[2] << 8) | ipTeile[3]) >>> 0;
+    var praefix = parseInt(teile[1], 10);
+    if (isNaN(praefix) || praefix < 0 || praefix > 32) return;
+    var maske = praefix === 0 ? 0 : (0xFFFFFFFF << (32 - praefix)) >>> 0;
+    ergebnis.push({ netz: netzInt & maske, maske: maske, land: kommaTeile[1] });
+  });
+  return ergebnis;
+})();
+
+function appleRelayLandFuerIp(ip) {
+  var ipInt = ipv4ZuInt(ip);
+  if (ipInt === null) return null;
+  var treffer = APPLE_RELAY_LAENDER.find(function (bereich) { return (ipInt & bereich.maske) === bereich.netz; });
+  return treffer ? treffer.land : null;
+}
+
+function landFuerIp(ip) {
+  var relayLand = appleRelayLandFuerIp(ip);
+  if (relayLand) return { country: relayLand, city: null };
+  return geoip.lookup(ip);
+}
+
 function istCloudHostingIp(ip) {
   if (istAppleRelayIp(ip)) return false;
   return CLOUD_IP_PREFIXE.some(function (re) { return re.test(ip); })
@@ -555,7 +595,7 @@ function main() {
     gesamt++;
     eindeutigeIps.add(e.ip);
     if (istGueltigeIp(e.ip)) {
-      var geo = geoip.lookup(e.ip);
+      var geo = landFuerIp(e.ip);
       var land = (geo && geo.country) || 'unbekannt';
       proLand[land] = (proLand[land] || 0) + 1;
       if (land === 'DE' && geo && geo.city) {
@@ -591,7 +631,7 @@ function main() {
     verweildauerWerteMs.push(ms);
     var land = 'unbekannt';
     if (istGueltigeIp(e.ip)) {
-      var geo = geoip.lookup(e.ip);
+      var geo = landFuerIp(e.ip);
       land = (geo && geo.country) || 'unbekannt';
     }
     var dt = parseNginxZeit(e.zeit);
