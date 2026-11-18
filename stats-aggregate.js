@@ -228,7 +228,7 @@ function quelleFuerReferer(referer) {
 // Bot-/Crawler-Erkennung: grobe, konservative Liste bekannter Nicht-Menschen-User-Agents --
 // zieht die Aufrufzahlen NICHT kuenstlich hoch (waere bei einer "Monetarisierungs-
 // Ueberwachung" grimmig gesagt: Selbstbetrug ueber die eigene Reichweite).
-var BOT_RE = /bot|crawl|spider|slurp|bingpreview|facebookexternalhit|ahrefs|semrush|mj12|petalbot|yandex|baidu|duckduckbot|ia_archiver|uptime|monitor|pingdom|curl\/|python-requests|headlesschrome|aiohttp|axios\/|go-http-client|okhttp|libwww-perl|wget\/|scrapy|node-fetch|java\/|apache-httpclient|compatible;|checker|research/i;
+var BOT_RE = /bot|crawl|spider|slurp|bingpreview|facebookexternalhit|ahrefs|semrush|mj12|petalbot|yandex|baidu|duckduckbot|ia_archiver|uptime|monitor|pingdom|curl\/|python-requests|headlesschrome|aiohttp|axios\/|go-http-client|okhttp|libwww-perl|wget\/|scrapy|node-fetch|java\/|apache-httpclient|compatible;|checker|research|rankingcoach|rc-crawler/i;
 
 // Echte Browser senden IMMER einen User-Agent, der mit "Mozilla/" beginnt (historische
 // Konvention seit den 1990ern, bis heute ausnahmslos eingehalten) -- Rene-Fund 2026-11-16:
