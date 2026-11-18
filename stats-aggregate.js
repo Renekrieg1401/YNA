@@ -468,7 +468,10 @@ function hatFehlendenAcceptLanguage(e) {
 // echte Heimnetz-IP (diese Session laeuft lokal auf seinem Mac, jeder Curl-/Playwright-
 // Testaufruf lief darueber) -- fruehere Notiz "das ist Claudes Sandbox" war ein Irrtum,
 // hiermit korrigiert.
-var BEKANNTE_IPS = (process.env.BEKANNTE_IPS || '79.207.63.73').split(',').map(function (s) { return s.trim(); }).filter(Boolean);
+// 46.88.104.196 (Rene-Bestaetigung 2026-11-18): Deutsche Telekom, Dautphetal -- Renes
+// eigener Mac, live per Log-Korrelation identifiziert (60s-Polling-Muster passt exakt
+// zum eigenen Dashboard-Code) und von Rene explizit bestaetigt.
+var BEKANNTE_IPS = (process.env.BEKANNTE_IPS || '79.207.63.73,46.88.104.196').split(',').map(function (s) { return s.trim(); }).filter(Boolean);
 
 // User-Agent-Rotation pro IP (Rene-Fund 2026-11-16): dieselbe IP schickte innerhalb
 // kurzer Zeit zwei unterschiedliche Windows/Chrome-Kombinationen -- ein echtes
