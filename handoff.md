@@ -1,5 +1,43 @@
 # Handoff — Pflege-Faktencheck (ex Pflege-Fakten / YNA Digital), 2026-11-15
 
+## Nachtrag 2026-11-18 (29) — App-Icon zeigte nur "P" (iOS ignoriert SVG-apple-touch-icon)
+René-Fund: Nach dem Dashboard-App-Icon-Fix (Nachtrag 28) zeigte "Zum
+Home-Bildschirm" weiterhin nur einen Buchstaben-Platzhalter statt des
+Logos. Root-Cause: iOS Safari unterstützt bei `apple-touch-icon` nur
+echte Bilddateien (PNG), keine `data:image/svg+xml`-URIs — die SVG wurde
+komplett ignoriert, iOS generierte stattdessen selbst einen Platzhalter
+aus dem ersten Buchstaben des Seitentitels. Fix: echtes 180×180-PNG ohne
+Alphakanal (volle Deckkraft, Apple-Vorgabe) aus derselben Logo-SVG
+gerendert (`qlmanage` + Pillow-Alpha-Flatten), quadratischer statt
+kreisförmiger Hintergrund (iOS rundet die Ecken selbst). Browser-Tab-
+Favicon bleibt SVG (funktioniert dort zuverlässig). Gleicher Bug lag
+latent auch auf der öffentlichen Hauptseite vor (identischer SVG-Code,
+nur noch nicht bemerkt) — direkt mitbehoben: `dashboard/apple-touch-
+icon.png` + `apple-touch-icon.png` (Root). Live byte-identisch an beiden
+Stellen verifiziert. Commit `ae28e11`.
+
+## Nachtrag 2026-11-18 (28) — Dashboard: App-Icon/Favicon + Aufklapp-Box + Reload-Button
+Drei kleinere René-Aufträge im Anschluss an den Traffic-Bugfix:
+- **Aufklapp-Box:** "Verweildauer je Aufruf" von einer Dauer-sichtbaren
+  Section zu einem nativen `<details>`/`<summary>`-Element umgebaut
+  (Bronze-Pfeil-Marker, Karten-Optik beibehalten), Standard eingeklappt.
+  Commit `d9d8c8a`.
+- **"Seite neu laden"-Button:** Der bestehende "Aktualisieren"-Button
+  ruft nur `laden()` (stats.json neu laden) auf, nicht die Seite selbst.
+  Neuer zweiter Button (Outline-Stil, `location.reload()`) ergänzt für
+  den Fall einer zwischengespeicherten alten Seite. Zusätzlich
+  `Cache-Control: no-cache` für die Dashboard-Nginx-Location ergänzt
+  (Backup vorher angelegt), da vorher gar kein Cache-Header gesetzt war
+  — plausibelste Erklärung für ein früheres "Box reagiert nicht"-Problem
+  (Browser zeigte vermutlich noch die alte, vor dem Umbau ausgelieferte
+  Seite). Commits `726cde4`, Nginx-Reload verifiziert.
+- **App-Icon/Favicon:** Logo im Header war schon vorhanden, aber kein
+  Favicon/Home-Bildschirm-Icon gesetzt — 1:1 aus `index.html` übernommen
+  (GLOBAL_SOURCE_OF_TRUTH_MANDATE), eigener `apple-mobile-web-app-title`
+  "PFK Dashboard" zur Unterscheidung von der Hauptseite. Commit `5324255`
+  — **stellte sich im nächsten Schritt als unzureichend heraus, s.
+  Nachtrag 29 oben** (SVG-apple-touch-icon wird von iOS ignoriert).
+
 ## Nachtrag 2026-11-18 (27) — KRITISCH: Dashboard-Traffic-Bug behoben (2 Root-Causes)
 René-Fund: "Social-Media-Posts werden angesehen, Dashboard zeigt aber fast
 keine Besucher." Kein Raten — Diagnose direkt gegen die echten Produktions-
