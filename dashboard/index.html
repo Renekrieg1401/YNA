@@ -33,6 +33,11 @@
   .refresh-btn:active{transform:scale(.97)}
   .refresh-btn svg{width:15px;height:15px;transition:transform .4s ease}
   .refresh-btn.spin svg{transform:rotate(360deg)}
+  .reload-btn{display:inline-flex;align-items:center;gap:6px;font-size:.8rem;font-weight:700;color:var(--ink);
+    background:transparent;border:1px solid var(--line);border-radius:999px;
+    padding:10px 16px;min-height:44px;cursor:pointer;-webkit-appearance:none;appearance:none}
+  .reload-btn:active{transform:scale(.97)}
+  .reload-btn svg{width:15px;height:15px}
   .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:28px}
   .kpi{background:linear-gradient(135deg,var(--card),#1E2B40);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
   .kpi .label{font-size:.72rem;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
@@ -88,6 +93,10 @@
     <button type="button" class="refresh-btn" id="refresh-btn" aria-label="Jetzt aktualisieren">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
       Aktualisieren
+    </button>
+    <button type="button" class="reload-btn" id="reload-btn" aria-label="Seite neu laden" title="Lädt die komplette Seite neu (hilft, falls eine alte, zwischengespeicherte Version angezeigt wird)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.5 2v6h-6"/><path d="M2.5 22v-6h6"/><path d="M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.3"/></svg>
+      Seite neu laden
     </button>
     <span class="refresh-badge"><span class="dot"></span> <span id="refresh-text">lädt …</span></span>
   </header>
@@ -344,6 +353,15 @@
     btn.classList.add('spin');
     laden();
     setTimeout(function(){ btn.classList.remove('spin'); }, 450);
+  });
+  // Separater Button (Rene-Auftrag 2026-11-18): der "Aktualisieren"-Button oben laedt nur
+  // stats.json neu (laden()), nicht die Seite selbst (HTML/CSS/JS) -- bei einer evtl. noch
+  // zwischengespeicherten alten Version (z.B. "Zum Home-Bildschirm" auf iOS) hilft nur ein
+  // echter Seiten-Reload. location.reload() statt location.reload(true), da der veraltete
+  // Force-Parameter von Browsern laengst ignoriert wird -- das neue Cache-Control:no-cache
+  // auf dem Server stellt die Frische stattdessen sicher.
+  document.getElementById('reload-btn').addEventListener('click', function(){
+    location.reload();
   });
   // Beim Zurueckkehren aus dem Hintergrund (u.a. "Zum Home-Bildschirm"-PWA auf iOS pausiert
   // setInterval im Hintergrund und aktualisiert beim Wiederoeffnen nicht automatisch neu) --
