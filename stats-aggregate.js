@@ -228,7 +228,11 @@ function quelleFuerReferer(referer) {
 // Bot-/Crawler-Erkennung: grobe, konservative Liste bekannter Nicht-Menschen-User-Agents --
 // zieht die Aufrufzahlen NICHT kuenstlich hoch (waere bei einer "Monetarisierungs-
 // Ueberwachung" grimmig gesagt: Selbstbetrug ueber die eigene Reichweite).
-var BOT_RE = /bot|crawl|spider|slurp|bingpreview|facebookexternalhit|ahrefs|semrush|mj12|petalbot|yandex|baidu|duckduckbot|ia_archiver|uptime|monitor|pingdom|curl\/|python-requests|headlesschrome|aiohttp|axios\/|go-http-client|okhttp|libwww-perl|wget\/|scrapy|node-fetch|java\/|apache-httpclient|compatible;|checker|research|rankingcoach|rc-crawler/i;
+// Funde Forensik 2026-11-18: "ModatScanner" (modat.io, Internet-weiter Asset-Scanner)
+// und "Chrome-Lighthouse" (Googles Performance-Audit-Tool, fuehrt echtes JS aus,
+// kein Mensch) hatten KEIN Keyword-Match -- beide rutschten bisher nur ueber die
+// (jetzt gefixte) Accept-Language-Luecke durch, nicht ueber BOT_RE selbst.
+var BOT_RE = /bot|crawl|spider|slurp|bingpreview|facebookexternalhit|ahrefs|semrush|mj12|petalbot|yandex|baidu|duckduckbot|ia_archiver|uptime|monitor|pingdom|curl\/|python-requests|headlesschrome|aiohttp|axios\/|go-http-client|okhttp|libwww-perl|wget\/|scrapy|node-fetch|java\/|apache-httpclient|compatible;|checker|research|rankingcoach|rc-crawler|modatscanner|lighthouse|python-httpx/i;
 
 // Echte Browser senden IMMER einen User-Agent, der mit "Mozilla/" beginnt (historische
 // Konvention seit den 1990ern, bis heute ausnahmslos eingehalten) -- Rene-Fund 2026-11-16:
@@ -455,10 +459,32 @@ function parseZeile(line) {
 
 // Fehlender Accept-Language-Header ist ein starkes Bot-Signal -- echte Browser senden
 // ihn ausnahmslos automatisch mit jedem Request. 'null' (altes Log-Format vor der
-// Erweiterung 2026-11-16) zaehlt NICHT als verdaechtig, nur ein tatsaechlich leerer
-// String bei einer Zeile im neuen Format.
+// Erweiterung 2026-11-16) zaehlt NICHT als verdaechtig, nur ein tatsaechlich leerer/
+// fehlender Wert bei einer Zeile im neuen Format.
+//
+// KRITISCHER Fund (Forensik 2026-11-18): dieser Filter war seit Einfuehrung komplett
+// wirkungslos -- nginx schreibt einen fehlenden Header NICHT als leeren String (''),
+// sondern als literalen Bindestrich ('-') ins Log (Standardverhalten fuer alle leeren
+// Variablen, s. auch Referer "-"). Verifiziert am echten Server-Log: 459 von ~2200
+// Zeilen haben acceptLanguage === '-', GENAU 0 haben ''. Jeder Bot/Scanner ohne
+// Accept-Language-Header (CensysInspect, CMS-Checker, ModatScanner, Chrome-Lighthouse
+// u.a.) ist seit 2026-11-16 durch diese Luecke gerutscht, sofern kein anderer Filter
+// griff. Fix: beide Werte gelten als "fehlend".
 function hatFehlendenAcceptLanguage(e) {
-  return e.acceptLanguage === '';
+  return e.acceptLanguage === '' || e.acceptLanguage === '-';
+}
+
+// Fund (Forensik 2026-11-18, Rene-Auftrag "Aufruf-Probleme pruefen"): echte
+// Facebook/Instagram-Besucher landen mit angehaengtem "?fbclid=..."-Tracking-
+// Parameter auf der Startseite (Facebooks eigener Mechanismus, kein Bot-Signal)
+// -- der bisherige EXAKTE Pfadvergleich ('/' bzw. '/index.html') verwarf diese
+// Aufrufe komplett, obwohl JS_AUSGEFUEHRT_IPS/beacon-dauer/beacon-share fuer
+// dieselbe IP direkt danach echtes Browser-Verhalten belegen. 11 von 11 im
+// Live-Log gefundenen "/?..."-Aufrufen waren echte Browser, 0 Bots -- also
+// Unterzaehlung echter Menschen, nicht Ueberzaehlung von Bots.
+function pfadOhneQuery(pfad) {
+  var i = (pfad || '').indexOf('?');
+  return i === -1 ? pfad : pfad.slice(0, i);
 }
 
 // Bekannte eigene IP(s) -- Rene-Auftrag 2026-11-16 "meine IP als bekannt markieren und
@@ -483,7 +509,8 @@ function findeRotierendeUaIps(eintraege) {
   var uaProIp = {};
   eintraege.forEach(function (e) {
     if (e.methode !== 'GET' || e.status !== 200) return;
-    if (e.pfad !== '/' && e.pfad !== '/index.html') return;
+    var pfad = pfadOhneQuery(e.pfad);
+    if (pfad !== '/' && pfad !== '/index.html') return;
     if (!uaProIp[e.ip]) uaProIp[e.ip] = {};
     uaProIp[e.ip][e.userAgent] = true;
   });
@@ -523,7 +550,9 @@ function istEchterSeitenaufruf(e) {
   if (istCloudHostingIp(e.ip)) return false;
   if (BEKANNTE_IPS.indexOf(e.ip) !== -1) return false;
   // Nur echte Dokument-Aufrufe zaehlen, keine Assets/Favicons/robots.txt etc.
-  return e.pfad === '/' || e.pfad === '/index.html';
+  // pfadOhneQuery: s. Fund oben -- "?fbclid=..."/"?utm_..." ist kein Bot-Signal.
+  var pfad = pfadOhneQuery(e.pfad);
+  return pfad === '/' || pfad === '/index.html';
 }
 
 function istEchterDownload(e) {
@@ -536,7 +565,9 @@ function istEchterDownload(e) {
   if (hatFehlendenAcceptLanguage(e)) return false;
   if (istCloudHostingIp(e.ip)) return false;
   if (BEKANNTE_IPS.indexOf(e.ip) !== -1) return false;
-  return DOWNLOAD_PFADE.indexOf(e.pfad) !== -1;
+  // Konsistenz zu istEchterSeitenaufruf: ein geteilter Download-Link kann
+  // ebenso ein fbclid/utm-Anhaengsel tragen -- exakter Match wuerde das verwerfen.
+  return DOWNLOAD_PFADE.indexOf(pfadOhneQuery(e.pfad)) !== -1;
 }
 
 function istEchterShareBeacon(e) {
