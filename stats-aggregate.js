@@ -215,13 +215,20 @@ var SUCHMASCHINEN_RE = /google\.|bing\.|duckduckgo\.|yahoo\.|ecosia\.|startpage\
 var SOCIAL_MEDIA_RE = /facebook\.|instagram\.|twitter\.|\bx\.com|t\.co\b|tiktok\.|linkedin\.|pinterest\.|reddit\.|whatsapp\.|telegram\.|threads\.net|youtube\./i;
 var EIGENE_DOMAIN_RE = /pflege-faktencheck\.de/i;
 
+// Fund (testing-qa-Gegenpruefung 2026-11-18): EIGENE_DOMAIN_RE/SUCHMASCHINEN_RE/
+// SOCIAL_MEDIA_RE pruefen gegen den KOMPLETTEN Referer-String statt nur den Host --
+// Instagrams eigener Redirector (z.B. "https://l.instagram.com/?u=https%3A%2F%2F
+// pflege-faktencheck.de%2F...") enthaelt die eigene Domain als URL-kodierten
+// Querystring-Teil und wurde dadurch faelschlich als "Direkt" statt "Social Media"
+// gezaehlt. Jetzt: wenn der Referer als echte URL parsbar ist, zaehlt NUR der Host.
 function quelleFuerReferer(referer) {
   if (!referer || referer === '-') return { kategorie: 'Direkt', host: null };
-  if (EIGENE_DOMAIN_RE.test(referer)) return { kategorie: 'Direkt', host: null };
   var host = null;
   try { host = new URL(referer).hostname; } catch (e) { /* kaputter Referer-String, bleibt ohne Host */ }
-  if (SUCHMASCHINEN_RE.test(referer)) return { kategorie: 'Suchmaschine', host: host };
-  if (SOCIAL_MEDIA_RE.test(referer)) return { kategorie: 'Social Media', host: host };
+  var pruefstring = host || referer;
+  if (EIGENE_DOMAIN_RE.test(pruefstring)) return { kategorie: 'Direkt', host: null };
+  if (SUCHMASCHINEN_RE.test(pruefstring)) return { kategorie: 'Suchmaschine', host: host };
+  if (SOCIAL_MEDIA_RE.test(pruefstring)) return { kategorie: 'Social Media', host: host };
   return { kategorie: 'Sonstige Verweise', host: host };
 }
 
@@ -721,9 +728,15 @@ function main() {
     ? Math.round(verweildauerWerteMs.reduce(function (s, v) { return s + v; }, 0) / verweildauerWerteMs.length / 1000)
     : null;
 
+  // Fund (testing-qa-Gegenpruefung 2026-11-18): istEchterDownload() vergleicht bereits
+  // gegen pfadOhneQuery(e.pfad), aber hier wurde weiterhin der ROHE Pfad (inkl. evtl.
+  // Query-String) als Schluessel verwendet -- ein Download mit angehaengtem Tracking-
+  // Parameter haette den Filter bestanden, waere aber beim Nachschlagen gegen die
+  // saubere DOWNLOAD_PFADE-Liste (Zeile ~780) spurlos verschwunden. Jetzt konsistent.
   var downloadsProDatei = {};
   eintraege.filter(istEchterDownload).forEach(function (e) {
-    downloadsProDatei[e.pfad] = (downloadsProDatei[e.pfad] || 0) + 1;
+    var p = pfadOhneQuery(e.pfad);
+    downloadsProDatei[p] = (downloadsProDatei[p] || 0) + 1;
   });
 
   var teilenProPlattform = {};
