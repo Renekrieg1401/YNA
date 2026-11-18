@@ -39,6 +39,15 @@ beim Extrahieren aber nicht übernommen wurde). Wäre ein separater,
 kleiner Nachbesserungsauftrag (Apple-CSV-Länderspalte statt geoip-lite
 für genau diese IP-Bereiche nutzen).
 
+**Sofort nachgezogen (René-Wunsch, selber Tag):** genau diese Länder-
+Korrektur umgesetzt — `apple-private-relay-laender.txt` (41.831
+CIDR→Länderkürzel-Zeilen aus Apples eigener CSV) + neuer `landFuerIp()`-
+Helper, der Apples eigene Länderangabe zuerst prüft, sonst auf
+`geoip-lite` zurückfällt. Stadt/Bundesland bleiben für Relay-IPs bewusst
+„unbekannt" statt geraten (Apples Liste liefert kein Stadtfeld). Live
+verifiziert: 17 der 19 echten Aufrufe zeigten vorher „US", jetzt korrekt
+„DE" — Gesamtzahl unverändert. Commit `d40e249`, gepusht.
+
 ## Nachtrag 2026-11-17 (26) — Drucken-Button entfernt
 René-Direktive 1:1 umgesetzt: Button + zugehöriges CSS (Basis-Styles,
 Mobile-Breakpoint-Position) entfernt. Textverweis im Antrags-Fahrplan
