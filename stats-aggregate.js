@@ -354,7 +354,42 @@ function istInHostingListe(ip) {
   return HOSTING_RANGES.some(function (bereich) { return (ipInt & bereich.maske) === bereich.netz; });
 }
 
+// Apple iCloud Private Relay (Rene-Fund 2026-11-18): echte iPhone-Besucher mit
+// aktiviertem Private Relay erscheinen mit Fastly-/Akamai-Egress-IPs, die auf der
+// X4BNet-Hosting-Liste korrekt als Rechenzentrum gelistet sind -- fuer normale Bot-
+// Erkennung richtig, hier aber ein echter Mensch hinter einer Datenschutzfunktion.
+// Quelle: Apples eigene, offizielle Liste https://mask-api.icloud.com/egress-ip-ranges.csv
+// (einmalig geladen, lokal gebuendelt wie hosting-ranges.txt, kein Live-API-Call pro
+// Besucher-IP). Bewusst NUR aus dem Hosting-Flag herausgenommen, nicht komplett von
+// allen Bot-Checks befreit -- ROTIERENDE_UA/BOT_RE/Accept-Language greifen unverändert.
+var APPLE_RELAY_RANGES = (function () {
+  var pfad = path.join(__dirname, 'apple-private-relay-ranges.txt');
+  var zeilen;
+  try { zeilen = fs.readFileSync(pfad, 'utf8').split('\n'); } catch (e) { return []; }
+  var ergebnis = [];
+  zeilen.forEach(function (zeile) {
+    var z = zeile.trim();
+    if (!z || z.indexOf('/') === -1) return;
+    var teile = z.split('/');
+    var ipTeile = teile[0].split('.').map(Number);
+    if (ipTeile.length !== 4 || ipTeile.some(function (n) { return isNaN(n) || n < 0 || n > 255; })) return;
+    var netzInt = ((ipTeile[0] << 24) | (ipTeile[1] << 16) | (ipTeile[2] << 8) | ipTeile[3]) >>> 0;
+    var praefix = parseInt(teile[1], 10);
+    if (isNaN(praefix) || praefix < 0 || praefix > 32) return;
+    var maske = praefix === 0 ? 0 : (0xFFFFFFFF << (32 - praefix)) >>> 0;
+    ergebnis.push({ netz: netzInt & maske, maske: maske });
+  });
+  return ergebnis;
+})();
+
+function istAppleRelayIp(ip) {
+  var ipInt = ipv4ZuInt(ip);
+  if (ipInt === null) return false;
+  return APPLE_RELAY_RANGES.some(function (bereich) { return (ipInt & bereich.maske) === bereich.netz; });
+}
+
 function istCloudHostingIp(ip) {
+  if (istAppleRelayIp(ip)) return false;
   return CLOUD_IP_PREFIXE.some(function (re) { return re.test(ip); })
     || BEKANNTE_HOSTING_IPS.indexOf(ip) !== -1
     || istInHostingListe(ip);
@@ -427,7 +462,7 @@ var JS_AUSGEFUEHRT_IPS = {};
 function findeJsAusgefuehrtIps(eintraege) {
   var ergebnis = {};
   eintraege.forEach(function (e) {
-    if (e.methode === 'GET' && e.pfad === '/beacon-geladen' && e.status === 204) {
+    if (e.methode === 'POST' && e.pfad === '/beacon-geladen' && e.status === 204) {
       ergebnis[e.ip] = true;
     }
   });
@@ -464,7 +499,7 @@ function istEchterDownload(e) {
 function istEchterShareBeacon(e) {
   if (ROTIERENDE_UA_IPS[e.ip]) return false;
   if (!JS_AUSGEFUEHRT_IPS[e.ip]) return false;
-  if (e.methode !== 'GET') return false;
+  if (e.methode !== 'POST') return false;
   if (e.status !== 204) return false;
   if (BOT_RE.test(e.userAgent)) return false;
   if (!hatEchtesBrowserPraefix(e.userAgent)) return false;
@@ -546,7 +581,7 @@ function main() {
   var verweildauerWerteMs = [];
   var verweildauerListe = [];
   eintraege.forEach(function (e) {
-    if (e.methode !== 'GET' || BOT_RE.test(e.userAgent)) return;
+    if (e.methode !== 'POST' || BOT_RE.test(e.userAgent)) return;
     if (!hatEchtesBrowserPraefix(e.userAgent) || hatFehlendenAcceptLanguage(e)) return;
     if (istCloudHostingIp(e.ip) || BEKANNTE_IPS.indexOf(e.ip) !== -1 || ROTIERENDE_UA_IPS[e.ip]) return;
     var m = VERWEILDAUER_RE.exec(e.pfad);
