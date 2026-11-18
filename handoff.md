@@ -1,5 +1,32 @@
 # Handoff — Pflege-Faktencheck (ex Pflege-Fakten / YNA Digital), 2026-11-15
 
+## Nachtrag 2026-11-18 (30) — Kritische Bot-Prüfung: 2 von 20 Aufrufen waren SEO-Bot, 1 Verdachtsfall entkräftet
+René-Auftrag: "Verdacht auf nicht echte Personen" bei den Länder US/RU/LV
+gezielt nachprüfen. Ergebnis, grimmig: **zwei der bis dahin 20 gezählten
+"echten" Aufrufe waren tatsächlich kein Mensch.**
+- **185.237.96.165 ("unbekannt") + 195.88.191.119 ("RU"):** beide
+  identischer User-Agent `...Firefox/155.0 rankingcoach` — keine
+  Vermutung, der Bot nennt sich im Rohlog wörtlich selbst beim Namen
+  (kommerzielle SEO-Rank-Tracking-Software). Per `ip-api.com`-Gegencheck
+  bestätigt: beide auf VPS-Hosting (Kamatera/GWY IT, tatsächlicher
+  Standort Frankfurt, nicht RU) — bisher durchgerutscht, weil diese
+  beiden VPS-Anbieter nicht in der X4BNet-Hosting-Liste stehen. Fix:
+  `rankingcoach` + `rc-crawler` direkt in `BOT_RE` ergänzt. Verifiziert:
+  Gesamtaufrufe 20 → 18, RU- und "unbekannt"-Länder verschwinden
+  vollständig (waren ausschließlich dieser eine Bot). Commit `e354af1`.
+- **213.110.68.3 ("LV"):** geprüft, aber NICHT als Bot eingestuft —
+  echter deutscher ISP (1&1 Versatel, kein Hosting/VPS laut
+  ip-api.com), feuerte einen echten JS-Beacon (4,2s Verweildauer) und
+  lud zusätzlich `apple-touch-icon.png` nach — beides Verhalten, das ein
+  einfacher Scraper normalerweise nicht zeigt. Länderlabel "LV" ist
+  vermutlich eine einzelne `geoip-lite`-Fehlzuordnung (gleiche
+  Fehlerklasse wie der bereits behobene Private-Relay-Fall), aber nur
+  ein Einzelfall — keine neue systematische Korrektur gebaut, nur hier
+  dokumentiert. Bleibt in den 18 echten Aufrufen enthalten.
+- **Verbleibende 17 "DE"-Aufrufe:** nicht neu geprüft in dieser Runde —
+  bereits in Nachtrag 27/28 einzeln per `ip-api.com` verifiziert
+  (überwiegend Apple-iCloud-Private-Relay-iPhones).
+
 ## Nachtrag 2026-11-18 (29) — App-Icon zeigte nur "P" (iOS ignoriert SVG-apple-touch-icon)
 René-Fund: Nach dem Dashboard-App-Icon-Fix (Nachtrag 28) zeigte "Zum
 Home-Bildschirm" weiterhin nur einen Buchstaben-Platzhalter statt des
