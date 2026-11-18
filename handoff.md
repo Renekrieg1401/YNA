@@ -1,5 +1,43 @@
 # Handoff — Pflege-Faktencheck (ex Pflege-Fakten / YNA Digital), 2026-11-15
 
+## Nachtrag 2026-11-18 (31) — Verweildauer-Liste zeigte ~41 statt max. 20 Einträge
+René-Fund: "Gesamtaufrufe 20, in der Liste sind ca. 40, was ist da los."
+Root-Cause per Rohlog verifiziert (nicht geraten): dieselbe IP feuert
+mehrfach `/beacon-dauer` für denselben Seitenaufruf — Beispiel
+`104.28.62.43`: ein `GET / 200` um 14:27:31, aber ZWEI `beacon-dauer`-POSTs
+um 14:27:31 und 14:28:13 (6.225ms, dann 42.185ms). Bei anderen IPs bis zu
+14 Beacons für vermutlich eine einzige lange Lesesitzung. Der clientseitige
+`gesendet`-Dedup-Flag (`visibilitychange`+`pagehide` teilen sich eine
+Closure-Variable, s. `index.html` Zeile ~3781-3794) wird bei iOS Safaris
+App-Wechsel-/Backgrounding-Zyklus nicht zuverlässig respektiert — konkrete
+WebKit-Innenursache nicht abschließend bestimmbar, aber das Muster
+(mehrere ansteigende ms-Werte derselben IP kurz hintereinander) ist im Log
+eindeutig belegt.
+- **[ERLEDIGT] Fix (serverseitig, Client-JS bewusst unverändert, da die
+  genaue Browser-Ursache nicht zuverlässig fixierbar ist):**
+  `stats-aggregate.js` — jeder Beacon wird jetzt dem zeitlich nächsten
+  vorherigen ECHTEN, bereits gefilterten Aufruf derselben IP zugeordnet
+  (4h-Fenster); mehrere Beacons für denselben Aufruf werden zu einem
+  Eintrag zusammengefasst (längster Wert = vollständigste Messung). Ein
+  Beacon ohne zugehörigen gezählten Aufruf zählt nicht mehr mit.
+- **[ERLEDIGT] Verifikation:** gegen eine lokale Kopie des echten
+  Produktions-Logs getestet (nicht gegen synthetische Daten) —
+  `verweildauerAnzahlMessungen` 41 → 12 (jetzt ≤ `gesamtAufrufe`=20, wie es
+  strukturell sein muss), `gesamtAufrufe` selbst unverändert (diese Logik
+  wurde nicht angefasst). Live deployed und am echten `stats.json`
+  bestätigt. Commit `e4f966b`, gepusht.
+- **[OFFEN]:** Nur 12 von 20 echten Aufrufen haben überhaupt eine
+  Verweildauer-Messung — die übrigen 8 haben vermutlich nie einen Beacon
+  gesendet (z. B. App komplett geschlossen/Prozess beendet statt normal
+  verlassen, bei dem `pagehide`/`visibilitychange` nicht zuverlässig
+  feuern). Das ist eine bekannte Grenze von `sendBeacon`, keine neue
+  Fehlerquelle — nicht weiter behoben, da kein zuverlässigerer
+  JS-Mechanismus ohne Drittanbieter-Tracking existiert.
+- **[KORREKTUR-POTENZIAL → bereits geprüft, kein Fund]:** Geprüft, ob eine
+  zweite `stats-aggregate.js`-Kopie existiert (CLAUDE.md erwähnte früher
+  einen `dashboard/`-Ordner) — im aktuellen Repo-Stand gibt es nur die eine
+  Root-Datei, kein zweiter Pflegepunkt übersehen.
+
 ## Nachtrag 2026-11-18 (30) — Kritische Bot-Prüfung: 2 von 20 Aufrufen waren SEO-Bot, 1 Verdachtsfall entkräftet
 René-Auftrag: "Verdacht auf nicht echte Personen" bei den Länder US/RU/LV
 gezielt nachprüfen. Ergebnis, grimmig: **zwei der bis dahin 20 gezählten
