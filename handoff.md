@@ -1,5 +1,44 @@
 # Handoff — Pflege-Faktencheck (ex Pflege-Fakten / YNA Digital), 2026-11-15
 
+## Nachtrag 2026-11-18 (27) — KRITISCH: Dashboard-Traffic-Bug behoben (2 Root-Causes)
+René-Fund: "Social-Media-Posts werden angesehen, Dashboard zeigt aber fast
+keine Besucher." Kein Raten — Diagnose direkt gegen die echten Produktions-
+Filterfunktionen auf dem Server (`eval()` der realen `stats-aggregate.js`
+gegen das echte Rohlog), mehrere Diagnoseskripte nacheinander.
+**Root-Cause 1 (eigener Fehler aus dem Beacon-System-Bau):**
+`navigator.sendBeacon()` sendet laut Spec IMMER HTTP POST — drei Filter
+(`findeJsAusgefuehrtIps`, `istEchterShareBeacon`, Verweildauer-Block)
+prüften fälschlich auf GET. `JS_AUSGEFUEHRT_IPS` blieb dadurch praktisch
+immer leer → die gesamte echte-Besucher-/Download-/Share-/Verweildauer-
+Zählung war seit Bau des Beacon-Systems lahmgelegt. Fix: alle drei Stellen
+auf POST korrigiert. Live-Test: Gesamtaufrufe 0 → 2.
+**Root-Cause 2 (Apple iCloud Private Relay):** nach Fix 1 immer noch nur
+2 von 150 Kandidaten-IPs durchgelassen — ROTIERENDE_UA-Treffer einzeln
+geprüft (alle echte Bot-Muster: "rc-crawler"-UA, Googlebot, fiktive
+Zukunfts-Chrome-Versionen, Hetzner/AWS-Ranges — keine falschen Treffer).
+HOSTING_IP-Treffer einzeln per `ip-api.com`-Gegencheck geprüft: 4 von 16
+Kandidaten sind Fastly-/Akamai-Egress-IPs mit `org:"iCloud Private Relay"`,
+`country:"Germany"` — echte iPhone-Nutzer mit aktivierter Datenschutz-
+funktion, fälschlich als Rechenzentrum/Bot geblockt. Fix: Apples eigene
+offizielle Egress-Liste (`mask-api.icloud.com/egress-ip-ranges.csv`)
+lokal gebündelt (`apple-private-relay-ranges.txt`, 41.831 Bereiche,
+gleiches Offline-Prinzip wie `hosting-ranges.txt`), neue Funktion
+`istAppleRelayIp()` nimmt NUR das Hosting-Flag heraus — ROTIERENDE_UA/
+BOT_RE/Accept-Language greifen für diese IPs unverändert weiter.
+**Verifiziertes Ergebnis seit 2026-11-16:** 19 echte Seitenaufrufe, 6
+eindeutige Besucher-IPs, 32 echte Verweildauer-Messungen (Ø 19s, ein
+Besuch mit 191s echtem Engagement), 1 echter Flyer-Download, 4 echte
+Facebook-Share-Klicks. Commit `8825746`, gepusht, Server-Deploy via `scp`
+verifiziert (`node --check` + Live-Lauf).
+**Bekannte Rest-Ungenauigkeit (nicht in diesem Fix behoben, nur
+Länder-Statistik betroffen, nicht die Besucher-Zählung):** Private-
+Relay-Besuche zeigen im Dashboard oft "US" statt dem echten Egress-Land,
+weil `geoip-lite` die Fastly/Akamai-Blöcke anders geolokalisiert als
+Apples eigene CSV (die pro Bereich ein echtes Länderkürzel mitliefert,
+beim Extrahieren aber nicht übernommen wurde). Wäre ein separater,
+kleiner Nachbesserungsauftrag (Apple-CSV-Länderspalte statt geoip-lite
+für genau diese IP-Bereiche nutzen).
+
 ## Nachtrag 2026-11-17 (26) — Drucken-Button entfernt
 René-Direktive 1:1 umgesetzt: Button + zugehöriges CSS (Basis-Styles,
 Mobile-Breakpoint-Position) entfernt. Textverweis im Antrags-Fahrplan
