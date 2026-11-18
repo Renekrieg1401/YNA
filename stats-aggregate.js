@@ -617,12 +617,43 @@ function main() {
   });
 
   // Verweildauer je einzelnem Aufruf (Rene-Auftrag 2026-11-16 Nachtrag: "pro User",
-  // nicht nur der Durchschnitt). Dieselben Bot-/Cloud-/Bekannte-IP-Filter wie bei den
-  // Seitenaufrufen, damit kein Bot-Beacon die Liste verfaelscht. KEINE rohe IP in der
-  // Ausgabe -- nur Land (wie in den uebrigen Dashboard-Bereichen auch), konsistent mit
-  // dem bisherigen Datenschutz-Ansatz dieses Dashboards.
-  var verweildauerWerteMs = [];
-  var verweildauerListe = [];
+  // nicht nur der Durchschnitt). KEINE rohe IP in der Ausgabe -- nur Land (wie in den
+  // uebrigen Dashboard-Bereichen auch), konsistent mit dem bisherigen Datenschutz-
+  // Ansatz dieses Dashboards.
+  //
+  // Fix (Rene-Fund 2026-11-18): Liste zeigte ~41 Eintraege bei nur 20 echten Aufrufen.
+  // Ursache per Rohlog verifiziert (nicht geraten): dieselbe IP feuert mehrfach
+  // /beacon-dauer fuer denselben Seitenaufruf (z.B. 104.28.62.43: ein GET / 200 um
+  // 14:27:31, dann ZWEI beacon-dauer-POSTs um 14:27:31 und 14:28:13 -- iOS Safaris
+  // visibilitychange/pagehide-Zyklus bei App-Wechseln feuert das clientseitige
+  // "gesendet"-Dedup-Flag nicht zuverlaessig aus). Jeder Beacon wird jetzt dem
+  // zeitlich naechsten VOR ihm liegenden echten Aufruf (aufrufe, bereits gefiltert)
+  // derselben IP zugeordnet (Fenster 4h); mehrere Beacons fuer denselben Aufruf
+  // werden zu einem Eintrag zusammengefasst (laengster Wert = vollstaendigste
+  // Messung). Ein Beacon ohne zugehoerigen gezaehlten Aufruf zaehlt nicht mit.
+  var MAX_BEACON_ZUORDNUNG_MS = 4 * 60 * 60 * 1000;
+  var aufrufeNachIp = {};
+  aufrufe.forEach(function (e) {
+    var dt = parseNginxZeit(e.zeit);
+    if (!dt) return;
+    (aufrufeNachIp[e.ip] = aufrufeNachIp[e.ip] || []).push(dt.getTime());
+  });
+  Object.keys(aufrufeNachIp).forEach(function (ip) {
+    aufrufeNachIp[ip].sort(function (a, b) { return a - b; });
+  });
+  function findeZugehoerigenAufruf(ip, beaconZeitMs) {
+    var liste = aufrufeNachIp[ip];
+    if (!liste) return null;
+    var treffer = null;
+    for (var i = 0; i < liste.length; i++) {
+      if (liste[i] <= beaconZeitMs && (beaconZeitMs - liste[i]) <= MAX_BEACON_ZUORDNUNG_MS) {
+        treffer = liste[i];
+      }
+    }
+    return treffer;
+  }
+
+  var verweildauerProAufruf = {};
   eintraege.forEach(function (e) {
     if (e.methode !== 'POST' || BOT_RE.test(e.userAgent)) return;
     if (!hatEchtesBrowserPraefix(e.userAgent) || hatFehlendenAcceptLanguage(e)) return;
@@ -631,18 +662,27 @@ function main() {
     if (!m) return;
     var ms = parseInt(m[1], 10);
     if (!(ms > 0 && ms < MAX_PLAUSIBLE_VERWEILDAUER_MS)) return;
-    verweildauerWerteMs.push(ms);
+    var dt = parseNginxZeit(e.zeit);
+    if (!dt) return;
+    var aufrufZeitMs = findeZugehoerigenAufruf(e.ip, dt.getTime());
+    if (aufrufZeitMs === null) return;
     var land = 'unbekannt';
     if (istGueltigeIp(e.ip)) {
       var geo = landFuerIp(e.ip);
       land = (geo && geo.country) || 'unbekannt';
     }
-    var dt = parseNginxZeit(e.zeit);
-    verweildauerListe.push({
-      zeit: dt ? dt.toISOString() : null,
-      land: land,
-      sekunden: Math.round(ms / 1000)
-    });
+    var key = e.ip + '|' + aufrufZeitMs;
+    var bestehend = verweildauerProAufruf[key];
+    if (!bestehend || ms > bestehend.ms) {
+      verweildauerProAufruf[key] = { ms: ms, land: land, zeit: new Date(aufrufZeitMs).toISOString() };
+    }
+  });
+  var verweildauerWerteMs = [];
+  var verweildauerListe = [];
+  Object.keys(verweildauerProAufruf).forEach(function (key) {
+    var v = verweildauerProAufruf[key];
+    verweildauerWerteMs.push(v.ms);
+    verweildauerListe.push({ zeit: v.zeit, land: v.land, sekunden: Math.round(v.ms / 1000) });
   });
   verweildauerListe.sort(function (a, b) { return (b.zeit || '').localeCompare(a.zeit || ''); });
   verweildauerListe = verweildauerListe.slice(0, 50); // letzte 50, Payload-Groesse begrenzen
