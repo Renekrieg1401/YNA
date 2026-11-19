@@ -25,9 +25,35 @@ offen benannten Punkte.
 - **[ERLEDIGT] Deploy:** `git push` (Commits `4c76442`, `27fee2c`) +
   `scp` nach `/var/www/pflege-fakten/index.html`, live verifiziert
   (238 `<h4>`-Tags via Browser-UA-curl, Dateigröße identisch zu lokal).
-- **[OFFEN]:** AVV-Prüfung (Auftragsverarbeitungsvertrag/Art. 28 DSGVO)
-  für den privaten Gmail-SMTP-Newsletterversand — noch nicht begonnen,
-  s. unten.
+- **[ERLEDIGT] AVV-Prüfung (Auftragsverarbeitungsvertrag/Art. 28 DSGVO):**
+  primärquellen-verifiziert gegen Googles eigenen Workspace-DPA-Vertragstext
+  — ein kostenloses `@gmail.com`-Konto bietet KEINEN AVV, nur zahlende
+  Workspace-Kunden erhalten diesen. René-Entscheidung (3 Optionen
+  vorgelegt): Wechsel zu Brevo (kostenloser Tarif, 300 Mails/Tag, AVV
+  automatisch im Setup, Rechenzentrum Deutschland).
+  - `mailer.js`: SMTP-Transport auf `smtp-relay.brevo.com` umgestellt,
+    neue Env-Vars `BREVO_SMTP_LOGIN`/`BREVO_SMTP_KEY`/`MAIL_FROM`.
+  - Datenschutzerklärung (Punkt 5+7): Brevo GmbH (Köpenicker Str. 126,
+    10179 Berlin) als Auftragsverarbeiter benannt — Nebenbefund dabei
+    behoben: Punkt 7 behauptete bisher fälschlich "keine Weitergabe an
+    Dritte", ohne den damaligen Gmail-Versand zu erwähnen.
+  - Server-`.env`: alte `SMTP_USER`/`SMTP_APP_PASSWORD` (Gmail-App-
+    Passwort) durch leere `BREVO_SMTP_LOGIN`/`BREVO_SMTP_KEY`-Platzhalter
+    ersetzt, Backup vor Änderung angelegt (`.env.bak-2026-11-19-brevo-
+    migration`), Service neu gestartet (bleibt stabil ohne Credentials,
+    `buildTransport()` liefert `null`, kein Crash).
+  - Commit `eebf7dc`, gepusht + live deployed (index.html + mailer.js),
+    live verifiziert (Text online, Service aktiv, 0 Fehler im Log).
+- **[OFFEN]:** René muss selbst einen Brevo-Account anlegen, den Absender
+  `pflegefaktencheck@gmail.com` per Single-Sender-Verifizierung bestätigen,
+  SMTP-Zugangsdaten erzeugen (SMTP & API → SMTP) und in
+  `/opt/pflege-fakten-server/.env` (`BREVO_SMTP_LOGIN`/`BREVO_SMTP_KEY`)
+  eintragen — **bis dahin versendet der Server GAR KEINE Mails mehr**
+  (weder Newsletter noch Draft-Benachrichtigungen), das alte Gmail-
+  App-Passwort ist nicht mehr verdrahtet. Altes Gmail-App-Passwort
+  (`ruflxgyxdqrbnuqp`, war im Klartext in der alten `.env`) sollte bei
+  Gelegenheit in den Google-Kontoeinstellungen widerrufen werden — wird
+  durch diesen Umstieg funktional nicht mehr gebraucht.
 
 ## Nachtrag 2026-11-19 (33) — Alle WICHTIG/KRITISCH-Funde aus Nachtrag 32 umgesetzt + Testmodus-Flag + 2 Folgefunde live behoben
 René-Freigabe "Ja" zur vollständigen Umsetzung der Nachtrag-32-Liste.
