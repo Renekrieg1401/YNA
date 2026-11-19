@@ -1,5 +1,82 @@
 # Handoff — Pflege-Faktencheck (ex Pflege-Fakten / YNA Digital), 2026-11-15
 
+## Nachtrag 2026-11-19 (33) — Alle WICHTIG/KRITISCH-Funde aus Nachtrag 32 umgesetzt + Testmodus-Flag + 2 Folgefunde live behoben
+René-Freigabe "Ja" zur vollständigen Umsetzung der Nachtrag-32-Liste.
+- **[ERLEDIGT] Kontrast (2 KRITISCH):** `.flyer-btn`/`.nl-submit` nutzten
+  den 3-Stopp-Bronze-Gradient als Text-Hintergrund (fiel am dunklen Stopp
+  auf 2.04:1) — ersetzt durch den bereits existierenden `--primary`-
+  Solidton (4.56:1, rechnerisch verifiziert, identisches Muster wie
+  `.settings-btn`/`.side-tab`/`.situation-btn` in derselben Datei).
+  Dashboard `.refresh-btn` (2.93:1→6.56:1) und `.kpi .value.bronze`
+  (1.50:1→3.36–7.72:1) analog korrigiert.
+- **[ERLEDIGT] Doppeltes `</html>`-Tag** entfernt.
+- **[ERLEDIGT] Barrierefreiheitserklärung** korrigiert: Kontrast-Aussage
+  war objektiv falsch, jetzt mit Datum richtiggestellt + Heading-
+  Hierarchie-Lücke (h3 für 2 Ebenen, alle 28 Themen betroffen) ehrlich als
+  bekannt/unbehoben dokumentiert statt verschwiegen — **die Heading-
+  Hierarchie selbst wurde NICHT behoben** (Umfang: 437 h3-Stellen,
+  bewusst nicht in dieser Runde angefasst, s. Offene Punkte).
+- **[ERLEDIGT] AGB-Button/Modal** auf "Nutzungsbedingungen" umbenannt
+  (widersprach vorher dem eigenen Inhalt).
+- **[ERLEDIGT] "Monetarisierungs-Dashboard"** → "Besucher-Dashboard"
+  (Title, H1, Code-Kommentare) — kein Einnahme-Mechanismus existiert.
+- **[ERLEDIGT] Newsletter-Rate-Limit:** In-Memory-Sliding-Window (5/IP/10
+  Min.) gegen Mail-Bombing — live verifiziert (429 ab 6. Versuch).
+- **[ERLEDIGT] Subscriber-Enumeration geschlossen:** alle Erfolgsfälle
+  liefern jetzt dieselbe generische Antwort ("request_received") statt
+  zu verraten, ob eine Adresse bereits Abonnent ist. Frontend-Text
+  entsprechend angepasst (keine Änderung am Double-Opt-In-Ablauf selbst).
+- **[ERLEDIGT] Newsletter-DB-Backup:** neues `backup-newsletter-db.js`
+  (`sqlite3 .backup`, WAL-sicher, 14-Tage-Retention) + systemd-Timer
+  `pflege-fakten-backup.timer` (täglich, analog Cleanup-Timer) — live
+  getestet (57KB, Rechte 600).
+- **[ERLEDIGT] Newsletter-DB-Dateirechte** `644`→`600` (inkl. `-shm`/
+  `-wal`), zusätzlich `UMask=0077` im systemd-Service ergänzt, damit
+  künftig neu erzeugte Dateien automatisch restriktiv sind statt sich
+  auf einen einmaligen `chmod` zu verlassen.
+- **[ERLEDIGT] Security-Header** (CSP/X-Frame-Options/HSTS/Referrer-
+  Policy/X-Content-Type-Options) via neues nginx-Snippet
+  `/etc/nginx/snippets/pfk-security-headers.conf`, in allen 3 relevanten
+  `location`-Blöcken eingebunden (nginx überschreibt `add_header` pro
+  Location, nicht additiv — Snippet daher explizit mehrfach eingebunden).
+  CSP erlaubt bewusst `'unsafe-inline'` für Script/Style (Seite nutzt
+  durchgängig Inline-`<script>`, keine externe Bundle-Umstellung in
+  dieser Runde) + Google Fonts, blockiert aber echte Lücken (Framing,
+  Plugin-Embeds, Base-Tag-Injection, Formular-Exfiltration). Playwright-
+  verifiziert: 0 Konsolenfehler, Fonts laden, Dashboard-KPI rendert.
+
+**[ERLEDIGT, separater René-Fund während der Umsetzung] Testmodus-Flag
+gegen Apple-Private-Relay-Fehlzählung:** René fragte "haben Social-Media-
+Klicks mein Gerät erfasst?" — bestätigt per Rohlog: 9 Share-Klicks in 5
+Minuten von 3 verschiedenen `104.28.62.x`-IPs = ein Gerät (sein iPhone)
+über Apple Private Relay, dessen sichtbare IP sogar innerhalb einer
+einzigen Testsitzung mehrfach wechselt — die feste `BEKANNTE_IPS`-Liste
+kann das strukturell nicht abfangen. Fix: einmaliger Aufruf mit
+`?rktest=1` setzt ein dauerhaftes `localStorage`-Flag auf seinem Gerät;
+alle Beacons (geladen/dauer/share) hängen danach `&rktest=1` an,
+unabhängig von der aktuellen IP. Aggregator erkennt und schließt das in
+allen 4 Zählstellen aus. Verifiziert gegen das echte Log + injizierte
+Testzeilen: 0 Impact auf `gesamtAufrufe`/`teilenProPlattform`.
+
+**[KORREKTUR-POTENZIAL, im eigenen Rollout gefunden]:** Beim Deployen des
+Rate-Limit-Fixes zunächst vergessen, `server.js` tatsächlich per `scp` auf
+den Server zu kopieren (nur `systemctl restart` auf dem alten Code) —
+beim Live-Test (6 Anfragen, erwartet 429 ab #6, bekam aber 6× 400)
+aufgefallen, nachgeholt, danach korrekt verifiziert. Lektion: ein
+Service-Neustart beweist nicht, dass der neue Code lief — Deploy-Schritt
+nicht überspringen, auch wenn er "offensichtlich" schon erledigt scheint.
+
+**[OFFEN]:**
+- Heading-Hierarchie-Flachung (h3 für 2 Ebenen) — nicht behoben, Umfang
+  437 Stellen über alle 28 Themen, eigener Folgeauftrag nötig.
+- AVV-Prüfung für den privaten Gmail-SMTP-Versand (business-consultant-
+  Fund) — reine Rechtsfrage, kein Code-Fix, nicht in dieser Runde geklärt.
+- Kein zweiter `testing-qa`/`security-privacy`-Gegenprüfer-Lauf für diese
+  Fix-Runde (Score <6 pro Einzelfix, nur Claude direkt + eigene
+  Live-Verifikation je Änderung).
+
+## Nachtrag 2026-11-18 (32) — Breite Agentenkette "Dashboard+Webseite, alle Lücken" + 2 Zähl-Bugs gefunden/behoben, die echte Menschen UNTERZÄHLT haben
+
 ## Nachtrag 2026-11-18 (32) — Breite Agentenkette "Dashboard+Webseite, alle Lücken" + 2 Zähl-Bugs gefunden/behoben, die echte Menschen UNTERZÄHLT haben
 René-Auftrag: alle verdeckten Lücken/Fehler über Dashboard+Webseite prüfen
 lassen, zusätzlich gezielt "Aufruf-Probleme" + Bot-Barrieren, da die
