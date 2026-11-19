@@ -42,7 +42,9 @@
     background:rgba(124,147,184,.1);border:1px solid var(--line);border-radius:999px;padding:4px 10px;margin-left:auto}
   .dot{width:7px;height:7px;border-radius:50%;background:var(--ok)}
   .refresh-btn{display:inline-flex;align-items:center;gap:6px;font-size:.8rem;font-weight:700;color:var(--ink);
-    background:linear-gradient(135deg,var(--bronze1),var(--bronze2));border:none;border-radius:999px;
+    /* a11y-Fix (2026-11-19): bronze1->bronze2-Gradient faellt am bronze2-Ende auf 2.93:1
+       gegen den hellen --ink-Text -- solider bronze1 (6.56:1) statt Gradient. */
+    background:var(--bronze1);border:none;border-radius:999px;
     padding:10px 16px;min-height:44px;cursor:pointer;-webkit-appearance:none;appearance:none}
   .refresh-btn:active{transform:scale(.97)}
   .refresh-btn svg{width:15px;height:15px;transition:transform .4s ease}

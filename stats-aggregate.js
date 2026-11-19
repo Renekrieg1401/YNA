@@ -450,7 +450,7 @@ function istCloudHostingIp(ip) {
 // beim Verlassen der Seite per navigator.sendBeacon() ausgeloest (s. index.html) und
 // landet als normale Logzeile im selben Nginx-Access-Log -- kein neuer Server, kein
 // Tracking-Pixel. Obergrenze schuetzt gegen Ausreisser durch Tage offen gelassene Tabs.
-var VERWEILDAUER_RE = /^\/beacon-dauer\?ms=(\d+)$/;
+var VERWEILDAUER_RE = /^\/beacon-dauer\?ms=(\d+)(?:&rktest=1)?$/;
 var MAX_PLAUSIBLE_VERWEILDAUER_MS = 2 * 60 * 60 * 1000;
 
 function parseZeile(line) {
@@ -492,6 +492,17 @@ function hatFehlendenAcceptLanguage(e) {
 function pfadOhneQuery(pfad) {
   var i = (pfad || '').indexOf('?');
   return i === -1 ? pfad : pfad.slice(0, i);
+}
+
+// Testmodus-Flag (Rene-Fund 2026-11-19: eigene Social-Media-Klicks ueber Apple
+// Private Relay -- die sichtbare IP wechselt sogar INNERHALB einer einzigen
+// Testsitzung mehrfach, BEKANNTE_IPS kann das strukturell nicht abfangen). Das
+// Flag reist mit jedem einzelnen Request mit (index.html haengt "&rktest=1" an
+// jeden Beacon an, sobald das lokale Testmodus-localStorage-Flag gesetzt ist) --
+// unabhaengig von der IP, die gerade zufaellig aktiv ist.
+var TESTMODUS_RE = /[?&]rktest=1\b/;
+function istTestmodusMarkiert(pfad) {
+  return TESTMODUS_RE.test(pfad || '');
 }
 
 // Bekannte eigene IP(s) -- Rene-Auftrag 2026-11-16 "meine IP als bekannt markieren und
@@ -539,7 +550,7 @@ var JS_AUSGEFUEHRT_IPS = {};
 function findeJsAusgefuehrtIps(eintraege) {
   var ergebnis = {};
   eintraege.forEach(function (e) {
-    if (e.methode === 'POST' && e.pfad === '/beacon-geladen' && e.status === 204) {
+    if (e.methode === 'POST' && pfadOhneQuery(e.pfad) === '/beacon-geladen' && e.status === 204) {
       ergebnis[e.ip] = true;
     }
   });
@@ -556,6 +567,7 @@ function istEchterSeitenaufruf(e) {
   if (hatFehlendenAcceptLanguage(e)) return false;
   if (istCloudHostingIp(e.ip)) return false;
   if (BEKANNTE_IPS.indexOf(e.ip) !== -1) return false;
+  if (istTestmodusMarkiert(e.pfad)) return false;
   // Nur echte Dokument-Aufrufe zaehlen, keine Assets/Favicons/robots.txt etc.
   // pfadOhneQuery: s. Fund oben -- "?fbclid=..."/"?utm_..." ist kein Bot-Signal.
   var pfad = pfadOhneQuery(e.pfad);
@@ -572,6 +584,7 @@ function istEchterDownload(e) {
   if (hatFehlendenAcceptLanguage(e)) return false;
   if (istCloudHostingIp(e.ip)) return false;
   if (BEKANNTE_IPS.indexOf(e.ip) !== -1) return false;
+  if (istTestmodusMarkiert(e.pfad)) return false;
   // Konsistenz zu istEchterSeitenaufruf: ein geteilter Download-Link kann
   // ebenso ein fbclid/utm-Anhaengsel tragen -- exakter Match wuerde das verwerfen.
   return DOWNLOAD_PFADE.indexOf(pfadOhneQuery(e.pfad)) !== -1;
@@ -587,6 +600,7 @@ function istEchterShareBeacon(e) {
   if (hatFehlendenAcceptLanguage(e)) return false;
   if (istCloudHostingIp(e.ip)) return false;
   if (BEKANNTE_IPS.indexOf(e.ip) !== -1) return false;
+  if (istTestmodusMarkiert(e.pfad)) return false;
   return SHARE_RE.test(e.pfad);
 }
 
@@ -696,6 +710,7 @@ function main() {
     if (e.methode !== 'POST' || BOT_RE.test(e.userAgent)) return;
     if (!hatEchtesBrowserPraefix(e.userAgent) || hatFehlendenAcceptLanguage(e)) return;
     if (istCloudHostingIp(e.ip) || BEKANNTE_IPS.indexOf(e.ip) !== -1 || ROTIERENDE_UA_IPS[e.ip]) return;
+    if (istTestmodusMarkiert(e.pfad)) return;
     var m = VERWEILDAUER_RE.exec(e.pfad);
     if (!m) return;
     var ms = parseInt(m[1], 10);

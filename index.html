@@ -187,7 +187,12 @@
   .notfall-btn:active{transform:translateY(0) scale(.97)}
   @media print{.notfall-btn{display:none!important}}
   .flyer-btn{font-family:var(--font-body);font-weight:700;font-size:13px;color:var(--on-primary);
-    background:linear-gradient(135deg,#6B4423,#B87333,#E8C39E);
+    /* a11y-Fix (2026-11-19): 3-Stopp-Gradient als Textuntergrund faellt am dunklen
+       Stopp #6B4423 auf 2.04:1 (WCAG-Fail) -- ersetzt durch den bereits existierenden
+       --primary-Solidton (4.56:1, identisches Muster wie .settings-btn/.side-tab/
+       .situation-btn in dieser Datei). Gradient bleibt die AERIS-Quellfarbe, nur hier
+       als Text-Hintergrund ungeeignet. */
+    background:var(--primary);
     border:0;border-radius:99px;padding:9px 16px;display:inline-flex;align-items:center;gap:6px;
     cursor:pointer;-webkit-appearance:none;appearance:none;min-height:44px;text-decoration:none;
     box-shadow:0 8px 16px -6px rgba(184,115,51,.45);transition:transform .25s var(--ease)}
@@ -225,7 +230,8 @@
     min-height:48px;box-sizing:border-box}
   .nl-field input[type=email]:focus-visible{outline:none;box-shadow:var(--focus)}
   .nl-submit{font-family:var(--font-body);font-weight:700;font-size:15px;color:var(--on-primary);
-    background:linear-gradient(135deg,#6B4423,#B87333,#E8C39E);border:0;border-radius:99px;
+    /* a11y-Fix (2026-11-19): s. .flyer-btn -- gleicher Kontrast-Fail, gleicher Fix. */
+    background:var(--primary);border:0;border-radius:99px;
     padding:13px 24px;min-height:48px;cursor:pointer;-webkit-appearance:none;appearance:none;white-space:nowrap}
   .nl-submit:hover{transform:translateY(-1px)}
   .nl-submit:disabled{opacity:.6;cursor:default;transform:none}
@@ -3626,7 +3632,7 @@
   }
 
   function shareUrl(plattform, btn){
-    if (navigator.sendBeacon) navigator.sendBeacon('/beacon-share?plattform=' + encodeURIComponent(plattform));
+    if (navigator.sendBeacon) navigator.sendBeacon('/beacon-share?plattform=' + encodeURIComponent(plattform) + pfkTestmodusSuffix());
     var seite = 'https://pflege-faktencheck.de/';
     var text = 'Pflegegrad, Pflegegeld, Entlastungsbetrag & mehr — kostenlos erklärt, jeder Betrag gegen das echte Gesetz geprüft.';
     var url = encodeURIComponent(seite);
@@ -3773,6 +3779,21 @@
     return false;
   }
 
+  // Testmodus-Kennzeichnung (René-Fund 2026-11-19: "haben Social-Media-Button-Klicks
+  // mein Geraet erfasst?" -- ja: Apple Private Relay wechselt die sichtbare IP sogar
+  // INNERHALB einer einzigen Testsitzung mehrfach, die feste BEKANNTE_IPS-Liste kann
+  // das strukturell nicht abfangen). Einmaliger Aufruf mit "?rktest=1" im Link setzt
+  // ein dauerhaftes localStorage-Flag; alle Beacons haengen danach einen Marker an,
+  // unabhaengig von der IP. Kein Cookie, keine personenbezogene Kennung -- nur ein
+  // einzelnes Flag auf Renés eigenem Geraet.
+  var PFK_TESTMODUS = (function(){
+    try {
+      if (/[?&]rktest=1\b/.test(location.search)) localStorage.setItem('pfk_rktest', '1');
+      return localStorage.getItem('pfk_rktest') === '1';
+    } catch (e) { return false; }
+  })();
+  function pfkTestmodusSuffix(){ return PFK_TESTMODUS ? '&rktest=1' : ''; }
+
   // Verweildauer-Messung (René-Auftrag 2026-11-16) -- bewusst OHNE Drittanbieter-
   // Analytics/Tracking-Pixel: einmalig beim Verlassen der Seite die vergangene Zeit
   // seit Seitenaufruf per Beacon an einen bereits bestehenden Nginx-Log-Eintrag
@@ -3785,7 +3806,7 @@
       if (gesendet) return;
       gesendet = true;
       var ms = Math.round(performance.now());
-      navigator.sendBeacon('/beacon-dauer?ms=' + ms);
+      navigator.sendBeacon('/beacon-dauer?ms=' + ms + pfkTestmodusSuffix());
     }
     document.addEventListener('visibilitychange', function(){
       if (document.visibilityState === 'hidden') sendeDauer();
@@ -3800,12 +3821,11 @@
   // einzelner Request ohne Payload.
   (function(){
     if (!navigator.sendBeacon) return;
-    navigator.sendBeacon('/beacon-geladen');
+    navigator.sendBeacon('/beacon-geladen' + (PFK_TESTMODUS ? '?rktest=1' : ''));
   })();
 </script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Wer kann einen Pflegegrad beantragen?", "acceptedAnswer": {"@type": "Answer", "text": "Jede gesetzlich oder privat pflegeversicherte Person, unabhängig vom Alter — auch Kinder."}}, {"@type": "Question", "name": "Ab wann gelten die Leistungen?", "acceptedAnswer": {"@type": "Answer", "text": "Rückwirkend ab dem Tag der Antragstellung — nicht erst ab dem Bescheid."}}, {"@type": "Question", "name": "Was, wenn sich der Zustand verschlechtert?", "acceptedAnswer": {"@type": "Answer", "text": "Ein Antrag auf Höherstufung ist jederzeit möglich, genauso formlos wie der Erstantrag."}}]}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Was tun, wenn ich einen Verdacht habe, aber noch keine Diagnose besteht?", "acceptedAnswer": {"@type": "Answer", "text": "Zuerst die Hausarztpraxis ansprechen — bei Bedarf überweist sie an eine neurologische oder gedächtnisdiagnostische Sprechstunde. Ein früher, ergebnisoffener Test verpflichtet zu nichts."}}, {"@type": "Question", "name": "Wer hilft mir als Angehöriger weiter?", "acceptedAnswer": {"@type": "Answer", "text": "Die kostenlose, unabhängige Pflegeberatung nach § 7a SGB XI (siehe „Zuhause organisieren\"), örtliche Alzheimer-Gesellschaften, Selbsthilfegruppen sowie das Alzheimer-Telefon."}}, {"@type": "Question", "name": "Was darf ich als Angehöriger entscheiden — was nicht?", "acceptedAnswer": {"@type": "Answer", "text": "Ohne Vorsorgevollmacht gibt es grundsätzlich kein automatisches Entscheidungsrecht — weder für Kinder noch für Ehepartner. Einzige Ausnahme: das seit 2023 geltende Ehegatten-Notvertretungsrecht (§ 1358 BGB, siehe „Vorsorge & Vollmacht\") erlaubt Ehepartnern, bei akuten medizinischen Angelegenheiten für maximal sechs Monate zu vertreten — nicht bei Finanzen oder sonstigen Entscheidungen, und nicht für Kinder gegenüber Eltern. Ohne Vollmacht bestellt sonst das Betreuungsgericht eine Betreuung, die auch eine fremde Person sein kann."}}, {"@type": "Question", "name": "Was sollte ich möglichst früh regeln?", "acceptedAnswer": {"@type": "Answer", "text": "Vorsorgevollmacht und Patientenverfügung — beide müssen rechtzeitig erstellt werden: die Vorsorgevollmacht setzt Geschäftsfähigkeit voraus, die Patientenverfügung Einwilligungsfähigkeit zum jeweiligen medizinischen Sachverhalt. Je weiter eine Demenz fortgeschritten ist, desto eher wird genau diese Fähigkeit später infrage gestellt — deshalb lieber früh als zu spät regeln."}}]}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Wie lange dauert die Bearbeitung eines Antrags?", "acceptedAnswer": {"@type": "Answer", "text": "In der Regel 25 Arbeitstage ab Antragseingang (§ 18c SGB XI). Bei Krankenhaus, Reha, Hospiz oder Palliativversorgung verkürzt sich die Frist auf eine Woche. Wird die Frist ohne triftigen Grund überschritten, stehen Ihnen 70 € Entschädigung pro angefangener Woche Verzögerung zu — das sollte die Pflegekasse automatisch zahlen, notfalls schriftlich einfordern."}}, {"@type": "Question", "name": "Wirkt der Pflegegrad rückwirkend?", "acceptedAnswer": {"@type": "Answer", "text": "Leistungen gibt es ab dem Tag der Antragstellung, nicht davor. Ein früher Anruf bei der Pflegekasse lohnt sich also immer — der Tag des Anrufs zählt bereits als Antragsdatum."}}, {"@type": "Question", "name": "Muss ich Pflegegeld versteuern?", "acceptedAnswer": {"@type": "Answer", "text": "Nein. Pflegegeld ist beim Empfänger steuerfrei (§ 3 Nr. 1a EStG) — und bleibt auch steuerfrei, wenn es an eine pflegende Angehörige oder einen pflegenden Angehörigen weitergeleitet wird (§ 3 Nr. 36 EStG)."}}, {"@type": "Question", "name": "Was passiert mit dem Pflegegeld, wenn die pflegebedürftige Person verstirbt?", "acceptedAnswer": {"@type": "Answer", "text": "Es wird bis zum Ende des Sterbemonats weitergezahlt und muss nicht zurückgezahlt werden — vorausgesetzt, im Sterbemonat bestand an mindestens einem Tag Anspruch darauf."}}, {"@type": "Question", "name": "Muss der Pflegegrad regelmäßig neu festgestellt werden?", "acceptedAnswer": {"@type": "Answer", "text": "Nein, es gibt keine automatische Wiederholungsbegutachtung in festen Abständen. Eine erneute Begutachtung erfolgt nur, wenn sich der Hilfebedarf wesentlich verändert hat oder Sie selbst eine Höherstufung beantragen."}}, {"@type": "Question", "name": "Kann ich mehrere Leistungen gleichzeitig nutzen?", "acceptedAnswer": {"@type": "Answer", "text": "Ja, viele Leistungen lassen sich kombinieren — etwa Pflegegeld mit Verhinderungspflege, dem Entlastungsbetrag und Pflegehilfsmitteln."}}, {"@type": "Question", "name": "Was passiert bei einem Umzug in ein anderes Bundesland?", "acceptedAnswer": {"@type": "Answer", "text": "Der Pflegegrad bleibt bundesweit gültig, eine neue Begutachtung ist dafür nicht nötig. Lediglich die zuständige Pflegekasse kann sich ändern, falls auch die Krankenkasse gewechselt wird."}}, {"@type": "Question", "name": "Kann ich den Pflegedienst wechseln?", "acceptedAnswer": {"@type": "Answer", "text": "Ja, jederzeit. Der Pflegevertrag ist nach § 120 SGB XI grundsätzlich kündbar."}}]}</script>
 </body>
-</html>
 </html>
