@@ -44,16 +44,23 @@ offen benannten Punkte.
     `buildTransport()` liefert `null`, kein Crash).
   - Commit `eebf7dc`, gepusht + live deployed (index.html + mailer.js),
     live verifiziert (Text online, Service aktiv, 0 Fehler im Log).
-- **[OFFEN]:** René muss selbst einen Brevo-Account anlegen, den Absender
-  `pflegefaktencheck@gmail.com` per Single-Sender-Verifizierung bestätigen,
-  SMTP-Zugangsdaten erzeugen (SMTP & API → SMTP) und in
-  `/opt/pflege-fakten-server/.env` (`BREVO_SMTP_LOGIN`/`BREVO_SMTP_KEY`)
-  eintragen — **bis dahin versendet der Server GAR KEINE Mails mehr**
-  (weder Newsletter noch Draft-Benachrichtigungen), das alte Gmail-
-  App-Passwort ist nicht mehr verdrahtet. Altes Gmail-App-Passwort
-  (`ruflxgyxdqrbnuqp`, war im Klartext in der alten `.env`) sollte bei
-  Gelegenheit in den Google-Kontoeinstellungen widerrufen werden — wird
-  durch diesen Umstieg funktional nicht mehr gebraucht.
+- **[ERLEDIGT] Brevo-Account von René selbst eingerichtet** (Absender
+  `pflegefaktencheck@gmail.com` per Single-Sender bestätigt, SMTP-
+  Zugangsdaten erzeugt) — echte Werte in `/opt/pflege-fakten-server/.env`
+  eingetragen (`BREVO_SMTP_LOGIN`/`BREVO_SMTP_KEY`), Service neu gestartet.
+  Dabei eigenständiger Blocker gefunden+behoben: Brevo sperrt SMTP-Logins
+  standardmäßig nach nicht-autorisierter Quell-IP (`525 Unauthorized IP
+  address`) — Server-IP `212.132.117.130` von René im Brevo-Dashboard
+  autorisiert (Registerkarte "Unauthorized IP addresses" → genehmigen).
+- **[ERLEDIGT] Vollständiger Ende-zu-Ende-Test** (echte Anmeldung über die
+  Live-API mit Renés eigener Adresse, kein Mock): `nodemailer.verify()`
+  OK, Bestätigungsmail UND Willkommensmail beide real angekommen und von
+  René bestätigt. Test-Datensatz danach aus der Produktions-DB gelöscht.
+  AVV-Lücke damit vollständig geschlossen — Newsletter-Versand läuft jetzt
+  ausschließlich über einen Dienst mit gültigem Art.-28-AVV.
+- **[OFFEN]:** Altes Gmail-App-Passwort (war im Klartext in der alten
+  `.env`, jetzt funktional ungenutzt) sollte René bei Gelegenheit in den
+  Google-Kontoeinstellungen widerrufen.
 
 ## Nachtrag 2026-11-19 (33) — Alle WICHTIG/KRITISCH-Funde aus Nachtrag 32 umgesetzt + Testmodus-Flag + 2 Folgefunde live behoben
 René-Freigabe "Ja" zur vollständigen Umsetzung der Nachtrag-32-Liste.
