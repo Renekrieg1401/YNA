@@ -213,7 +213,36 @@ function brandSeite(titel, text) {
     '<p><a href="/" style="color:#B87333;font-size:.85rem">← Zurück zur Seite</a></p></div></body></html>';
 }
 
+// Rate-Limit + Antwort-Vereinheitlichung (security-privacy-Fund 2026-11-19):
+// (1) kein Limit existierte -- beliebige Drittadressen liessen sich per Skript
+// mit Bestaetigungsmails ueber Renés eigenes Gmail-Postfach "bomben". Einfacher
+// In-Memory-Sliding-Window (kein neues DB-Schema/Paket noetig fuer diesen
+// Low-Traffic-Endpunkt) -- 5 Versuche je IP pro 10 Minuten reichen fuer echte
+// Formularnutzung, blockieren aber Skript-Spam.
+// (2) Die Response verriet bisher per unterschiedlichem "status"-Feld, ob eine
+// E-Mail-Adresse bereits Abonnent ist (Subscriber-Enumeration) -- alle
+// Erfolgsfaelle liefern jetzt dieselbe generische Antwort, das interne
+// Verhalten (Resend-Sperre, kein Mehrfachversand) bleibt unveraendert.
+var NEWSLETTER_RATE_MAX = 5;
+var NEWSLETTER_RATE_FENSTER_MS = 10 * 60 * 1000;
+var newsletterVersucheProIp = new Map();
+function newsletterRateLimitErreicht(ip) {
+  var jetzt = Date.now();
+  var eintrag = newsletterVersucheProIp.get(ip);
+  if (!eintrag || jetzt - eintrag.start > NEWSLETTER_RATE_FENSTER_MS) {
+    newsletterVersucheProIp.set(ip, { start: jetzt, anzahl: 1 });
+    return false;
+  }
+  eintrag.anzahl++;
+  return eintrag.anzahl > NEWSLETTER_RATE_MAX;
+}
+
 app.post('/api/newsletter/subscribe', function (req, res) {
+  var ip = req.ip || 'unknown';
+  if (newsletterRateLimitErreicht(ip)) {
+    return res.status(429).json({ error: 'rate_limited' });
+  }
+
   var email = String((req.body && req.body.email) || '').trim().toLowerCase();
   var consent = req.body && req.body.consent === true;
   if (!EMAIL_RE.test(email) || email.length > 254) {
@@ -223,23 +252,24 @@ app.post('/api/newsletter/subscribe', function (req, res) {
     return res.status(400).json({ error: 'consent_required' });
   }
 
+  var ANTWORT_OK = { ok: true, status: 'request_received' };
   var now = new Date();
   var nowIso = now.toISOString();
   var existing = db.prepare('SELECT * FROM subscribers WHERE email = ?').get(email);
 
   if (existing && existing.status === 'confirmed') {
-    return res.json({ ok: true, status: 'already_confirmed' });
+    return res.json(ANTWORT_OK);
   }
   if (existing && existing.status === 'pending_confirmation') {
     var zuletzt = new Date(existing.created_at).getTime();
     if (now.getTime() - zuletzt < RESEND_SPERRE_MS) {
-      return res.json({ ok: true, status: 'confirmation_pending' });
+      return res.json(ANTWORT_OK);
     }
     var neuerToken = crypto.randomBytes(24).toString('hex');
     db.prepare('UPDATE subscribers SET confirm_token = ?, confirm_token_expires = ?, created_at = ? WHERE email = ?')
       .run(neuerToken, new Date(now.getTime() + CONFIRM_TOKEN_GUELTIG_MS).toISOString(), nowIso, email);
     mailer.sendConfirmationMail({ email: email, confirm_token: neuerToken }).catch(function () {});
-    return res.json({ ok: true, status: 'confirmation_resent' });
+    return res.json(ANTWORT_OK);
   }
 
   var row = {
@@ -260,7 +290,7 @@ app.post('/api/newsletter/subscribe', function (req, res) {
   mailer.sendConfirmationMail(row).catch(function (err) {
     console.error('[newsletter] Bestätigungsmail-Fehler: ' + err.message);
   });
-  res.json({ ok: true, status: 'confirmation_sent' });
+  res.json(ANTWORT_OK);
 });
 
 app.get('/api/newsletter/confirm', function (req, res) {

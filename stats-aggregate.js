@@ -1,5 +1,8 @@
 // Pflege-Faktencheck -- Besucher-Statistik-Aggregator (René-Auftrag 2026-11-16,
-// "Dashboard zur Monetarisierungs-Ueberwachung: Aufrufe, Regionen, 12-Monats-Prognose").
+// "Dashboard zur Reichweiten-Ueberwachung: Aufrufe, Regionen, 12-Monats-Prognose").
+// Umbenannt von "Monetarisierungs-Dashboard" (business-consultant-Fund 2026-11-19:
+// irrefuehrend, da kein einziger Einnahme-Mechanismus im Code existiert -- reine
+// Traffic-Zaehlung).
 //
 // Liest das EIGENE Nginx-Access-Log dieser Domain (seit 2026-11-16 per eigenem
 // access_log-Direktive von den uebrigen Silos auf demselben Server getrennt -- vorher
@@ -233,8 +236,8 @@ function quelleFuerReferer(referer) {
 }
 
 // Bot-/Crawler-Erkennung: grobe, konservative Liste bekannter Nicht-Menschen-User-Agents --
-// zieht die Aufrufzahlen NICHT kuenstlich hoch (waere bei einer "Monetarisierungs-
-// Ueberwachung" grimmig gesagt: Selbstbetrug ueber die eigene Reichweite).
+// zieht die Aufrufzahlen NICHT kuenstlich hoch (waere grimmig gesagt: Selbstbetrug
+// ueber die eigene Reichweite).
 // Funde Forensik 2026-11-18: "ModatScanner" (modat.io, Internet-weiter Asset-Scanner)
 // und "Chrome-Lighthouse" (Googles Performance-Audit-Tool, fuehrt echtes JS aus,
 // kein Mensch) hatten KEIN Keyword-Match -- beide rutschten bisher nur ueber die
