@@ -1,5 +1,18 @@
 # Handoff — Pflege-Faktencheck (ex Pflege-Fakten / YNA Digital), 2026-11-15
 
+## Nachtrag 2026-11-19 (35) — Google-Indexierung geprüft, kein technischer Fehler
+René-Frage "Auf Google Suche ist meine Webseite noch nicht zu finden" geprüft.
+- **[ERLEDIGT] Diagnose:** `robots.txt` erlaubt Crawling, `sitemap.xml`
+  liefert korrekt die Startseite (200), kein `noindex`-Meta-Tag, kein
+  blockierender `X-Robots-Tag`-Header — technisch alles sauber. Whois
+  zeigt die Domain erst seit 15.11.2026 registriert (4 Tage alt),
+  `site:pflege-faktencheck.de` liefert bei Google noch keine Treffer.
+  Ursache: ganz neue Domain ohne Backlinks, noch nicht gecrawlt — kein
+  Bug auf unserer Seite.
+- **René-Entscheidung:** einfach abwarten, keine Google-Search-Console-
+  Anmeldung und kein SEO-Tiefenaudit gewünscht. Kein Code-/Server-
+  Änderung in diesem Schritt nötig/erfolgt.
+
 ## Nachtrag 2026-11-19 (34) — Heading-Hierarchie-Fix (212 Kartentitel h3→h4) umgesetzt + deployed
 René-Direktive "Offene erledigen" zum ersten der 2 in Nachtrag 33 als
 offen benannten Punkte.
