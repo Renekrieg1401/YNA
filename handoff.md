@@ -1,5 +1,34 @@
 # Handoff — Pflege-Faktencheck (ex Pflege-Fakten / YNA Digital), 2026-11-15
 
+## Nachtrag 2026-11-19 (34) — Heading-Hierarchie-Fix (212 Kartentitel h3→h4) umgesetzt + deployed
+René-Direktive "Offene erledigen" zum ersten der 2 in Nachtrag 33 als
+offen benannten Punkte.
+- **[ERLEDIGT]:** `<div class="card"><h3>...</h3>` → `<h4>` an exakt 212
+  Stellen (Python-Regex, verifiziert 0 verbleibende Treffer danach).
+  Bewusst NICHT angefasst: 68 `<button class="topic-card">`-Navigations-
+  kacheln auf der Startseite und ~12 `.group-heading h3`-Kategorie-
+  Überschriften — beide ein anderes Strukturmuster (Navigation statt
+  verschachtelter Inhalt), nicht vom ursprünglichen a11y-Befund erfasst.
+  CSS-Selektor `.card h3`→`.card h4` mitgezogen (einzige Fundstelle),
+  keine JS-Abhängigkeit vom alten Selektor gefunden (grep leer).
+- **[ERLEDIGT] Verifikation:** Playwright-Heading-Outline am Demenz-
+  Abschnitt bestätigt korrekte Schachtelung (h2→h3→h4), Screenshot-
+  Vergleich zeigt 0 optische Änderung, 0 echte JS-Fehler (einzige
+  Meldung: erwarteter `sendBeacon`-file://-Artefakt).
+- **[ERLEDIGT] René-Freigabe eingeholt** (Screenshot gezeigt, AskUserQuestion
+  "Ja, push + deploy") vor Push/Deploy — Standing-Regel "Show before going
+  live" eingehalten.
+- **[ERLEDIGT] Barrierefreiheitserklärung korrigiert:** Text spiegelt jetzt
+  ehrlich den Teil-Fix (212 Stellen behoben, Navigationskacheln/Gruppen-
+  überschriften bewusst unverändert, nicht stillschweigend als vollständig
+  behoben deklariert).
+- **[ERLEDIGT] Deploy:** `git push` (Commits `4c76442`, `27fee2c`) +
+  `scp` nach `/var/www/pflege-fakten/index.html`, live verifiziert
+  (238 `<h4>`-Tags via Browser-UA-curl, Dateigröße identisch zu lokal).
+- **[OFFEN]:** AVV-Prüfung (Auftragsverarbeitungsvertrag/Art. 28 DSGVO)
+  für den privaten Gmail-SMTP-Newsletterversand — noch nicht begonnen,
+  s. unten.
+
 ## Nachtrag 2026-11-19 (33) — Alle WICHTIG/KRITISCH-Funde aus Nachtrag 32 umgesetzt + Testmodus-Flag + 2 Folgefunde live behoben
 René-Freigabe "Ja" zur vollständigen Umsetzung der Nachtrag-32-Liste.
 - **[ERLEDIGT] Kontrast (2 KRITISCH):** `.flyer-btn`/`.nl-submit` nutzten
