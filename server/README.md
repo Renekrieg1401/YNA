@@ -124,20 +124,25 @@ vorher) — sobald der Stichtag erreicht ist, wandert der Wert automatisch von
 - `POST /admin/drafts/:id/reject` — Body optional `{note}`.
 - `GET /admin/crawl-runs` — letzter Lauf je Fact.
 
-## E-Mail-Benachrichtigung — Gmail-App-Passwort nötig
+## E-Mail-Versand — Brevo-SMTP-Zugangsdaten nötig
 
-`mailer.js` nutzt `nodemailer` mit Gmail-SMTP (`SMTP_USER`/
-`SMTP_APP_PASSWORD` in `.env`). **Ein echtes Gmail-App-Passwort kann nur René
-selbst erzeugen** (https://myaccount.google.com/apppasswords, erfordert
-2FA auf dem Google-Konto) — das Feature ist vollständig lauffähig gebaut,
-funktioniert aber erst, sobald diese beiden Werte gesetzt sind. Ohne sie
-loggt `mailer.js` nur einen Fehler (`missing_smtp_credentials`) — der
+`mailer.js` nutzt `nodemailer` mit Brevo-SMTP-Relay (`BREVO_SMTP_LOGIN`/
+`BREVO_SMTP_KEY` in `.env`, umgestellt 2026-11-19 von privatem Gmail-SMTP —
+Grund: ein kostenloses `@gmail.com`-Konto bietet keinen Auftragsverarbeitungs-
+vertrag nach Art. 28 DSGVO, Google stellt diesen primärquellen-verifiziert
+nur für zahlende Workspace-Kunden bereit; Brevo bietet ihn im kostenlosen
+Tarif automatisch, Serverstandort EU/Deutschland). **Die echten Zugangsdaten
+kann nur René selbst erzeugen** (brevo.com-Account anlegen, Absender
+`pflegefaktencheck@gmail.com` per Single-Sender-Verifizierung bestätigen,
+dann SMTP & API → SMTP-Zugangsdaten) — das Feature ist vollständig lauffähig
+gebaut, funktioniert aber erst, sobald diese beiden Werte gesetzt sind. Ohne
+sie loggt `mailer.js` nur einen Fehler (`missing_smtp_credentials`) — der
 Crawl-Lauf selbst bricht dadurch **nicht** ab.
 
 ## Offene Punkte (nicht Teil dieses Auftrags)
 
 - Vollständige Fact-Liste über die 8 Seed-Einträge hinaus.
-- Gmail-App-Passwort von René.
+- Brevo-SMTP-Zugangsdaten von René.
 - devops-infra: nginx-Reverse-Proxy + TLS (selbstsigniertes Zertifikat,
   analog AERIS Buch), systemd-Service für `server.js`, systemd-Timer für
   `crawl.js` (wöchentlich).

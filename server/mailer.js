@@ -1,19 +1,27 @@
-// E-Mail-Benachrichtigung bei neuem Draft (nodemailer/Gmail-SMTP).
+// E-Mail-Versand (nodemailer/Brevo-SMTP-Relay).
 // Robust: ein Mailfehler darf den Crawl-Lauf NIEMALS abbrechen, nur loggen.
-// Echtes Gmail-App-Passwort kann nur René selbst erzeugen (Google-
-// Kontoeinstellungen) -- ohne SMTP_USER/SMTP_APP_PASSWORD ist dieses Feature
+// Umstieg von privatem Gmail-SMTP auf Brevo (2026-11-19, Rene-Entscheidung
+// nach AVV-Pruefung): ein kostenloses @gmail.com-Konto bietet KEINEN
+// Auftragsverarbeitungsvertrag nach Art. 28 DSGVO (nur Google-Workspace-
+// Kunden erhalten diesen, primaerquellen-verifiziert gegen Googles eigenen
+// DPA-Vertragstext). Brevo stellt den AVV auch im kostenlosen Tarif
+// automatisch im Setup bereit, Server-Standort EU/Deutschland. BREVO_SMTP_LOGIN/
+// BREVO_SMTP_KEY muss Rene selbst im Brevo-Dashboard erzeugen (kein Secret
+// von Claude geraten/erfunden) -- ohne beide Werte ist dieses Feature
 // lauffaehig gebaut, aber nicht funktionsfaehig (s. README).
 
 var nodemailer = require('nodemailer');
 var crypto = require('crypto');
 
 function buildTransport() {
-  if (!process.env.SMTP_USER || !process.env.SMTP_APP_PASSWORD) return null;
+  if (!process.env.BREVO_SMTP_LOGIN || !process.env.BREVO_SMTP_KEY) return null;
   return nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp-relay.brevo.com',
+    port: 587,
+    secure: false,
     auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_APP_PASSWORD
+      user: process.env.BREVO_SMTP_LOGIN,
+      pass: process.env.BREVO_SMTP_KEY
     }
   });
 }
@@ -34,13 +42,13 @@ async function notifyNewDraft(fact, draft) {
     'Freigabe (Stichtag + Pro/Contra-Text) im Admin-Panel wird er wirksam.';
 
   if (!transport) {
-    console.error('[mailer] SMTP_USER/SMTP_APP_PASSWORD fehlt in .env -- Mail NICHT gesendet. Betroffen: ' + fact.id);
+    console.error('[mailer] BREVO_SMTP_LOGIN/BREVO_SMTP_KEY fehlt in .env -- Mail NICHT gesendet. Betroffen: ' + fact.id);
     return { sent: false, reason: 'missing_smtp_credentials' };
   }
 
   try {
     await transport.sendMail({
-      from: process.env.SMTP_USER,
+      from: process.env.MAIL_FROM || 'pflegefaktencheck@gmail.com',
       to: to,
       subject: subject,
       text: text
@@ -101,7 +109,7 @@ async function sendConfirmationMail(subscriber) {
   }
   try {
     await transport.sendMail({
-      from: process.env.SMTP_USER, to: subscriber.email,
+      from: process.env.MAIL_FROM || 'pflegefaktencheck@gmail.com', to: subscriber.email,
       subject: 'Bitte bestätigen: Pflege-Faktencheck-Newsletter', html: html, text: text
     });
     return { sent: true };
@@ -143,7 +151,7 @@ async function sendWelcomeMail(subscriber) {
   }
   try {
     await transport.sendMail({
-      from: process.env.SMTP_USER, to: subscriber.email,
+      from: process.env.MAIL_FROM || 'pflegefaktencheck@gmail.com', to: subscriber.email,
       subject: 'Willkommen beim Pflege-Faktencheck-Newsletter', html: html, text: text
     });
     return { sent: true };
@@ -190,7 +198,7 @@ async function broadcastLegalChange(fact, draft) {
     );
     try {
       await transport.sendMail({
-        from: process.env.SMTP_USER, to: sub.email,
+        from: process.env.MAIL_FROM || 'pflegefaktencheck@gmail.com', to: sub.email,
         subject: 'Mögliche Änderung erkannt: ' + fact.label, html: html
       });
       sent++;
@@ -198,8 +206,8 @@ async function broadcastLegalChange(fact, draft) {
       failed++;
       console.error('[mailer] Broadcast an ' + sub.email + ' fehlgeschlagen: ' + err.message);
     }
-    // Gmail-Free-Versandlimit (~500/Tag) -- defensive kleine Pause zwischen Sends,
-    // bei Wachstum laut Rene-Entscheidung Wechsel auf dedizierten Mail-Dienst.
+    // Brevo-Free-Versandlimit (300/Tag) -- defensive kleine Pause zwischen Sends,
+    // bei Wachstum darueber hinaus waere ein bezahlter Brevo-Tarif noetig.
     await new Promise(function (r) { setTimeout(r, 300); });
   }
   return { sent: sent, failed: failed };
