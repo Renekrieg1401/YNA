@@ -1,5 +1,35 @@
 # Handoff — Pflege-Faktencheck (ex Pflege-Fakten / YNA Digital), 2026-11-15
 
+## Nachtrag 2026-11-21 (36) — Nächtliche Content-Automatisierung + echtes Favicon für Google
+René-Direktive: tägliche Automatisierung analog EvidenzKompass, explizit OHNE Freigabe-Pflicht
+(überschreibt die ursprüngliche Scoping-Entscheidung vom 2026-11-15 "Freigabe-Pflicht vor
+Live-Schaltung" für dieses Silo — bewusste, von René getroffene Aufhebung).
+- **Cloud-Routine** `trig_01WWDsXGWAFHtYWi1g4Lzk7m` ("Pflege-Faktencheck Daily Content
+  Update"), täglich 03:00 UTC: prüft SGB-XI/BMG/MD-Bund-Primärquellen gegen die Zahlen-/
+  Fristen-/Paragrafen-Stellen in `index.html` (keine JSON-Struktur wie bei EvidenzKompass,
+  daher Prüfung bei jedem Lauf gegen die echte Quelle statt gegen ein Änderungs-Datum),
+  committet+pusht direkt nach `origin main` ohne Zwischenschritt.
+- **Server-seitiger Pull-Deploy** (`devops-infra`): neuer read-only Deploy-Key für
+  `Renekrieg1401/YNA` (GitHub Key-ID 170689938), Checkout `/opt/pflege-faktencheck-src/`,
+  Pull-Skript `/opt/pflege-faktencheck-pull-deploy.sh` (nur `index.html`+Icons, NICHT
+  `dashboard/`/`server/`), systemd-Timer `pflege-faktencheck-pull.timer` (05:00 Berlin).
+  Bestehendes Dashboard/Newsletter-System nachweislich unberührt (Hash-Vergleich vorher/
+  nachher identisch). Backup der alten `index.html` unter `/opt/pflege-fakten-backups/`.
+- **Google-Icon-Fund behoben:** `seo-technisch` bestätigte gegen Googles eigene Dokumentation,
+  dass die bisherige Inline-SVG-Data-URI als `<link rel="icon">` kein von Google unterstütztes
+  Format/keine crawlbare Ressource ist. `frontend-ui` hat `favicon-192.png`/`favicon-32.png`
+  (aus dem bestehenden `apple-touch-icon.png`-Artwork abgeleitet, keine neue Grafik) ergänzt +
+  `index.html`-Head korrigiert, Commit `af9a1a0` gepusht. Zieht beim nächsten Pull-Lauf
+  automatisch auf den Server.
+- **[OFFEN]:** Erster echter automatischer Lauf (03:00/05:00) noch nicht abgewartet — nur
+  manuell getestet. Google braucht laut eigener Doku zusätzlich mehrere Tage/Wochen, bis ein
+  neues Favicon in Suchergebnissen erscheint, selbst nach korrektem Fix. Keine GSC-
+  Neuindexierung ausgelöst (kein Zugriff auf Renés Search-Console-Konto von hier aus).
+- **[KORREKTUR-POTENZIAL]:** Kein `testing-qa`/`quality-management`-Lauf für diese Kette
+  (Einzelaufgaben jeweils unter der Agent-Schwelle bzw. reine Infra-Konfiguration ohne
+  Code-Fund) — bei Bedarf nachholen, falls der erste automatische Lauf unerwartetes Verhalten
+  zeigt.
+
 ## Nachtrag 2026-11-19 (35) — Google-Indexierung geprüft, kein technischer Fehler
 René-Frage "Auf Google Suche ist meine Webseite noch nicht zu finden" geprüft.
 - **[ERLEDIGT] Diagnose:** `robots.txt` erlaubt Crawling, `sitemap.xml`
