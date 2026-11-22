@@ -625,94 +625,190 @@ function parseNginxZeit(zeit) {
   return new Date(Date.UTC(parseInt(mm[3],10), monate[mm[2]], parseInt(mm[1],10), parseInt(mm[4],10), parseInt(mm[5],10), parseInt(mm[6],10)));
 }
 
-function main() {
-  var raw;
-  try { raw = fs.readFileSync(LOG_PATH, 'utf8'); } catch (e) {
-    raw = '';
+// ===========================================================================
+// KRITISCHER FUND (Rene-Fund 2026-11-22, "Besucherzahl von 56 auf 1
+// zurueckgefallen"): /etc/logrotate.d/nginx rotiert ALLE *.log-Dateien unter
+// /var/log/nginx/ TAEGLICH um Mitternacht (server-weite Standard-Config,
+// nicht pflege-faktencheck-spezifisch). Bisher las main() AUSSCHLIESSLICH
+// LOG_PATH komplett neu ein und berechnete JEDEN Wert bei JEDEM Lauf (alle
+// 5 Minuten) von Grund auf NUR aus dieser einen Datei -- nach jeder
+// naechtlichen Rotation beginnt sie leer, das Dashboard "vergisst" also
+// jede Nacht alles bisher Gezaehlte. Fix: persistenter Zustand (state.json)
+// mit Byte-Offset+Inode-Cursor -- jeder Lauf liest nur NEUE Zeilen seit dem
+// letzten Lauf, akkumuliert in state.json, erkennt eine Rotation (Inode-
+// Wechsel) und liest zuerst den Rest der alten (jetzt .log.1) Datei zu Ende,
+// bevor er mit der neuen weitermacht. Einmaliger Backfill beim ALLERERSTEN
+// Lauf mit dieser neuen Logik liest zusaetzlich alle noch vorhandenen
+// rotierten Altdateien (.log.1, .log.N.gz) ein, um die echte Historie seit
+// Live-Gang wiederherzustellen, statt bei 1 stehen zu bleiben.
+// ===========================================================================
+
+var zlib = require('zlib');
+
+var STATE_PATH = path.join(__dirname, 'state.json');
+var MAX_BEACON_ZUORDNUNG_MS = 4 * 60 * 60 * 1000;
+
+function statOrNull(p) {
+  try { return fs.statSync(p); } catch (e) { return null; }
+}
+
+function leereState() {
+  return {
+    cursor: null, // { ino, offset }
+    jsIps: {}, rotierendeUaIps: {}, eindeutigeIps: {},
+    proTag: {}, proLand: {}, proBundesland: {}, proStadt: {},
+    proQuelle: {}, proVerweisHost: {}, downloadsProDatei: {}, teilenProPlattform: {},
+    gesamt: 0,
+    // Verweildauer: "offene" (noch nicht aelter als das 4h-Zuordnungsfenster)
+    // Eintraege bleiben bearbeitbar (neue Beacons koennen sie noch verlaengern);
+    // einmal aus dem Fenster gefallene werden in die permanenten Summen gebucht.
+    offeneVerweildauer: {}, // "ip|aufrufZeitMs" -> { ms, land, zeit }
+    verweildauerSumMs: 0, verweildauerCount: 0,
+    verweildauerJeAufrufLetzte: [], // bereits abgeschlossene, max. 50, neueste zuerst
+    recentAufrufeProIp: {} // ip -> [ms, ...] (nur Zeitstempel innerhalb des 4h-Fensters)
+  };
+}
+
+function ladeState() {
+  try { return JSON.parse(fs.readFileSync(STATE_PATH, 'utf8')); } catch (e) { return null; }
+}
+
+function speichereState(state) {
+  var tmp = STATE_PATH + '.tmp';
+  fs.writeFileSync(tmp, JSON.stringify(state));
+  fs.renameSync(tmp, STATE_PATH);
+}
+
+function leseAlleZeilen(datei) {
+  var buf = datei.slice(-3) === '.gz' ? zlib.gunzipSync(fs.readFileSync(datei)) : fs.readFileSync(datei);
+  return buf.toString('utf8').split('\n').filter(Boolean);
+}
+
+// Liest nur den Teil einer Datei ab einem Byte-Offset -- nur vollstaendige
+// Zeilen werden zurueckgegeben (die letzte, evtl. noch unvollstaendig
+// geschriebene Zeile bleibt fuer den naechsten Lauf stehen).
+function leseAbOffset(datei, offset) {
+  var fd = fs.openSync(datei, 'r');
+  try {
+    var groesse = fs.fstatSync(fd).size;
+    if (offset >= groesse) return { zeilen: [], neuerOffset: offset };
+    var buf = Buffer.alloc(groesse - offset);
+    fs.readSync(fd, buf, 0, buf.length, offset);
+    var text = buf.toString('utf8');
+    var letzterNewline = text.lastIndexOf('\n');
+    if (letzterNewline === -1) return { zeilen: [], neuerOffset: offset };
+    var neuerOffset = offset + Buffer.byteLength(text.slice(0, letzterNewline + 1), 'utf8');
+    return { zeilen: text.slice(0, letzterNewline).split('\n').filter(Boolean), neuerOffset: neuerOffset };
+  } finally {
+    fs.closeSync(fd);
   }
-  var zeilen = raw.split('\n').filter(Boolean);
-  var eintraege = zeilen.map(parseZeile).filter(Boolean);
-  ROTIERENDE_UA_IPS = findeRotierendeUaIps(eintraege);
-  JS_AUSGEFUEHRT_IPS = findeJsAusgefuehrtIps(eintraege);
-  var aufrufe = eintraege.filter(istEchterSeitenaufruf);
+}
 
-  var proTag = {}; // YYYY-MM-DD -> count
-  var proLand = {}; // ISO-Code -> count
-  var proBundesland = {}; // Name -> count (nur DE, nur wenn Stadt aufloesbar)
-  var proStadt = {}; // Stadtname -> count (feinste erreichbare Stufe ohne kostenpflichtigen Dienst)
-  var proQuelle = {}; // Direkt/Suchmaschine/Social Media/Sonstige Verweise -> count
-  var proVerweisHost = {}; // externe Domain -> count (nur "Sonstige Verweise")
-  var eindeutigeIps = new Set();
-  var gesamt = 0;
+function findeDateiMitInode(kandidaten, ino) {
+  for (var i = 0; i < kandidaten.length; i++) {
+    var st = statOrNull(kandidaten[i]);
+    if (st && st.ino === ino) return kandidaten[i];
+  }
+  return null;
+}
 
-  aufrufe.forEach(function (e) {
+// Enumeriert alle verfuegbaren rotierten Logs (aeltestes zuerst) + das
+// aktuelle Log zuletzt -- fuer den einmaligen Historie-Backfill.
+function ermittleBackfillDateien() {
+  var verzeichnis = path.dirname(LOG_PATH);
+  var basisname = path.basename(LOG_PATH);
+  var dateien;
+  try { dateien = fs.readdirSync(verzeichnis); } catch (e) { dateien = []; }
+  var rotiert = dateien
+    .filter(function (d) { return d.indexOf(basisname + '.') === 0; })
+    .map(function (d) {
+      var m = /^\.(\d+)(\.gz)?$/.exec(d.slice(basisname.length));
+      return m ? { datei: path.join(verzeichnis, d), n: parseInt(m[1], 10) } : null;
+    })
+    .filter(Boolean)
+    .sort(function (a, b) { return b.n - a.n; }); // hoechste Nummer = aeltestes zuerst
+  var reihenfolge = rotiert.map(function (r) { return r.datei; });
+  reihenfolge.push(LOG_PATH);
+  return reihenfolge;
+}
+
+function findeZugehoerigenAufrufState(state, ip, beaconZeitMs) {
+  var liste = state.recentAufrufeProIp[ip];
+  if (!liste) return null;
+  var treffer = null;
+  for (var i = 0; i < liste.length; i++) {
+    if (liste[i] <= beaconZeitMs && (beaconZeitMs - liste[i]) <= MAX_BEACON_ZUORDNUNG_MS) {
+      treffer = liste[i];
+    }
+  }
+  return treffer;
+}
+
+// Verarbeitet einen Batch neuer Log-Zeilen (eine Datei oder ein Datei-
+// Ausschnitt) und akkumuliert die Ergebnisse IN state -- niemals eine
+// Neuberechnung von Grund auf. Identische Filterlogik wie zuvor
+// (istEchterSeitenaufruf/istEchterDownload/istEchterShareBeacon).
+function verarbeiteBatch(entries, state) {
+  if (!entries.length) return;
+
+  // JS_AUSGEFUEHRT_IPS/ROTIERENDE_UA_IPS sind modul-globale Variablen, die die
+  // bestehenden ist*-Filterfunktionen lesen -- mit dem persistenten, ueber
+  // alle bisherigen Laeufe akkumulierten Zustand befuellen (ein einmal als
+  // JS-faehig/UA-rotierend erkannter Request bleibt das dauerhaft, exakt wie
+  // zuvor bei einem gedacht-unbegrenzten Einzel-Log).
+  var jsBatch = findeJsAusgefuehrtIps(entries);
+  var rotBatch = findeRotierendeUaIps(entries);
+  Object.keys(jsBatch).forEach(function (ip) { state.jsIps[ip] = true; });
+  Object.keys(rotBatch).forEach(function (ip) { state.rotierendeUaIps[ip] = true; });
+  JS_AUSGEFUEHRT_IPS = state.jsIps;
+  ROTIERENDE_UA_IPS = state.rotierendeUaIps;
+
+  entries.filter(istEchterSeitenaufruf).forEach(function (e) {
     var dt = parseNginxZeit(e.zeit);
     if (!dt) return;
     var tag = dt.toISOString().slice(0, 10);
-    proTag[tag] = (proTag[tag] || 0) + 1;
-    gesamt++;
-    eindeutigeIps.add(e.ip);
+    state.proTag[tag] = (state.proTag[tag] || 0) + 1;
+    state.gesamt++;
+    state.eindeutigeIps[e.ip] = true;
     if (istGueltigeIp(e.ip)) {
       var geo = landFuerIp(e.ip);
       var land = (geo && geo.country) || 'unbekannt';
-      proLand[land] = (proLand[land] || 0) + 1;
+      state.proLand[land] = (state.proLand[land] || 0) + 1;
       if (land === 'DE' && geo && geo.city) {
-        proStadt[geo.city] = (proStadt[geo.city] || 0) + 1;
+        state.proStadt[geo.city] = (state.proStadt[geo.city] || 0) + 1;
         var bl = bundeslandFuerStadt(geo.city);
-        proBundesland[bl || 'unbekannt'] = (proBundesland[bl || 'unbekannt'] || 0) + 1;
+        state.proBundesland[bl || 'unbekannt'] = (state.proBundesland[bl || 'unbekannt'] || 0) + 1;
       }
     } else {
-      proLand['unbekannt'] = (proLand['unbekannt'] || 0) + 1;
+      state.proLand['unbekannt'] = (state.proLand['unbekannt'] || 0) + 1;
     }
     var quelle = quelleFuerReferer(e.referer);
-    proQuelle[quelle.kategorie] = (proQuelle[quelle.kategorie] || 0) + 1;
+    state.proQuelle[quelle.kategorie] = (state.proQuelle[quelle.kategorie] || 0) + 1;
     if (quelle.kategorie === 'Sonstige Verweise' && quelle.host) {
-      proVerweisHost[quelle.host] = (proVerweisHost[quelle.host] || 0) + 1;
+      state.proVerweisHost[quelle.host] = (state.proVerweisHost[quelle.host] || 0) + 1;
     }
+    (state.recentAufrufeProIp[e.ip] = state.recentAufrufeProIp[e.ip] || []).push(dt.getTime());
   });
 
-  // Verweildauer je einzelnem Aufruf (Rene-Auftrag 2026-11-16 Nachtrag: "pro User",
-  // nicht nur der Durchschnitt). KEINE rohe IP in der Ausgabe -- nur Land (wie in den
-  // uebrigen Dashboard-Bereichen auch), konsistent mit dem bisherigen Datenschutz-
-  // Ansatz dieses Dashboards.
-  //
-  // Fix (Rene-Fund 2026-11-18): Liste zeigte ~41 Eintraege bei nur 20 echten Aufrufen.
-  // Ursache per Rohlog verifiziert (nicht geraten): dieselbe IP feuert mehrfach
-  // /beacon-dauer fuer denselben Seitenaufruf (z.B. 104.28.62.43: ein GET / 200 um
-  // 14:27:31, dann ZWEI beacon-dauer-POSTs um 14:27:31 und 14:28:13 -- iOS Safaris
-  // visibilitychange/pagehide-Zyklus bei App-Wechseln feuert das clientseitige
-  // "gesendet"-Dedup-Flag nicht zuverlaessig aus). Jeder Beacon wird jetzt dem
-  // zeitlich naechsten VOR ihm liegenden echten Aufruf (aufrufe, bereits gefiltert)
-  // derselben IP zugeordnet (Fenster 4h); mehrere Beacons fuer denselben Aufruf
-  // werden zu einem Eintrag zusammengefasst (laengster Wert = vollstaendigste
-  // Messung). Ein Beacon ohne zugehoerigen gezaehlten Aufruf zaehlt nicht mit.
-  var MAX_BEACON_ZUORDNUNG_MS = 4 * 60 * 60 * 1000;
-  var aufrufeNachIp = {};
-  aufrufe.forEach(function (e) {
-    var dt = parseNginxZeit(e.zeit);
-    if (!dt) return;
-    (aufrufeNachIp[e.ip] = aufrufeNachIp[e.ip] || []).push(dt.getTime());
+  entries.filter(istEchterDownload).forEach(function (e) {
+    var p = pfadOhneQuery(e.pfad);
+    state.downloadsProDatei[p] = (state.downloadsProDatei[p] || 0) + 1;
   });
-  Object.keys(aufrufeNachIp).forEach(function (ip) {
-    aufrufeNachIp[ip].sort(function (a, b) { return a - b; });
-  });
-  function findeZugehoerigenAufruf(ip, beaconZeitMs) {
-    var liste = aufrufeNachIp[ip];
-    if (!liste) return null;
-    var treffer = null;
-    for (var i = 0; i < liste.length; i++) {
-      if (liste[i] <= beaconZeitMs && (beaconZeitMs - liste[i]) <= MAX_BEACON_ZUORDNUNG_MS) {
-        treffer = liste[i];
-      }
-    }
-    return treffer;
-  }
 
-  var verweildauerProAufruf = {};
-  eintraege.forEach(function (e) {
+  entries.filter(istEchterShareBeacon).forEach(function (e) {
+    var m = SHARE_RE.exec(e.pfad);
+    var p = m ? m[1] : 'unbekannt';
+    state.teilenProPlattform[p] = (state.teilenProPlattform[p] || 0) + 1;
+  });
+
+  // Verweildauer-Beacons -- Zuordnung ueber state.recentAufrufeProIp, das durch
+  // die Seitenaufrufe weiter oben in DIESEM Batch bereits aktualisiert wurde
+  // (identische Reihenfolge wie im alten main(), nur jetzt ueber state statt
+  // einer lokalen Variable).
+  entries.forEach(function (e) {
     if (e.methode !== 'POST' || BOT_RE.test(e.userAgent)) return;
     if (!hatEchtesBrowserPraefix(e.userAgent) || hatFehlendenAcceptLanguage(e)) return;
-    if (istCloudHostingIp(e.ip) || BEKANNTE_IPS.indexOf(e.ip) !== -1 || ROTIERENDE_UA_IPS[e.ip]) return;
+    if (istCloudHostingIp(e.ip) || BEKANNTE_IPS.indexOf(e.ip) !== -1 || state.rotierendeUaIps[e.ip]) return;
     if (istTestmodusMarkiert(e.pfad)) return;
     var m = VERWEILDAUER_RE.exec(e.pfad);
     if (!m) return;
@@ -720,7 +816,7 @@ function main() {
     if (!(ms > 0 && ms < MAX_PLAUSIBLE_VERWEILDAUER_MS)) return;
     var dt = parseNginxZeit(e.zeit);
     if (!dt) return;
-    var aufrufZeitMs = findeZugehoerigenAufruf(e.ip, dt.getTime());
+    var aufrufZeitMs = findeZugehoerigenAufrufState(state, e.ip, dt.getTime());
     if (aufrufZeitMs === null) return;
     var land = 'unbekannt';
     if (istGueltigeIp(e.ip)) {
@@ -728,89 +824,93 @@ function main() {
       land = (geo && geo.country) || 'unbekannt';
     }
     var key = e.ip + '|' + aufrufZeitMs;
-    var bestehend = verweildauerProAufruf[key];
+    var bestehend = state.offeneVerweildauer[key];
     if (!bestehend || ms > bestehend.ms) {
-      verweildauerProAufruf[key] = { ms: ms, land: land, zeit: new Date(aufrufZeitMs).toISOString() };
+      state.offeneVerweildauer[key] = { ms: ms, land: land, zeit: new Date(aufrufZeitMs).toISOString() };
     }
   });
-  var verweildauerWerteMs = [];
-  var verweildauerListe = [];
-  Object.keys(verweildauerProAufruf).forEach(function (key) {
-    var v = verweildauerProAufruf[key];
-    verweildauerWerteMs.push(v.ms);
-    verweildauerListe.push({ zeit: v.zeit, land: v.land, sekunden: Math.round(v.ms / 1000) });
-  });
-  verweildauerListe.sort(function (a, b) { return (b.zeit || '').localeCompare(a.zeit || ''); });
-  verweildauerListe = verweildauerListe.slice(0, 50); // letzte 50, Payload-Groesse begrenzen
-  var verweildauerDurchschnittSekunden = verweildauerWerteMs.length
-    ? Math.round(verweildauerWerteMs.reduce(function (s, v) { return s + v; }, 0) / verweildauerWerteMs.length / 1000)
-    : null;
+}
 
-  // Fund (testing-qa-Gegenpruefung 2026-11-18): istEchterDownload() vergleicht bereits
-  // gegen pfadOhneQuery(e.pfad), aber hier wurde weiterhin der ROHE Pfad (inkl. evtl.
-  // Query-String) als Schluessel verwendet -- ein Download mit angehaengtem Tracking-
-  // Parameter haette den Filter bestanden, waere aber beim Nachschlagen gegen die
-  // saubere DOWNLOAD_PFADE-Liste (Zeile ~780) spurlos verschwunden. Jetzt konsistent.
-  var downloadsProDatei = {};
-  eintraege.filter(istEchterDownload).forEach(function (e) {
-    var p = pfadOhneQuery(e.pfad);
-    downloadsProDatei[p] = (downloadsProDatei[p] || 0) + 1;
+// Schliesst Verweildauer-Eintraege endgueltig ab, sobald ihr 4h-Zuordnungsfenster
+// sicher abgelaufen ist (kein weiterer Beacon kann sie noch verlaengern), und
+// bucht sie in die permanenten Summen -- haelt offeneVerweildauer/
+// recentAufrufeProIp dauerhaft klein statt unbegrenzt zu wachsen.
+function finalisiereAbgelaufeneVerweildauer(state, jetztMs) {
+  Object.keys(state.offeneVerweildauer).forEach(function (key) {
+    var v = state.offeneVerweildauer[key];
+    if (jetztMs - new Date(v.zeit).getTime() > MAX_BEACON_ZUORDNUNG_MS) {
+      state.verweildauerSumMs += v.ms;
+      state.verweildauerCount++;
+      state.verweildauerJeAufrufLetzte.unshift({ zeit: v.zeit, land: v.land, sekunden: Math.round(v.ms / 1000) });
+      delete state.offeneVerweildauer[key];
+    }
   });
+  state.verweildauerJeAufrufLetzte.sort(function (a, b) { return (b.zeit || '').localeCompare(a.zeit || ''); });
+  state.verweildauerJeAufrufLetzte = state.verweildauerJeAufrufLetzte.slice(0, 50);
 
-  var teilenProPlattform = {};
-  eintraege.filter(istEchterShareBeacon).forEach(function (e) {
-    var m = SHARE_RE.exec(e.pfad);
-    var p = m ? m[1] : 'unbekannt';
-    teilenProPlattform[p] = (teilenProPlattform[p] || 0) + 1;
+  Object.keys(state.recentAufrufeProIp).forEach(function (ip) {
+    var liste = state.recentAufrufeProIp[ip].filter(function (ms) { return jetztMs - ms <= MAX_BEACON_ZUORDNUNG_MS; });
+    if (liste.length) state.recentAufrufeProIp[ip] = liste;
+    else delete state.recentAufrufeProIp[ip];
   });
+}
 
-  var tage = Object.keys(proTag).sort();
+function schreibeStatsJson(state, jetztMs) {
+  var tage = Object.keys(state.proTag).sort();
   var anzahlTageMitDaten = tage.length;
-  var alterInTagen = Math.max(1, Math.round((Date.now() - new Date(LAUNCH_DATE + 'T00:00:00Z').getTime()) / 86400000));
+  var alterInTagen = Math.max(1, Math.round((jetztMs - new Date(LAUNCH_DATE + 'T00:00:00Z').getTime()) / 86400000));
 
-  // Ehrliche Prognose-Sperre: unter 14 echten Beobachtungstagen ist jede Hochrechnung auf
-  // 12 Monate reine Erfindung, keine reale Prognose (René-Direktive "grimmiges Framing" --
-  // lieber "noch keine Aussage moeglich" als eine erfundene Zahl zeigen).
   var MIN_TAGE_FUER_PROGNOSE = 14;
   var prognose = null;
   if (anzahlTageMitDaten >= MIN_TAGE_FUER_PROGNOSE) {
-    var letzte14 = tage.slice(-14).reduce(function (s, t) { return s + proTag[t]; }, 0);
+    var letzte14 = tage.slice(-14).reduce(function (s, t) { return s + state.proTag[t]; }, 0);
     var taeglicherSchnitt = letzte14 / 14;
     prognose = [];
     for (var i = 1; i <= 12; i++) {
-      var tageImMonat = 30.4;
-      prognose.push({ monat: i, geschaetzteAufrufe: Math.round(taeglicherSchnitt * tageImMonat * i) });
+      prognose.push({ monat: i, geschaetzteAufrufe: Math.round(taeglicherSchnitt * 30.4 * i) });
     }
   }
 
+  // Noch offene (nicht aeltere als 4h) Verweildauer-Eintraege sofort mit
+  // anzeigen, nicht erst nach ihrer Finalisierung -- sonst wuerde eine
+  // frisch gemessene Verweildauer bis zu 4h lang nicht im Dashboard
+  // auftauchen, obwohl der Wert bereits feststeht.
+  var offeneWerte = Object.keys(state.offeneVerweildauer).map(function (k) { return state.offeneVerweildauer[k]; });
+  var kombinierteListe = state.verweildauerJeAufrufLetzte
+    .concat(offeneWerte.map(function (v) { return { zeit: v.zeit, land: v.land, sekunden: Math.round(v.ms / 1000) }; }))
+    .sort(function (a, b) { return (b.zeit || '').localeCompare(a.zeit || ''); })
+    .slice(0, 50);
+  var gesamtSumMs = state.verweildauerSumMs + offeneWerte.reduce(function (s, v) { return s + v.ms; }, 0);
+  var gesamtCount = state.verweildauerCount + offeneWerte.length;
+
   var out = {
-    generiertAm: new Date().toISOString(),
+    generiertAm: new Date(jetztMs).toISOString(),
     logPfad: LOG_PATH,
     liveSeit: LAUNCH_DATE,
     datenerfassungSeit: LOG_START,
     seiteIstSeitTagenLive: alterInTagen,
-    gesamtAufrufe: gesamt,
-    eindeutigeBesucherIps: eindeutigeIps.size,
-    aufrufeProTag: tage.map(function (t) { return { datum: t, aufrufe: proTag[t] }; }),
-    aufrufeProLand: Object.keys(proLand).sort(function (a, b) { return proLand[b] - proLand[a]; })
-      .map(function (l) { return { land: l, aufrufe: proLand[l] }; }),
-    aufrufeProBundesland: Object.keys(proBundesland).sort(function (a, b) { return proBundesland[b] - proBundesland[a]; })
-      .map(function (b) { return { bundesland: b, aufrufe: proBundesland[b] }; }),
-    aufrufeProStadt: Object.keys(proStadt).sort(function (a, b) { return proStadt[b] - proStadt[a]; })
-      .map(function (s) { return { stadt: s, aufrufe: proStadt[s] }; }),
-    aufrufeProQuelle: Object.keys(proQuelle).sort(function (a, b) { return proQuelle[b] - proQuelle[a]; })
-      .map(function (q) { return { quelle: q, aufrufe: proQuelle[q] }; }),
-    topVerweisDomains: Object.keys(proVerweisHost).sort(function (a, b) { return proVerweisHost[b] - proVerweisHost[a]; })
-      .slice(0, 10).map(function (h) { return { host: h, aufrufe: proVerweisHost[h] }; }),
+    gesamtAufrufe: state.gesamt,
+    eindeutigeBesucherIps: Object.keys(state.eindeutigeIps).length,
+    aufrufeProTag: tage.map(function (t) { return { datum: t, aufrufe: state.proTag[t] }; }),
+    aufrufeProLand: Object.keys(state.proLand).sort(function (a, b) { return state.proLand[b] - state.proLand[a]; })
+      .map(function (l) { return { land: l, aufrufe: state.proLand[l] }; }),
+    aufrufeProBundesland: Object.keys(state.proBundesland).sort(function (a, b) { return state.proBundesland[b] - state.proBundesland[a]; })
+      .map(function (b) { return { bundesland: b, aufrufe: state.proBundesland[b] }; }),
+    aufrufeProStadt: Object.keys(state.proStadt).sort(function (a, b) { return state.proStadt[b] - state.proStadt[a]; })
+      .map(function (s) { return { stadt: s, aufrufe: state.proStadt[s] }; }),
+    aufrufeProQuelle: Object.keys(state.proQuelle).sort(function (a, b) { return state.proQuelle[b] - state.proQuelle[a]; })
+      .map(function (q) { return { quelle: q, aufrufe: state.proQuelle[q] }; }),
+    topVerweisDomains: Object.keys(state.proVerweisHost).sort(function (a, b) { return state.proVerweisHost[b] - state.proVerweisHost[a]; })
+      .slice(0, 10).map(function (h) { return { host: h, aufrufe: state.proVerweisHost[h] }; }),
     bezirksHinweis: 'Echte Landkreise/Stadtbezirke liefert die kostenlose Offline-GeoIP-' +
       'Datenbasis nicht -- feinste erreichbare Stufe ohne kostenpflichtigen Drittanbieter ' +
       'ist der Stadtname. Bundesland wird daraus abgeleitet, nicht aus einem direkten Feld.',
-    verweildauerDurchschnittSekunden: verweildauerDurchschnittSekunden,
-    verweildauerAnzahlMessungen: verweildauerWerteMs.length,
-    verweildauerJeAufruf: verweildauerListe,
-    downloadsProDatei: DOWNLOAD_PFADE.map(function (p) { return { datei: p, downloads: downloadsProDatei[p] || 0 }; }),
-    teilenProPlattform: Object.keys(teilenProPlattform).sort(function (a, b) { return teilenProPlattform[b] - teilenProPlattform[a]; })
-      .map(function (p) { return { plattform: p, anzahl: teilenProPlattform[p] }; }),
+    verweildauerDurchschnittSekunden: gesamtCount ? Math.round(gesamtSumMs / gesamtCount / 1000) : null,
+    verweildauerAnzahlMessungen: gesamtCount,
+    verweildauerJeAufruf: kombinierteListe,
+    downloadsProDatei: DOWNLOAD_PFADE.map(function (p) { return { datei: p, downloads: state.downloadsProDatei[p] || 0 }; }),
+    teilenProPlattform: Object.keys(state.teilenProPlattform).sort(function (a, b) { return state.teilenProPlattform[b] - state.teilenProPlattform[a]; })
+      .map(function (p) { return { plattform: p, anzahl: state.teilenProPlattform[p] }; }),
     newsletterBestaetigteAbonnenten: zaehleBestaetigteAbonnenten(),
     prognose: prognose,
     prognoseHinweis: prognose ? null :
@@ -821,7 +921,60 @@ function main() {
 
   fs.mkdirSync(path.dirname(OUT_PATH), { recursive: true });
   fs.writeFileSync(OUT_PATH, JSON.stringify(out, null, 2));
-  console.log('Aktualisiert:', OUT_PATH, '| Gesamtaufrufe:', gesamt, '| Tage mit Daten:', anzahlTageMitDaten);
+  console.log('Aktualisiert:', OUT_PATH, '| Gesamtaufrufe:', state.gesamt, '| Tage mit Daten:', anzahlTageMitDaten);
+}
+
+function main() {
+  var state = ladeState();
+  var jetztMs = Date.now();
+
+  if (!state) {
+    // Einmaliger Backfill: komplette bisherige Historie (alle noch vorhandenen
+    // rotierten Logs + aktuelles Log) wird EINMALIG eingelesen, danach laeuft
+    // jeder weitere Lauf nur noch inkrementell weiter.
+    state = leereState();
+    var backfillDateien = ermittleBackfillDateien();
+    console.log('Erstlauf mit neuer State-Logik -- einmaliger Backfill aus', backfillDateien.length, 'Datei(en):', backfillDateien.join(', '));
+    backfillDateien.forEach(function (datei) {
+      var zeilen;
+      try { zeilen = leseAlleZeilen(datei); } catch (e) {
+        console.error('Backfill: Datei nicht lesbar, uebersprungen:', datei, '--', e.message);
+        return;
+      }
+      verarbeiteBatch(zeilen.map(parseZeile).filter(Boolean), state);
+    });
+    var aktuellStat = statOrNull(LOG_PATH);
+    state.cursor = aktuellStat ? { ino: aktuellStat.ino, offset: aktuellStat.size } : null;
+  } else {
+    var aktuellStat = statOrNull(LOG_PATH);
+    if (!aktuellStat) {
+      console.error('Log-Datei aktuell nicht lesbar, kein Update in diesem Lauf:', LOG_PATH);
+    } else if (!state.cursor || state.cursor.ino !== aktuellStat.ino) {
+      // Rotation erkannt (Inode-Wechsel) -- zuerst den Rest der alten Datei
+      // zu Ende lesen, DANACH die neue Datei komplett von Anfang an.
+      if (state.cursor) {
+        var alteDatei = findeDateiMitInode([LOG_PATH + '.1', LOG_PATH + '.2'], state.cursor.ino);
+        if (alteDatei) {
+          var rest = leseAbOffset(alteDatei, state.cursor.offset);
+          verarbeiteBatch(rest.zeilen.map(parseZeile).filter(Boolean), state);
+        } else {
+          console.error('Rotation erkannt, alte Log-Datei mit Inode', state.cursor.ino, 'nicht mehr auffindbar -- ' +
+            'Rest dieser Rotation nicht nachtraeglich erfassbar (mehr als 1 Rotation seit dem letzten Lauf).');
+        }
+      }
+      var neu = leseAlleZeilen(LOG_PATH);
+      verarbeiteBatch(neu.map(parseZeile).filter(Boolean), state);
+      state.cursor = { ino: aktuellStat.ino, offset: aktuellStat.size };
+    } else {
+      var inkrement = leseAbOffset(LOG_PATH, state.cursor.offset);
+      verarbeiteBatch(inkrement.zeilen.map(parseZeile).filter(Boolean), state);
+      state.cursor = { ino: aktuellStat.ino, offset: inkrement.neuerOffset };
+    }
+  }
+
+  finalisiereAbgelaufeneVerweildauer(state, jetztMs);
+  speichereState(state);
+  schreibeStatsJson(state, jetztMs);
 }
 
 main();
