@@ -37,7 +37,7 @@ var LOG_START = '2026-11-16T04:26:00Z';
 
 // René-Auftrag 2026-11-17: Downloads + Newsletter-Wachstum zusaetzlich zu den
 // reinen Besucherzahlen im Dashboard zeigen.
-var DOWNLOAD_PFADE = ['/flyer-pflege-faktencheck.pdf', '/vorlage-pflegetagebuch.pdf', '/vorlage-pflegetagebuch.docx', '/fristen-kalender.ics', '/checkliste-pflegedienst.pdf', '/checkliste-krankenhausentlassung.pdf'];
+var DOWNLOAD_PFADE = ['/flyer-pflege-faktencheck.pdf', '/vorlage-pflegetagebuch.pdf', '/vorlage-pflegetagebuch.docx', '/fristen-kalender.ics', '/checkliste-pflegedienst.pdf', '/checkliste-krankenhausentlassung.pdf', '/spickzettel-pflegedienst-telefonat.pdf'];
 var SHARE_RE = /^\/beacon-share\?plattform=([a-z]+)/;
 var NEWSLETTER_DB_PATH = process.env.NEWSLETTER_DB_PATH || '/opt/pflege-fakten-server/pflege-fakten.db';
 
