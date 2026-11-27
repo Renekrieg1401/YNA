@@ -3462,7 +3462,12 @@
 
 
   var SITUATIONS = {
-    unsicher:['pflegegrad','glossar','versorgungsformen'],
+    // René-Fund 2026-11-27: Belastungs-Selbstcheck soll nicht nur unter
+    // "Ich bin selbst erschöpft" erreichbar sein, sondern auch hier --
+    // Erschöpfung kann bereits auftreten, bevor überhaupt klar ist, ob ein
+    // Pflegegrad nötig ist. Bewusst als sekundäre (nicht primäre) Option
+    // angehängt -- "Der Pflegegrad" bleibt der naheliegende Haupteinstieg.
+    unsicher:['pflegegrad','glossar','versorgungsformen','belastungstest'],
     alltag:['leistungen','entlastungsbetrag','pflegedienst'],
     akut:['krankenhaus','hausnotruf','ersatzpflege'],
     vorsorge:['vorsorge','pflegezusatz','gdb'],
