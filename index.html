@@ -175,6 +175,16 @@
     background:var(--glass-strong);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);
     border:1px solid var(--glass-border);border-radius:16px;box-shadow:0 18px 40px -16px rgba(0,0,0,.35);
     padding:12px}
+  /* René-Fund 2026-11-27 (echtes Geraet-Screenshot): absolute+left:0
+     reicht nicht -- der Lupen-Button sitzt frueh im Header, ein
+     relativ dazu positioniertes Panel lief auf schmalen Bildschirmen
+     rechts ueber den Rand hinaus. Ab hier bewusst `position:fixed`
+     (Viewport-relativ, nicht mehr button-relativ) mit beidseitigem
+     Randabstand -- Breite ergibt sich automatisch aus left+right,
+     unabhaengig davon wo der Button im Header steht. */
+  @media (max-width:640px){
+    .gsearch-panel{position:fixed;left:16px;right:16px;top:64px;width:auto}
+  }
   .gsearch-panel input{width:100%;box-sizing:border-box;font-family:var(--font-body);font-size:15px;
     padding:11px 14px;border-radius:99px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
   .gsearch-panel input:focus{outline:2px solid var(--primary);outline-offset:2px}
@@ -3392,6 +3402,21 @@
     panel.hidden = !show;
     btn.setAttribute('aria-expanded', show ? 'true' : 'false');
     if (show) {
+      // René-Fund 2026-11-27 (echtes Geraet-Screenshot): auf schmalen
+      // Bildschirmen ist das Panel per CSS-Media-Query `position:fixed`
+      // (viewport-relativ, s. .gsearch-panel-Regel oben) -- der Header
+      // wraps auf sehr schmalen Breiten auf 2 Zeilen, eine fest
+      // einprogrammierte `top`-Zahl waere also unzuverlaessig. Hier
+      // stattdessen die tatsaechliche Header-Unterkante zur Laufzeit
+      // messen, NUR wenn die Fixed-Variante aktiv ist (Desktop behaelt
+      // sein eigenes button-relatives `top` aus dem Stylesheet).
+      var isFixedMode = window.matchMedia('(max-width:640px)').matches;
+      if (isFixedMode) {
+        var header = document.querySelector('header.nav');
+        panel.style.top = header ? (header.getBoundingClientRect().bottom + 8) + 'px' : '';
+      } else {
+        panel.style.top = '';
+      }
       var input = document.getElementById('gsearch-input');
       if (input) { input.value = ''; input.focus(); }
       globalSearchInput('');
