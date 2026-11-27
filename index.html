@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
+<script>
+  // René-Fund 2026-11-27: Ein Seiten-Reload (F5/Cmd+R) blieb beim alten
+  // Scroll-Stand stehen statt zur Hauptseite zurueckzuspringen -- das ist
+  // der Browser-native "scroll restoration"-Mechanismus (Safari/Chrome
+  // merken sich die Scroll-Position ueber einen Reload hinweg). Muss VOR
+  // jedem Layout gesetzt werden, daher als allererstes Script im <head>.
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="dark">
@@ -1238,7 +1246,8 @@
       <div class="card"><h4>Pflegegeld (§ 37 SGB XI)</h4><p class="muted">Wird ausgezahlt, wenn Angehörige oder nahestehende Personen die Pflege übernehmen. Voraussetzung: regelmäßige Beratungseinsätze.</p></div>
       <div class="card"><h4>Pflegesachleistung (§ 36 SGB XI)</h4><p class="muted">Wird direkt mit einem zugelassenen ambulanten Pflegedienst abgerechnet — das Geld geht nicht auf Ihr Konto.</p></div>
     </div>
-    <div class="callout"><strong>Kombinationsleistung (§ 38 SGB XI):</strong> Sie müssen sich nicht entscheiden. Nutzen Sie z. B. 60&nbsp;% der Sachleistung für den Pflegedienst — die restlichen 40&nbsp;% des Pflegegeldes werden dann anteilig ausgezahlt.</div>
+    <div class="callout"><strong>Kombinationsleistung (§ 38 SGB XI):</strong> Sie müssen sich nicht entscheiden. Nutzen Sie z. B. 60&nbsp;% der Sachleistung für den Pflegedienst, bleiben die restlichen 40&nbsp;% als Pflegegeld übrig — und genau diese 40&nbsp;% des vollen monatlichen Pflegegeld-Betrags werden ausgezahlt, nicht weniger.</div>
+    <div class="callout" style="margin-top:14px"><strong>Beispielgeschichte (fiktiv, zur Veranschaulichung):</strong> Frau N., Pflegegrad 3, lässt zweimal pro Woche einen ambulanten Pflegedienst kommen — an den übrigen Tagen pflegt ihre Tochter. Der Pflegedienst rechnet dafür 60&nbsp;% der Pflegesachleistung ab: 898,20&nbsp;€ von 1.497&nbsp;€. Die verbleibenden 40&nbsp;% des Pflegegeldes — 239,60&nbsp;€ von 599&nbsp;€ — zahlt die Pflegekasse direkt an Frau N. aus, als Anerkennung für die Pflege durch ihre Tochter. Beide Leistungsarten laufen also gleichzeitig, nicht nacheinander — niemand muss sich auf nur eine Variante festlegen.</div>
     <div class="motivate"><span class="spark">→</span><span><strong>Es lohnt sich:</strong> Sie haben diese Leistungen über Jahre mitfinanziert. Sie in Anspruch zu nehmen ist kein Gefallen der Pflegekasse, sondern Ihr gutes Recht.</span></div>
     </div>
 
@@ -2537,7 +2546,8 @@
 
     <div data-i18n="de">
     <h2 class="title">Hilfe zur Weiterführung des Haushalts (§ 66 SGB XII)</h2>
-    <p class="lead">Reicht der Entlastungsbetrag der Pflegekasse für Haushaltsführung und Betreuung nicht aus — oder entfällt er ganz —, kann das Sozialamt einspringen. Anders als die Pflegeversicherung ist das keine Pauschale, sondern eine einkommens- und vermögensgeprüfte Fürsorgeleistung.</p>
+    <p class="lead">Reicht der Entlastungsbetrag der Pflegekasse für Haushaltsführung und Betreuung nicht aus — oder entfällt er ganz —, kann das Sozialamt einspringen. Anders als die Pflegeversicherung ist das keine Pauschale, sondern eine einkommens- und vermögensgeprüfte Leistung — geprüft wird dabei ausschließlich Ihre eigene Einkommens-/Vermögenssituation zum Zeitpunkt des Pflegebedarfs.</p>
+    <div class="callout"><strong>Häufiges Missverständnis:</strong> Sie müssen dafür KEIN laufender Sozialhilfe- oder Bürgergeld-Empfänger sein. Diese Leistung steht eigenständig für sich — unabhängig davon, ob Sie sonst irgendeine andere Sozialleistung beziehen. Entscheidend ist allein, ob Ihr Einkommen unter der weiter unten genannten individuellen Grenze liegt, wenn der zusätzliche Haushaltshilfe-Bedarf entsteht. Auch wer finanziell sonst gut zurechtkommt, kann durch diesen zusätzlichen, pflegebedingten Bedarf darunterfallen.</div>
     <div class="callout warn"><strong>Reformeffekt PNOG (ab 2027):</strong> Der einkommensunabhängige 131-€-Entlastungsbetrag der Pflegekasse (§ 45b SGB XI) entfällt bei Pflegegrad 1 für reine Haushaltshilfen. Wer dadurch keine Pflegekassen-Leistung mehr erhält, landet für denselben Bedarf beim Sozialamt — einer bedarfs- und einkommensgeprüften Leistung statt der bisherigen Gießkannen-Pauschale.</div>
     <div class="step-list">
       <div class="step"><div class="step-num">1</div><div><h3>Pflegebedingter Bedarf</h3><p>Nachgewiesener gesundheits- oder pflegebedingter Hilfebedarf bei der Haushaltsführung — ab Pflegegrad 1 möglich, ein höherer Pflegegrad ist keine Voraussetzung.</p></div></div>
@@ -2555,7 +2565,8 @@
 
     <div data-i18n="en" hidden>
     <h2 class="title">Help continuing the household (§ 66 SGB XII)</h2>
-    <p class="lead">If the care fund's relief allowance for household help and support isn't enough — or stops applying altogether — the welfare office can step in. Unlike care insurance, this isn't a flat amount but a means- and asset-tested welfare benefit.</p>
+    <p class="lead">If the care fund's relief allowance for household help and support isn't enough — or stops applying altogether — the welfare office can step in. Unlike care insurance, this isn't a flat amount but a means- and asset-tested benefit — what's checked is solely your own income/assets at the time the care-related need arises.</p>
+    <div class="callout"><strong>Common misunderstanding:</strong> You do NOT need to already be receiving ongoing social assistance or basic jobseeker's benefit (Bürgergeld) to get this. This benefit stands on its own — regardless of whether you receive any other social benefit. What matters is purely whether your income falls below the individual limit stated further below once the additional household-help need arises. Even someone who otherwise manages well financially can fall under that limit because of this extra, care-related need.</div>
     <div class="callout warn"><strong>Reform effect (PNOG, from 2027):</strong> The income-independent €131 relief allowance from the care fund (§ 45b SGB XI) will no longer apply at care level 1 for pure household help. Anyone who loses that benefit this way ends up at the welfare office for the same need — a means- and needs-tested benefit instead of the previous flat-rate allowance.</div>
     <div class="step-list">
       <div class="step"><div class="step-num">1</div><div><h3>Care-related need</h3><p>A documented health- or care-related need for help with the household — possible from care level 1; a higher care level is not a requirement.</p></div></div>
@@ -3548,6 +3559,12 @@
     var initial = ids.indexOf(fromHash) !== -1 ? fromHash : 'start';
     topics.forEach(function(t){ t.hidden = (t.id !== initial); });
     setActiveTab(initial);
+    // René-Fund 2026-11-27: Reload soll zum Seitenanfang springen, nicht
+    // beim alten Scroll-Stand bleiben (ergaenzt scrollRestoration='manual'
+    // oben im <head> -- beides zusammen deckt sowohl den Browser-eigenen
+    // Restore-Mechanismus als auch einen evtl. noch vorhandenen Hash-Anker
+    // in der URL ab).
+    window.scrollTo(0, 0);
     document.querySelectorAll('.next-nav').forEach(function(nn){
       nn.insertAdjacentHTML('beforebegin', '<span class="version-note">Zuletzt aktualisiert: Juni 2026</span>');
     });
@@ -3834,6 +3851,27 @@
     amMarkDismissed(AM_SHOWN_KEYS);
     document.getElementById('aenderungen-modal').close();
   }
+  // Rene-Fund 2026-11-27: generisches "Neu auf der Seite"-Banner fuer
+  // inhaltliche Aenderungen an index.html selbst (neue Abschnitte,
+  // verstaendlichere Erklaerungen etc.) -- unabhaengig vom rechtlichen
+  // Freigabe-Status eines Fakts. Von Hand gepflegt, da es um redaktionelle
+  // Seiteninhalte geht, nicht um primaerquellen-geprueft Rechtswerte (die
+  // laufen weiterhin ausschliesslich ueber facts/aenderungen.json oben).
+  var SITE_NEUIGKEITEN = [
+    {
+      id: 'neu-haushaltshilfe-sozialamt', datum: '2026-11-27',
+      label: {de: 'Neuer Abschnitt: Haushaltshilfe über das Sozialamt', en: 'New section: Household help via the welfare office'},
+      text: {de: 'Ein neuer Themenbereich erklärt § 66 SGB XII — wann das Sozialamt einspringt, wenn der Entlastungsbetrag der Pflegekasse nicht reicht, inkl. Einkommensgrenzen-Beispiel und Abgrenzung zu Bürgergeld/Sozialhilfe.', en: 'A new topic explains § 66 SGB XII — when the welfare office can help once the care fund\'s relief allowance isn\'t enough, including an income-limit example and how it differs from basic jobseeker\'s benefit.'},
+      sectionId: 'haushaltshilfe-sozialamt'
+    },
+    {
+      id: 'neu-leistungen-fallbeispiel', datum: '2026-11-27',
+      label: {de: 'Verständlicher erklärt: Pflegegeld & Pflegesachleistung', en: 'Clearer explanation: care allowance & in-kind benefit'},
+      text: {de: 'Die Kombinationsleistung (§ 38 SGB XI) ist jetzt mit einem konkreten Rechenbeispiel statt nur der abstrakten Regel erklärt.', en: 'The combined benefit (§ 38 SGB XI) is now explained with a concrete worked example instead of just the abstract rule.'},
+      sectionId: 'leistungen'
+    }
+  ];
+
   async function checkAenderungen(){
     var items = [];
     try {
@@ -3843,6 +3881,7 @@
         facts.forEach(function(f){
           if (!f.pendingOverlay) return;
           items.push({
+            kind: 'legal',
             key: f.id + '|' + f.pendingOverlay.effectiveDate,
             label: f.label,
             date: f.pendingOverlay.effectiveDate,
@@ -3860,6 +3899,7 @@
         var liste = await r2.json();
         (liste.aenderungen || []).forEach(function(a){
           items.push({
+            kind: 'legal',
             key: 'aj:' + a.id + '|' + a.datum,
             label: a.label,
             date: a.datum,
@@ -3871,6 +3911,19 @@
         });
       }
     } catch(e){ /* Datei existiert evtl. noch nicht -- normal, kein Fehlerfall */ }
+    var langFuerSite = document.documentElement.lang === 'en' ? 'en' : 'de';
+    SITE_NEUIGKEITEN.forEach(function(n){
+      items.push({
+        kind: 'site',
+        key: 'site:' + n.id,
+        label: n.label[langFuerSite],
+        date: n.datum,
+        prosText: n.text[langFuerSite],
+        consText: null,
+        sourceUrl: null,
+        sectionId: n.sectionId
+      });
+    });
 
     var dismissed = amDismissedSet();
     var toShow = items.filter(function(it){ return !dismissed.has(it.key); });
@@ -3878,12 +3931,20 @@
     AM_SHOWN_KEYS = toShow.map(function(it){ return it.key; });
 
     var lang = document.documentElement.lang === 'en' ? 'en' : 'de';
-    document.getElementById('am-title').textContent = lang === 'en' ? 'Official changes' : 'Offizielle Änderungen';
-    var html = '<p class="am-intro">' + (lang === 'en'
-      ? 'These confirmed changes to German care law were verified against the official source and will take effect on the date shown.'
-      : 'Diese bestätigten Änderungen am Pflegerecht wurden gegen die amtliche Quelle geprüft und treten zum genannten Datum in Kraft.') + '</p>';
+    var hatRecht = toShow.some(function(it){ return it.kind === 'legal'; });
+    var hatSite = toShow.some(function(it){ return it.kind === 'site'; });
+    document.getElementById('am-title').textContent = lang === 'en' ? 'What\'s new' : 'Neuigkeiten';
+    var introParts = [];
+    if (hatRecht) introParts.push(lang === 'en'
+      ? 'Confirmed changes to German care law, verified against the official source.'
+      : 'Bestätigte Änderungen am Pflegerecht, gegen die amtliche Quelle geprüft.');
+    if (hatSite) introParts.push(lang === 'en'
+      ? 'Recent additions and clarifications on this page.'
+      : 'Neue oder verständlicher erklärte Inhalte auf dieser Seite.');
+    var html = '<p class="am-intro">' + introParts.join(' ') + '</p>';
     toShow.forEach(function(it){
-      html += '<div class="am-item"><span class="am-date">' + (lang === 'en' ? 'Effective ' : 'Gültig ab ') + (it.date || '') + '</span>';
+      var dateLabel = it.kind === 'legal' ? (lang === 'en' ? 'Effective ' : 'Gültig ab ') : (lang === 'en' ? 'New since ' : 'Neu seit ');
+      html += '<div class="am-item"><span class="am-date">' + dateLabel + (it.date || '') + '</span>';
       html += '<h4>' + it.label + '</h4>';
       if (it.prosText) html += '<p>' + it.prosText + '</p>';
       if (it.consText) html += '<p class="muted-label">' + it.consText + '</p>';
