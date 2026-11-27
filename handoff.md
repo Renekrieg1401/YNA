@@ -1,5 +1,43 @@
 # Handoff — Pflege-Faktencheck (ex Pflege-Fakten / YNA Digital), 2026-11-15
 
+## Nachtrag 2026-11-27 (3) — Zurück-Button-Scroll-Fix + Belastungs-Selbstcheck direkt aus Situationswahl
+René-Direktive "Dringend", zwei separate Funde:
+- **[ERLEDIGT] Zurück-Button:** `#go-back-btn` (`goBack()`/`jump()`) sprang
+  zwar zur richtigen Themenseite zurück, aber immer an deren Seitenanfang
+  statt an die exakte Stelle, von der aus weitergesprungen wurde.
+  `topicHistory` merkt sich jetzt zusätzlich `scrollY` der verlassenen
+  Seite (`{id, scrollY}` statt nur `id`), `jump()` stellt diese Position
+  bei `isBack` wieder her statt pauschal `scrollTo(0,0)`.
+- **[ERLEDIGT] Belastungstest direkt erreichbar:** René-Fund per
+  Screenshot — der Situationsknopf "Ich bin selbst erschöpft" führte nur
+  zur allgemeinen Übersichtsseite "Wenn die Kraft nachlässt"; der
+  7-Fragen-Selbstcheck darin war nur EIN Baustein unter mehreren Karten/
+  Hotline-Hinweisen, nicht sofort sichtbar. Neuer, sprachspezifischer
+  Anker `#belastungstest-de`/`#belastungstest-en` direkt auf der
+  Selbstcheck-Callout-Box, als primärer (`→ Hier starten`) Eintrag vor
+  `angehoerige-staerken` in `SITUATIONS.erschoepft` eingefügt. Label
+  bewusst "Belastungs-Selbstcheck" statt "ZBI" (bestehende Code-Doku bei
+  `ERSCHOEPFUNG_FRAGEN` besteht explizit darauf, dass dies NICHT das
+  lizenzpflichtige Zarit Burden Interview ist — Konstante erhalten).
+  Dabei einen latenten Bug in `jump()` behoben: ein Sprung zu einem
+  Innen-Anker (kein `.topic`-Element) deckte die umgebende, ggf. gerade
+  verborgene Topic-Section nicht auf — `scrollIntoView` auf ein Element
+  in einer `hidden`-Section hat keine Wirkung. `jump()` sucht jetzt per
+  `el.closest('main > section.topic')` die Elternsektion und zeigt sie
+  zuerst, bevor zum Anker gescrollt wird.
+- **Verifikation:** `node -e new Function(...)` über alle `<script>`-Blöcke
+  (0 Syntaxfehler) + echter Playwright-Lauf lokal (DE+EN): Klick auf
+  "Ich bin selbst erschöpft" → primärer Button → `#belastungstest-de`/
+  `-en` sichtbar mit realer BoundingBox (Höhe ~672px, nicht 0) — Widget
+  ist direkt erreichbar, kein Scroll-durch-Übersicht mehr nötig.
+- Deployed via `scp` (Produktions-Pattern, kein Git-Pull auf dem Server)
+  nach `/var/www/pflege-fakten/index.html`, live per `curl` gegengeprüft
+  (neue IDs + SITUATIONS-Eintrag im ausgelieferten HTML vorhanden).
+  Committed+gepusht (`52a6863`).
+- **[OFFEN]:** Kein `legal-compliance`/`accessibility-a11y`-Zweitprüfer-
+  Lauf (Komplexitäts-Gate, direkte René-Anweisung mit "Dringend", reine
+  Navigations-/UX-Korrektur ohne neue Rechts-/Fachinhalte).
+
 ## Nachtrag 2026-11-27 — Eigenanteil-Rechner-Fund behoben + neuer Themenabschnitt Haushaltshilfe/Sozialamt
 René-Direktive "Dringend", zwei Teile:
 - **[ERLEDIGT] Korrektur:** "Eigenanteil-Rechner" zeigte nur den Leistungsbetrag
