@@ -1,0 +1,4 @@
+{
+  "_hinweis": "Wird von der taeglichen RemoteTrigger-Routine (trig_01WWDsXGWAFHtYWi1g4Lzk7m) beschrieben, wenn sie eine bestaetigte Primaerquellen-Korrektur direkt in index.html eintraegt. Jeder Eintrag erscheint beim naechsten Seitenaufruf als Overlay (s. checkAenderungen() in index.html), bis der Nutzer 'Verstanden' klickt (localStorage-Dismiss je Eintrag). Format je Eintrag: {id, label, datum (ISO, Gueltig-ab), text (Oton-Zusammenfassung der Quelle), quelle (URL), abschnitt (section_id in index.html fuer 'Mehr dazu')}.",
+  "aenderungen": []
+}
