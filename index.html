@@ -159,6 +159,34 @@
     background:var(--glass-strong);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);
     border:1px solid var(--glass-border);border-radius:16px;box-shadow:0 18px 40px -16px rgba(0,0,0,.35);
     padding:14px}
+
+  /* René-Auftrag 2026-11-27: globale Suchleiste im Header (Lupen-Icon),
+     von jeder Themenseite aus erreichbar -- nicht nur auf der Startseite
+     wie die bestehende #topic-search. Gleiches Panel-Muster wie
+     .settings-wrap/.settings-panel oben. */
+  .gsearch-wrap{position:relative}
+  .gsearch-btn{display:flex;align-items:center;justify-content:center;width:44px;height:44px;
+    background:var(--surface);border:1px solid var(--line);border-radius:99px;color:var(--text-muted);
+    cursor:pointer;-webkit-appearance:none;transition:background .2s ease,color .2s ease}
+  .gsearch-btn:hover{background:#B8733324;color:var(--ink)}
+  .gsearch-btn[aria-expanded="true"]{background:var(--primary);color:var(--on-primary)}
+  @media print{.gsearch-wrap{display:none!important}}
+  .gsearch-panel{position:absolute;top:calc(100% + 8px);left:0;z-index:60;width:min(360px,calc(100vw - 32px));
+    background:var(--glass-strong);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);
+    border:1px solid var(--glass-border);border-radius:16px;box-shadow:0 18px 40px -16px rgba(0,0,0,.35);
+    padding:12px}
+  .gsearch-panel input{width:100%;box-sizing:border-box;font-family:var(--font-body);font-size:15px;
+    padding:11px 14px;border-radius:99px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+  .gsearch-panel input:focus{outline:2px solid var(--primary);outline-offset:2px}
+  .gsearch-results{margin-top:10px;max-height:min(50vh,420px);overflow-y:auto;display:grid;gap:6px}
+  .gsearch-result{display:block;width:100%;text-align:left;font-family:var(--font-body);
+    background:transparent;border:1px solid var(--line);border-radius:12px;padding:9px 12px;
+    cursor:pointer;-webkit-appearance:none;color:var(--ink);transition:background .2s ease}
+  .gsearch-result:hover,.gsearch-result:focus-visible{background:#B8733324}
+  .gsearch-result .gr-title{font-weight:700;font-size:13.5px;display:block}
+  .gsearch-result .gr-snippet{font-size:12.5px;color:var(--text-muted);display:block;margin-top:2px;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .gsearch-empty{font-size:13px;color:var(--text-muted);padding:6px 4px}
   .settings-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;padding:7px 2px}
   .settings-row + .settings-row{border-top:1px solid var(--line);margin-top:4px;padding-top:11px}
   .settings-label{font-size:13px;font-weight:600;color:var(--ink)}
@@ -667,6 +695,15 @@
       </svg>
       <span class="header-brand"><span class="main aeris-wortmarke">Pflege-Faktencheck</span></span>
     </button>
+    <div class="gsearch-wrap">
+      <button type="button" class="gsearch-btn" id="gsearch-btn" onclick="toggleGlobalSearch()" aria-expanded="false" aria-haspopup="true" aria-label="Website durchsuchen">
+        <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </button>
+      <div class="gsearch-panel" id="gsearch-panel" hidden>
+        <input type="search" id="gsearch-input" oninput="globalSearchInput(this.value)" placeholder="Stichwort eingeben, z. B. Hausnotruf, Schonvermögen …" aria-label="Website durchsuchen">
+        <div class="gsearch-results" id="gsearch-results"></div>
+      </div>
+    </div>
     <button type="button" class="notfall-btn" onclick="openNotfall()">
       <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3L2 20h20L12 3z"/><line x1="12" y1="9" x2="12" y2="13.5"/><circle cx="12" cy="16.5" r=".6" fill="currentColor" stroke="none"/></svg>
       Notfall
@@ -3338,6 +3375,77 @@
   });
   document.addEventListener('keydown', function(e){
     if (e.key === 'Escape') toggleSettings(false);
+  });
+
+  // René-Auftrag 2026-11-27: globale Suchleiste (Lupe im Header) -- im
+  // Gegensatz zu #topic-search (nur auf der Startseite, filtert eine
+  // sichtbare Kartenliste) von JEDER Themenseite aus erreichbar und
+  // rendert ein eigenes Treffer-Dropdown. Datenquelle sind dieselben
+  // #start .topic-card-Elemente -- die existieren immer im DOM, auch
+  // wenn die Startseite selbst gerade verborgen ist (nur textContent
+  // einer verborgenen Section ist weiterhin per JS lesbar).
+  function toggleGlobalSearch(force){
+    var btn = document.getElementById('gsearch-btn');
+    var panel = document.getElementById('gsearch-panel');
+    if (!btn || !panel) return;
+    var show = (typeof force === 'boolean') ? force : panel.hidden;
+    panel.hidden = !show;
+    btn.setAttribute('aria-expanded', show ? 'true' : 'false');
+    if (show) {
+      var input = document.getElementById('gsearch-input');
+      if (input) { input.value = ''; input.focus(); }
+      globalSearchInput('');
+    }
+  }
+  function globalSearchInput(query){
+    var q = query.trim().toLowerCase();
+    var results = document.getElementById('gsearch-results');
+    if (!results) return;
+    if (q === ''){ results.innerHTML = ''; return; }
+    var lang = document.documentElement.lang === 'en' ? 'en' : 'de';
+    var cards = document.querySelectorAll('#start .topic-card');
+    var seen = {};
+    var matches = [];
+    cards.forEach(function(c){
+      var onclickAttr = c.getAttribute('onclick') || '';
+      var m = onclickAttr.match(/jump\('([^']+)'\)/);
+      if (!m) return;
+      var id = m[1];
+      // Jedes Thema existiert als eigene Karte je Sprache (DE/EN) --
+      // pro Sprachlauf nur EINE Karte je id in die Treffer aufnehmen.
+      var cardLang = c.closest('[data-i18n]');
+      var cardIsCurrentLang = cardLang && cardLang.getAttribute('data-i18n') === lang;
+      if (!cardIsCurrentLang || seen[id]) return;
+      var text = c.textContent.toLowerCase();
+      if (text.indexOf(q) === -1) return;
+      var titleEl = c.querySelector('h3');
+      var snippetEl = c.querySelector('p');
+      seen[id] = true;
+      matches.push({
+        id: id,
+        title: titleEl ? titleEl.textContent : id,
+        snippet: snippetEl ? snippetEl.textContent : ''
+      });
+    });
+    if (matches.length === 0){
+      results.innerHTML = '<p class="gsearch-empty">' + (lang === 'en' ? 'No topic found.' : 'Kein Thema gefunden.') + '</p>';
+      return;
+    }
+    var html = '';
+    matches.slice(0, 10).forEach(function(m){
+      html += '<button type="button" class="gsearch-result" onclick="toggleGlobalSearch(false); jump(\'' + m.id + '\')">'
+        + '<span class="gr-title">' + m.title + '</span>'
+        + (m.snippet ? '<span class="gr-snippet">' + m.snippet + '</span>' : '')
+        + '</button>';
+    });
+    results.innerHTML = html;
+  }
+  document.addEventListener('click', function(e){
+    var wrap = document.querySelector('.gsearch-wrap');
+    if (wrap && !wrap.contains(e.target)) toggleGlobalSearch(false);
+  });
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') toggleGlobalSearch(false);
   });
 
   function setLang(lang){
