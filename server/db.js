@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS facts (
   label TEXT NOT NULL,
   current_value TEXT NOT NULL,
   legal_basis TEXT NOT NULL,
-  source_type TEXT NOT NULL CHECK (source_type IN ('sgbxi_html','bmg_pdf','mdbund_pdf')),
+  source_type TEXT NOT NULL CHECK (source_type IN ('sgbxi_html','sgb12_html','bmg_pdf','mdbund_pdf')),
   source_url TEXT NOT NULL,
   last_crawl_hash TEXT,
   last_verified_at TEXT
@@ -107,6 +107,41 @@ CREATE TABLE IF NOT EXISTS subscribers (
 );
 `);
 
+// Additive Migration fuer bereits bestehende DB-Dateien von vor dem 'sgb12_html'-
+// source_type (2026-11-27, Haushaltshilfe-Sozialamt-Abschnitt). SQLite kennt kein
+// "ALTER TABLE ... DROP/MODIFY CONSTRAINT" -- einzig moeglicher Weg ist Tabelle
+// neu anlegen + Daten kopieren + umbenennen, hier als atomare Transaktion mit
+// kurzzeitig abgeschalteten Foreign Keys (noetig, da drafts/crawl_runs per
+// fact_id auf facts verweisen und SQLite sonst das DROP verweigert).
+(function migrateFactsSourceTypeCheck() {
+  var row = db.prepare("SELECT sql FROM sqlite_master WHERE type='table' AND name='facts'").get();
+  if (!row || !row.sql || row.sql.indexOf('sgb12_html') !== -1) return;
+  db.pragma('foreign_keys = OFF');
+  var tx = db.transaction(function () {
+    db.exec(`
+      CREATE TABLE facts_new (
+        id TEXT PRIMARY KEY,
+        section_id TEXT NOT NULL,
+        label TEXT NOT NULL,
+        current_value TEXT NOT NULL,
+        legal_basis TEXT NOT NULL,
+        source_type TEXT NOT NULL CHECK (source_type IN ('sgbxi_html','sgb12_html','bmg_pdf','mdbund_pdf')),
+        source_url TEXT NOT NULL,
+        last_crawl_hash TEXT,
+        last_verified_at TEXT
+      );
+    `);
+    db.exec(
+      'INSERT INTO facts_new (id, section_id, label, current_value, legal_basis, source_type, source_url, last_crawl_hash, last_verified_at) ' +
+      'SELECT id, section_id, label, current_value, legal_basis, source_type, source_url, last_crawl_hash, last_verified_at FROM facts'
+    );
+    db.exec('DROP TABLE facts');
+    db.exec('ALTER TABLE facts_new RENAME TO facts');
+  });
+  tx();
+  db.pragma('foreign_keys = ON');
+})();
+
 // Additive Migration fuer bereits bestehende DB-Dateien von vor der approved_new_value-
 // Spalte (SQLite kann Spalten nicht per "ADD COLUMN IF NOT EXISTS" pruefen -- daher
 // manuell gegen pragma table_info prueofen, analog AERIS' additivem Migrations-Muster).
@@ -194,6 +229,42 @@ var SEED_FACTS = [
   }
 ];
 
+// Nachtrag 2026-11-27 (René-Auftrag): Fakten fuer den neuen Themenabschnitt
+// "Haushaltshilfe ueber das Sozialamt" (index.html id="haushaltshilfe-sozialamt").
+// Werte bereits in dieser Session per WebSearch gegen echte Primaerquellen
+// verifiziert (s. handoff.md Nachtrag 2026-11-27, Regelbedarfsstufe 1 2026 /
+// Schonvermoegen-Grenzen), hier nur als eigene facts-Zeilen nachgezogen, damit
+// der bestehende crawl.js/Newsletter-Mechanismus auch diese Werte ueberwacht.
+var SGB12_FACTS = [
+  {
+    id: 'sgb12.regelbedarfsstufe1',
+    section_id: 'haushaltshilfe-sozialamt',
+    label: 'Regelbedarfsstufe 1 (SGB XII)',
+    current_value: '563 Euro/Monat',
+    legal_basis: '§ 28 SGB XII i. V. m. Regelbedarfsstufen-Bekanntmachung',
+    source_type: 'sgb12_html',
+    source_url: 'https://www.gesetze-im-internet.de/sgb_12/__28.html'
+  },
+  {
+    id: 'sgb12.schonvermoegen',
+    section_id: 'haushaltshilfe-sozialamt',
+    label: 'Schonvermögen (Hilfe zur Pflege, § 90 SGB XII)',
+    current_value: '10.000 Euro (Grundfreibetrag), 20.000 Euro im Rahmen der Hilfe zur Pflege',
+    legal_basis: '§ 90 Abs. 2 Nr. 9 SGB XII',
+    source_type: 'sgb12_html',
+    source_url: 'https://www.gesetze-im-internet.de/sgb_12/__90.html'
+  },
+  {
+    id: 'sgb12.einkommensgrenze',
+    section_id: 'haushaltshilfe-sozialamt',
+    label: 'Einkommensgrenze § 85 SGB XII',
+    current_value: '1.126 Euro zuzüglich der tatsächlichen Warmmiete',
+    legal_basis: '§ 85 SGB XII',
+    source_type: 'sgb12_html',
+    source_url: 'https://www.gesetze-im-internet.de/sgb_12/__85.html'
+  }
+];
+
 function seedIfEmpty() {
   var count = db.prepare('SELECT COUNT(*) AS n FROM facts').get().n;
   if (count > 0) return 0;
@@ -211,4 +282,24 @@ function seedIfEmpty() {
   return SEED_FACTS.length;
 }
 
-module.exports = { db: db, uuid: uuid, seedIfEmpty: seedIfEmpty };
+// Additiv (kein count===0-Gate wie seedIfEmpty): fuegt die SGB12_FACTS-Zeilen
+// nur ein, wenn ihre id noch nicht existiert -- sicher gegen Mehrfachaufruf bei
+// jedem Serverstart UND gegen einen bereits befuellten Produktivbestand.
+function seedSgb12IfMissing() {
+  var insert = db.prepare(
+    'INSERT INTO facts (id, section_id, label, current_value, legal_basis, source_type, source_url, last_crawl_hash, last_verified_at) ' +
+    'VALUES (?,?,?,?,?,?,?,NULL,?)'
+  );
+  var exists = db.prepare('SELECT 1 FROM facts WHERE id = ?');
+  var now = new Date().toISOString();
+  var added = 0;
+  SGB12_FACTS.forEach(function (f) {
+    if (!exists.get(f.id)) {
+      insert.run(f.id, f.section_id, f.label, f.current_value, f.legal_basis, f.source_type, f.source_url, now);
+      added++;
+    }
+  });
+  return added;
+}
+
+module.exports = { db: db, uuid: uuid, seedIfEmpty: seedIfEmpty, seedSgb12IfMissing: seedSgb12IfMissing };

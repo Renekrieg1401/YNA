@@ -27,6 +27,7 @@ app.use(cors());
 app.use(express.json({ limit: '256kb' }));
 
 dbMod.seedIfEmpty();
+dbMod.seedSgb12IfMissing();
 
 var JWT_SECRET = process.env.JWT_SECRET;
 var ADMIN_PIN_HASH = process.env.ADMIN_PIN_HASH;

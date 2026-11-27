@@ -7,6 +7,10 @@ var mdBundPdf = require('./mdBundPdf');
 
 var SCRAPERS = {
   sgbxi_html: sgbxiHtml,
+  // sgb12_html (Nachtrag 2026-11-27): gesetze-im-internet.de hat fuer SGB XII
+  // dieselbe HTML-Struktur wie SGB XI (".jnhtml"-Container) -- derselbe
+  // generische Scraper ist 1:1 wiederverwendbar, kein eigenes Modul noetig.
+  sgb12_html: sgbxiHtml,
   bmg_pdf: bmgPdf,
   mdbund_pdf: mdBundPdf
 };
