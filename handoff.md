@@ -1,5 +1,34 @@
 # Handoff — Pflege-Faktencheck (ex Pflege-Fakten / YNA Digital), 2026-11-15
 
+## Nachtrag 2026-11-27 (13) — Neuer Download: Spickzettel fürs Pflegedienst-Telefonat
+René brachte einen XML-strukturierten Leitfaden
+("telefonischer_erstkontakt_pflegedienst") mit, der auflistet, welche
+Infos ein Anrufer dem Pflegedienst geben sollte, damit die PDL trotz
+gleichen Pflegegrads den tatsächlichen Zeitbedarf realistisch
+einschätzen kann. Nach Rückfrage geklärt: soll eine neue, öffentliche
+Checkliste auf der Website werden (nicht nur ein privates Dokument).
+- **[ERLEDIGT]:** Zu `spickzettel-pflegedienst-telefonat.pdf` verdichtet
+  (Playwright `page.pdf()`, Stil an die bestehende
+  `checkliste-pflegedienst.pdf` angelehnt). Ergänzt diese bewusst, statt
+  sie zu ersetzen: bestehende Checkliste = Fragen AN den Pflegedienst,
+  neuer Spickzettel = Infos FÜR den Pflegedienst (Kognition/
+  Beweglichkeit/Vorbereitung durch Angehörige/vorhandene Hilfsmittel),
+  inkl. Fallbeispiel (zwei PG-3-Fälle mit sehr unterschiedlichem
+  Zeitbedarf).
+- **[ERLEDIGT]:** Download-Link in Abschnitt "Pflegedienst finden",
+  Schritt 2 ("Mehrere Anbieter anfragen"), direkt neben dem bestehenden
+  Checklisten-Link, DE+EN. `stats-aggregate.js` (`DOWNLOAD_PFADE`) um
+  den neuen Pfad erweitert — lokale UND Server-Kopie
+  (`/opt/pflege-fakten-stats/`) synchron gehalten, analog
+  bestehendem Zwei-Stellen-Muster.
+- **[ERLEDIGT] Verifikation:** Playwright bestätigt beide Links (DE/EN)
+  im DOM, Live-PDF per `curl` mit HTTP 200 erreichbar. Committed+
+  gepusht (`1b76278`).
+- **[OFFEN]:** Kein `pflege-diagnostik`/`legal-compliance`-Zweitprüfer-
+  Lauf (Komplexitäts-Gate) — Inhalt ist rein organisatorisch (keine
+  neuen Rechts-/Fachbehauptungen, nur bereits an anderer Stelle
+  etablierte SGB-XI-Grundsätze in Stichpunktform wiedergegeben).
+
 ## Nachtrag 2026-11-27 (12) — Button-Text zentrierte sich bei Zeilenumbruch, jetzt generell linksbündig
 René-Fund per Screenshot: In der "Auf dieser Seite"-Box zentrierte sich
 die zweite Zeile eines zweizeiligen `.toclink`-Eintrags sichtbar, obwohl
