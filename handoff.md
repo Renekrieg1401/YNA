@@ -1,5 +1,72 @@
 # Handoff — Pflege-Faktencheck (ex Pflege-Fakten / YNA Digital), 2026-11-15
 
+## Nachtrag 2026-11-27 (5) — Belastungs-Selbstcheck zusätzlich unter "unsicher" verlinkt
+Kein Bug — René zeigte per Screenshot, dass auch bei der Situation "Ich
+weiß noch nicht, ob ein Pflegegrad nötig ist" ein Zugang zum Belastungs-
+Selbstcheck sinnvoll ist. `SITUATIONS.unsicher` um `'belastungstest'`
+als vierten (sekundären) Eintrag erweitert — "Der Pflegegrad" bleibt
+primärer Einstieg dieser Situation. Lokal + live per Playwright
+verifiziert, deployed, committed (`60b0bc4`).
+
+## Nachtrag 2026-11-27 (4) — Overlay "Offizielle Änderungen" ans Frontend angebunden + RemoteTrigger erweitert
+René-Auftrag (Fortsetzung der SGB-XII-Runde): "alle offiziellen Änderungen
+die der User sieht müssen als overlay beim öffnen der Seite angezeigt
+werden, alle Neuerungen die noch in Verhandlung sind als newsletter".
+- **[FUND]:** `server/` (facts/drafts/pendingOverlay, `GET /api/public/
+  facts`, s. `server/lib/resolveEffectiveValue.js`) war bereits
+  vollständig gebaut und live erreichbar (`https://pflege-faktencheck.de/
+  api/public/facts` liefert echte Daten), wurde aber nie von `index.html`
+  aufgerufen (`grep "api/public"` → 0 Treffer vor diesem Fix). Die
+  Newsletter-Seite der Anforderung ("in Verhandlung → Newsletter")
+  existiert bereits generisch über `server/crawl.js` +
+  `broadcastLegalChange()` — sendet jeden neu erkannten, noch nicht
+  freigegebenen Fund sofort an alle bestätigten Abonnenten, Oton-Zitat
+  ohne eigene Interpretation (René-Entscheidung 2026-11-16).
+- **[ERLEDIGT] Overlay:** neues `checkAenderungen()` in `index.html`,
+  läuft beim Seitenaufruf. Liest (a) `/api/public/facts` (DB-gestützte
+  Admin-Freigaben mit künftigem Stichtag) und (b) neue, statische
+  `aenderungen.json` (Repo-Root, für den DB-losen täglichen
+  RemoteTrigger-Direkteditier-Pfad). Zeigt ein Dialog-Overlay (reuse
+  `.contact-modal`-Pattern) mit Label/Oton-Text/Quelle/"Mehr dazu"-Sprung
+  zum betroffenen Abschnitt, DE+EN. Dismiss per `localStorage`
+  (`pfk_aenderungen_dismissed_v1`, Key je Fakt+Stichtag — ein neuer
+  Stichtag für denselben Fakt zeigt sich also erneut). Best-effort:
+  jeder Fetch in eigenem try/catch, Seite bleibt bei Serverausfall/
+  fehlender Datei unverändert funktionsfähig (lokal + live gegen eine
+  echte HTTP-Mock-Antwort per Playwright verifiziert: Overlay erscheint,
+  "Mehr dazu" springt korrekt + schließt, nach Reload bleibt es dismissed).
+- **[ERLEDIGT] RemoteTrigger erweitert** (`trig_01WWDsXGWAFHtYWi1g4Lzk7m`):
+  vierte Primärquelle `gesetze-im-internet.de/sgb_12` (§§ 2, 27, 66, 85,
+  87, 90) + jährliche BMAS-Regelbedarfsstufen-Bekanntmachung ergänzt
+  (deckt den neuen Haushaltshilfe-Sozialamt-Abschnitt ab). Neuer Schritt
+  11: bei jeder echten, primärquellen-belegten Korrektur zusätzlich
+  einen Eintrag in `aenderungen.json` schreiben (Format vorgegeben,
+  inkl. `abschnitt` für den "Mehr dazu"-Sprung), immer im selben Commit
+  wie die `index.html`-Änderung. Per `RemoteTrigger action:"update"`
+  gesetzt, HTTP 200 bestätigt.
+- **[OFFEN]:** `server/db.js`/`crawl.js`/`scrapers/` decken aktuell nur
+  7 SGB-XI-Fakten ab (Seed-Daten) — die neuen SGB-XII-Zahlen
+  (Regelbedarfsstufe 1, Schonvermögen) sind NICHT in diesem DB-Backend
+  erfasst, daher läuft für sie (noch) nicht der Newsletter-Pfad bei
+  unbestätigten Funden, nur der tägliche Direkt-Korrektur-Pfad über
+  `aenderungen.json`. Eine Erweiterung von `db.js`/`crawl.js` um
+  `source_type: 'sgb12_html'` (SQLite-CHECK-Constraint-Migration nötig,
+  da `ALTER TABLE` keine CHECK-Änderung unterstützt) ist ein separater,
+  bewusst zurückgestellter Folgeauftrag — kein Datenverlust-Risiko,
+  da rein additiv.
+- **[OFFEN]:** Kein `legal-compliance`/`security-privacy`-Zweitprüfer-
+  Lauf (Komplexitäts-Gate, direkte René-Anweisung, reine Frontend-
+  Anbindung eines bereits geprüften Backends ohne neue Rechts-/
+  Datenschutzinhalte).
+- **Nebenbefund (René-Rückfrage, aufgeklärt):** Ein Screenshot zeigte
+  `file:///Users/kriegrene/Development/...` in der Safari-Adresszeile
+  nach einem vermeintlichen Besuch einer Unterseite — verifiziert als
+  Fehlalarm: ein lokal offener Test-Tab (Datei-Protokoll), nicht die
+  Live-Seite. Code-Audit bestätigt 0 Treffer für jeden lokalen Pfad/
+  `file://`-String in `index.html`, keine `pushState`/`location.href`-
+  Schreibzugriffe — technisch ist ein Adresszeilen-Leck von `https://`
+  auf `file://` durch die Seite selbst ausgeschlossen.
+
 ## Nachtrag 2026-11-27 (3) — Zurück-Button-Scroll-Fix + Belastungs-Selbstcheck direkt aus Situationswahl
 René-Direktive "Dringend", zwei separate Funde:
 - **[ERLEDIGT] Zurück-Button:** `#go-back-btn` (`goBack()`/`jump()`) sprang
