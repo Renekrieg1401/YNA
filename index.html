@@ -3242,36 +3242,39 @@
   function jump(id, isBack, restoreScrollY){
     var el = document.getElementById(id);
     if (!el) return;
-    if (el.classList.contains('topic')){
-      if (!isBack){
-        var current = document.querySelector('main > section.topic:not([hidden])');
+    var isTopicLevel = el.classList.contains('topic');
+    // René-Fund 2026-11-27 (2): Sprünge zu einem Innen-Anker (z.B.
+    // "belastungstest-de", kein .topic-Element) trugen sich bisher NIE in
+    // topicHistory ein -- der Zurück-Button blieb deshalb unsichtbar, obwohl
+    // tatsächlich eine Themenseite gewechselt wurde. Beide Fälle (Topic-Ebene
+    // UND Innen-Anker innerhalb einer anderen Topic-Section) laufen jetzt
+    // durch dieselbe Reveal+History-Logik, bevor sich die Zweige nur noch im
+    // finalen Scroll-Ziel unterscheiden.
+    var targetTopic = isTopicLevel ? el : el.closest('main > section.topic');
+    if (targetTopic){
+      var current = document.querySelector('main > section.topic:not([hidden])');
+      var switchingTopic = !current || current.id !== targetTopic.id;
+      if (switchingTopic && !isBack && current){
         // René-Fund 2026-11-27: bisher wurde nur die Topic-ID gemerkt, beim
         // Zurückspringen landete man daher immer oben auf der Seite statt an
         // der Stelle, von der aus weitergesprungen wurde -- jetzt wird die
         // Scroll-Position der VERLASSENEN Seite mitgespeichert und bei
         // "Zurück" exakt wiederhergestellt.
-        if (current && current.id !== id) topicHistory.push({id: current.id, scrollY: window.scrollY});
+        topicHistory.push({id: current.id, scrollY: window.scrollY});
       }
-      document.querySelectorAll('main > section.topic').forEach(function(t){ t.hidden = (t !== el); });
-      setActiveTab(id);
-      toggleSidebar(false);
+      if (switchingTopic || targetTopic.hidden){
+        document.querySelectorAll('main > section.topic').forEach(function(t){ t.hidden = (t !== targetTopic); });
+        setActiveTab(targetTopic.id);
+      }
+      updateGoBackVisibility();
+    }
+    toggleSidebar(false);
+    if (isTopicLevel){
       if (isBack && typeof restoreScrollY === 'number') window.scrollTo(0, restoreScrollY);
       else window.scrollTo(0,0);
       el.setAttribute('tabindex','-1');
       el.focus({preventScroll:true});
-      updateGoBackVisibility();
     } else {
-      // René-Fund 2026-11-27: ein Anker (z.B. "belastungstest") innerhalb
-      // einer gerade VERBORGENEN Topic-Section wurde bisher nicht sichtbar
-      // gemacht -- scrollIntoView auf ein hidden-Element landet nirgends.
-      // Zuerst die umgebende Topic-Section wie im if-Zweig oben aufdecken,
-      // danach zum inneren Anker scrollen.
-      var parentTopic = el.closest('main > section.topic');
-      if (parentTopic && parentTopic.hidden){
-        document.querySelectorAll('main > section.topic').forEach(function(t){ t.hidden = (t !== parentTopic); });
-        setActiveTab(parentTopic.id);
-      }
-      toggleSidebar(false);
       el.scrollIntoView({behavior:'smooth', block:'start'});
       if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex','-1');
       el.focus({preventScroll:true});
