@@ -1,5 +1,30 @@
 # Handoff — Pflege-Faktencheck (ex Pflege-Fakten / YNA Digital), 2026-11-15
 
+## Nachtrag 2026-11-27 (10) — Globale Suchleiste im Header (Lupe) mit Treffer-Dropdown
+René-Auftrag "Implementiert noch eine Suche" — nach Rückfrage geklärt:
+eine zweite, von JEDER Themenseite aus erreichbare Suche (Lupen-Icon,
+Dropdown mit passenden Treffern), nicht nur die bestehende
+`#topic-search` auf der Startseite (die nur eine sichtbare Kartenliste
+filtert, nicht von Themenseiten aus erreichbar).
+- **[ERLEDIGT]:** Neuer Header-Button `.gsearch-wrap`/`#gsearch-btn`
+  (Lupen-SVG), Panel mit Input + Live-Trefferliste. Nutzt dieselbe
+  Datenquelle wie `#topic-search` (`#start .topic-card`-Elemente,
+  existieren immer im DOM, auch bei verborgener Startseite). Pro
+  Treffer: Titel + Snippet, Klick → `jump()` zum Thema + Panel schließt.
+  DE/EN-sprachbewusst (filtert auf den `data-i18n`-Zweig der aktuellen
+  Sprache, max. 1 Treffer je Thema-ID auch wenn beide Sprachversionen im
+  DOM liegen). Escape/Außenklick schließt (gleiches Muster wie
+  `.settings-wrap`), Leertreffer-Hinweis bei 0 Treffern.
+- **[ERLEDIGT] Verifikation:** Playwright-Läufe — Suche funktioniert von
+  einer TIEFEN Themenseite aus (nicht nur Startseite), DE+EN-Treffer,
+  Leertreffer-Fall, Escape-Verhalten, Mobile-Viewport (Panel passt in
+  Breite, 358px bei 390px Viewport). Live deployed, per `curl`
+  gegengeprüft, committed+gepusht (`6058554`).
+- **[OFFEN]:** Keine Tastatur-Navigation innerhalb der Trefferliste
+  (Pfeiltasten) — nur Maus-/Touch-Klick und Enter im Suchfeld (kein
+  eigenes Submit-Verhalten definiert, erster Treffer wird nicht
+  automatisch hervorgehoben). Bei Bedarf nachrüstbar.
+
 ## Nachtrag 2026-11-27 (9) — Grimmige Vollprüfung abgeschlossen: 2 echte Funde behoben, 1 Fund widerlegt
 Fortsetzung von Nachtrag (8). Fork hat alle ~35 Abschnitte durchgeprüft
 (1. Versuch am Session-Nutzungslimit gescheitert, 2. Versuch nach Reset
