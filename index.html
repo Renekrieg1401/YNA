@@ -2383,7 +2383,7 @@
     <div data-i18n="de">
     <h2 class="title">Wenn die Kraft nachlässt</h2>
     <p class="lead">Pflegende Angehörige geraten oft selbst an ihre Grenzen — und übersehen dabei, dass es auch für sie Unterstützung gibt. Ein Anruf reicht.</p>
-    <div class="callout" style="margin-top:4px">
+    <div class="callout" id="belastungstest-de" style="margin-top:4px">
       <strong>Kurzer Selbstcheck: Wie belastet sind Sie gerade?</strong>
       <p class="muted" style="margin:6px 0 14px">7 Fragen, eigene Einschätzung — keine Diagnose, nur eine Orientierung. Kein eigenes Ergebnis wird gespeichert oder übertragen.</p>
       <div id="ec-fragen-de"></div>
@@ -2410,7 +2410,7 @@
     <div data-i18n="en" hidden>
     <h2 class="title">When your strength runs low</h2>
     <p class="lead">Family carers often reach their own limits — and overlook that support exists for them too. A phone call is enough.</p>
-    <div class="callout" style="margin-top:4px">
+    <div class="callout" id="belastungstest-en" style="margin-top:4px">
       <strong>Quick self-check: how strained are you right now?</strong>
       <p class="muted" style="margin:6px 0 14px">7 questions, your own assessment — not a diagnosis, just orientation. No result is saved or transmitted.</p>
       <div id="ec-fragen-en"></div>
@@ -3239,6 +3239,16 @@
       el.focus({preventScroll:true});
       updateGoBackVisibility();
     } else {
+      // René-Fund 2026-11-27: ein Anker (z.B. "belastungstest") innerhalb
+      // einer gerade VERBORGENEN Topic-Section wurde bisher nicht sichtbar
+      // gemacht -- scrollIntoView auf ein hidden-Element landet nirgends.
+      // Zuerst die umgebende Topic-Section wie im if-Zweig oben aufdecken,
+      // danach zum inneren Anker scrollen.
+      var parentTopic = el.closest('main > section.topic');
+      if (parentTopic && parentTopic.hidden){
+        document.querySelectorAll('main > section.topic').forEach(function(t){ t.hidden = (t !== parentTopic); });
+        setActiveTab(parentTopic.id);
+      }
       toggleSidebar(false);
       el.scrollIntoView({behavior:'smooth', block:'start'});
       if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex','-1');
@@ -3434,20 +3444,34 @@
     alltag:['leistungen','entlastungsbetrag','pflegedienst'],
     akut:['krankenhaus','hausnotruf','ersatzpflege'],
     vorsorge:['vorsorge','pflegezusatz','gdb'],
-    erschoepft:['angehoerige-staerken','pflegezeit','hilfe-zur-pflege']
+    // René-Fund 2026-11-27: "Ich bin selbst erschöpft" muss direkt zum
+    // Belastungs-Selbstcheck führen, nicht erst zur allgemeinen Übersicht
+    // "Wenn die Kraft nachlässt" (der Check sitzt dort nur als EIN
+    // Baustein unter mehreren). 'belastungstest' daher als eigener,
+    // primärer Einstieg vorangestellt -- bewusst NICHT "ZBI" im Label
+    // (s. Code-Kommentar bei ERSCHOEPFUNG_FRAGEN: eigenes Instrument,
+    // nicht das lizenzpflichtige Zarit Burden Interview).
+    erschoepft:['belastungstest','angehoerige-staerken','pflegezeit','hilfe-zur-pflege']
   };
   var TOPIC_NAMES = {
     de:{pflegegrad:'Der Pflegegrad', glossar:'Fachbegriffe von A–Z', versorgungsformen:'Versorgungsformen',
       leistungen:'Pflegegeld & Leistungen', entlastungsbetrag:'Entlastungsbetrag', pflegedienst:'Pflegedienst finden',
       krankenhaus:'Nach dem Krankenhaus', hausnotruf:'Hausnotruf', ersatzpflege:'Verhinderungs- & Kurzzeitpflege',
       vorsorge:'Vorsorge & Vollmacht', pflegezusatz:'Pflegezusatzversicherung', gdb:'Schwerbehindertenausweis',
-      'angehoerige-staerken':'Wenn die Kraft nachlässt', pflegezeit:'Pflegezeit & Beruf', 'hilfe-zur-pflege':'Hilfe zur Pflege'},
+      'angehoerige-staerken':'Wenn die Kraft nachlässt', pflegezeit:'Pflegezeit & Beruf', 'hilfe-zur-pflege':'Hilfe zur Pflege',
+      belastungstest:'Belastungs-Selbstcheck (7 Fragen)'},
     en:{pflegegrad:'The care level', glossar:'Glossary A–Z', versorgungsformen:'Forms of care',
       leistungen:'Care allowance & benefits', entlastungsbetrag:'Relief allowance', pflegedienst:'Finding a care service',
       krankenhaus:'After hospital', hausnotruf:'Emergency call system', ersatzpflege:'Respite & short-term care',
       vorsorge:'Advance directives & power of attorney', pflegezusatz:'Supplemental care insurance', gdb:'Disability ID card',
-      'angehoerige-staerken':'When your strength runs low', pflegezeit:'Care leave & work', 'hilfe-zur-pflege':'Social care assistance'}
+      'angehoerige-staerken':'When your strength runs low', pflegezeit:'Care leave & work', 'hilfe-zur-pflege':'Social care assistance',
+      belastungstest:'Strain self-check (7 questions)'}
   };
+  // Sprachabhängige Ziel-IDs -- der Selbstcheck existiert als zwei separate
+  // DOM-Bloecke (DE/EN, je per data-i18n ein-/ausgeblendet), eine einzelne
+  // gemeinsame ID koennte im falschen Sprachzweig landen (hidden, nicht
+  // scrollbar). Alle anderen Situations-Ziele sind sprachneutrale Topic-IDs.
+  var LANG_SPECIFIC_TARGET = {belastungstest:{de:'belastungstest-de', en:'belastungstest-en'}};
   var START_PREFIX = {de:'→ Hier starten: ', en:'→ Start here: '};
   function showSituation(key){
     var ids = SITUATIONS[key];
@@ -3457,7 +3481,8 @@
     ids.forEach(function(id, i){
       var cls = i === 0 ? 'entry-btn entry-btn-primary' : 'entry-btn entry-btn-secondary';
       var label = (i === 0 ? START_PREFIX[lang] : '') + (TOPIC_NAMES[lang][id] || id);
-      html += '<button type="button" class="' + cls + '" onclick="jump(\'' + id + '\')">' + label + '</button>';
+      var target = (LANG_SPECIFIC_TARGET[id] && LANG_SPECIFIC_TARGET[id][lang]) || id;
+      html += '<button type="button" class="' + cls + '" onclick="jump(\'' + target + '\')">' + label + '</button>';
     });
     var result = document.getElementById(lang === 'en' ? 'entry-result-en' : 'entry-result');
     if (result) result.innerHTML = html;
