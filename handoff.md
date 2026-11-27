@@ -1,5 +1,32 @@
 # Handoff — Pflege-Faktencheck (ex Pflege-Fakten / YNA Digital), 2026-11-15
 
+## Nachtrag 2026-11-27 (11) — Suchpanel-Überlauf auf schmalen Bildschirmen behoben
+René-Fund per echtem Geräte-Screenshot direkt nach Nachtrag (10): das
+Suchpanel (`absolute`, `left:0` relativ zum Lupen-Button) lief auf
+schmalen Viewports über den rechten Bildschirmrand hinaus — der Button
+sitzt früh im Header, nicht am rechten Rand wie `.settings-btn`. Mein
+vorheriger Playwright-Mobiltest (iPhone-13-Emulation, 390px) hatte die
+reale Button-Position im LIVE-Header nicht korrekt abgebildet und den
+Fund verpasst.
+- **[ERLEDIGT]:** Ab 640px Breite wechselt `.gsearch-panel` per Media
+  Query auf `position:fixed` mit `left:16px; right:16px` (viewport-
+  relative Breite statt button-relativ). `top` wird zur Laufzeit gegen
+  die tatsächliche `header.nav`-Unterkante gemessen (`getBoundingClientRect()`),
+  da der Header selbst auf sehr schmalen Breiten auf 2 Zeilen umbricht —
+  eine fest einprogrammierte Pixelzahl wäre unzuverlässig gewesen.
+  Desktop-Verhalten (button-relatives Panel) unverändert, da die
+  Media-Query nur unterhalb 640px greift.
+- **[ERLEDIGT] Verifikation:** 390px- UND 360px-Viewport per Playwright
+  — Panel bleibt jetzt vollständig im sichtbaren Bereich, Header wird
+  nicht überlappt. Alle bestehenden Funktionstests (DE/EN-Treffer,
+  Leertreffer, Escape) erneut grün. Live deployed, per `curl`
+  gegengeprüft, committed+gepusht (`e7fbf4d`).
+- **Lehre:** Ein Mobile-Emulations-Test, der nur Breite×Höhe simuliert,
+  deckt nicht automatisch die echte Button-Position im tatsächlichen
+  Header auf — bei button-relativ positionierten UI-Elementen lohnt sich
+  ein Blick auf die tatsächliche horizontale Position im Header, nicht
+  nur ein pauschaler "passt-rein"-Breitencheck.
+
 ## Nachtrag 2026-11-27 (10) — Globale Suchleiste im Header (Lupe) mit Treffer-Dropdown
 René-Auftrag "Implementiert noch eine Suche" — nach Rückfrage geklärt:
 eine zweite, von JEDER Themenseite aus erreichbare Suche (Lupen-Icon,
