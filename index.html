@@ -3213,22 +3213,28 @@
   function goBack(){
     if (topicHistory.length === 0) return;
     var prev = topicHistory.pop();
-    jump(prev, true);
+    jump(prev.id, true, prev.scrollY);
     updateGoBackVisibility();
   }
 
-  function jump(id, isBack){
+  function jump(id, isBack, restoreScrollY){
     var el = document.getElementById(id);
     if (!el) return;
     if (el.classList.contains('topic')){
       if (!isBack){
         var current = document.querySelector('main > section.topic:not([hidden])');
-        if (current && current.id !== id) topicHistory.push(current.id);
+        // René-Fund 2026-11-27: bisher wurde nur die Topic-ID gemerkt, beim
+        // Zurückspringen landete man daher immer oben auf der Seite statt an
+        // der Stelle, von der aus weitergesprungen wurde -- jetzt wird die
+        // Scroll-Position der VERLASSENEN Seite mitgespeichert und bei
+        // "Zurück" exakt wiederhergestellt.
+        if (current && current.id !== id) topicHistory.push({id: current.id, scrollY: window.scrollY});
       }
       document.querySelectorAll('main > section.topic').forEach(function(t){ t.hidden = (t !== el); });
       setActiveTab(id);
       toggleSidebar(false);
-      window.scrollTo(0,0);
+      if (isBack && typeof restoreScrollY === 'number') window.scrollTo(0, restoreScrollY);
+      else window.scrollTo(0,0);
       el.setAttribute('tabindex','-1');
       el.focus({preventScroll:true});
       updateGoBackVisibility();
