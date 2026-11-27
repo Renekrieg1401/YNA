@@ -1,5 +1,26 @@
 # Handoff — Pflege-Faktencheck (ex Pflege-Fakten / YNA Digital), 2026-11-15
 
+## Nachtrag 2026-11-27 (12) — Button-Text zentrierte sich bei Zeilenumbruch, jetzt generell linksbündig
+René-Fund per Screenshot: In der "Auf dieser Seite"-Box zentrierte sich
+die zweite Zeile eines zweizeiligen `.toclink`-Eintrags sichtbar, obwohl
+die erste Zeile und der Rest der Seite linksbündig wirkten.
+- **Root-Cause:** `<button>` hat im User-Agent-Stylesheet standardmäßig
+  `text-align:center` — bei einzeiligem Text unsichtbar (Text füllt die
+  Buttonbreite ohnehin aus), erst bei Zeilenumbruch wird die Zentrierung
+  der zweiten Zeile sichtbar.
+- **[ERLEDIGT]:** Statt nur `.toclink` zu patchen, René-Vorgabe "Texte
+  immer linksbündig" als generellen Reset durchgesetzt:
+  `button{text-align:left}` ganz am Anfang des Stylesheets (niedrige
+  Spezifität — bestehende, bewusst zentrierte Button-Klassen mit eigener
+  `text-align`-Regel bleiben unverändert, Klassen-Selektoren haben
+  Vorrang). Verhindert denselben Bug an jeder anderen Button-Klasse mit
+  potenziell mehrzeiligem Text, nicht nur an der einen gemeldeten Stelle.
+- **[ERLEDIGT] Verifikation:** Playwright bestätigt `.toclink` jetzt
+  `text-align:left`; flex-basierte Buttons (`.entry-btn` u. ä., deren
+  Zentrierung über `justify-content` statt `text-align` läuft)
+  unverändert. Live deployed, per `curl` gegengeprüft, committed+
+  gepusht (`aa5639f`).
+
 ## Nachtrag 2026-11-27 (11) — Suchpanel-Überlauf auf schmalen Bildschirmen behoben
 René-Fund per echtem Geräte-Screenshot direkt nach Nachtrag (10): das
 Suchpanel (`absolute`, `left:0` relativ zum Lupen-Button) lief auf
