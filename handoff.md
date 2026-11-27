@@ -1,5 +1,41 @@
 # Handoff — Pflege-Faktencheck (ex Pflege-Fakten / YNA Digital), 2026-11-15
 
+## Nachtrag 2026-11-27 (8) — Reload-Scroll-Fix + generisches Neuigkeiten-Overlay + 2 Missverständlichkeits-Funde behoben + grimmige Vollprüfung laufend
+- **[ERLEDIGT] Reload springt zum Anfang:** `history.scrollRestoration =
+  'manual'` (ganz am Anfang von `<head>`, muss vor jedem Layout gesetzt
+  werden) + `window.scrollTo(0,0)` in der Init-Logik. Browser-nativer
+  Scroll-Restore hielt bisher die alte Position über einen Reload hinweg.
+  Playwright-verifiziert (scroll auf 2000px, reload, Ergebnis 0px).
+- **[ERLEDIGT] Generisches "Neuigkeiten"-Overlay:** neues
+  `SITE_NEUIGKEITEN`-Array (von Hand gepflegt) ergänzt das bestehende
+  rechtliche Freigabe-Overlay (`facts`/`aenderungen.json`) um
+  redaktionelle Seitenänderungen, unabhängig vom rechtlichen Freigabe-
+  Status — gleiche Dialog-/Dismiss-Mechanik, "Neu seit"- statt "Gültig
+  ab"-Badge je nach `kind`. Aktuell befüllt mit dem neuen Haushaltshilfe-
+  Abschnitt + dem SGB-XI-Fallbeispiel.
+- **[ERLEDIGT] 2 echte Missverständlichkeits-Funde (René-Screenshots):**
+  (a) "leistungen"-Abschnitt: "die restlichen 40% des Pflegegeldes werden
+  dann anteilig ausgezahlt" klang nach einer weiteren, unspezifizierten
+  Kürzung — jetzt klargestellt: exakt 40% des VOLLEN Pflegegeld-Betrags.
+  Neues Beispielgeschichte-Callout (Frau N., Pflegegrad 3, konkrete
+  Eurobeträge: 898,20€/239,60€) ergänzt, passend zum bestehenden
+  Seitenmuster. (b) "haushaltshilfe-sozialamt": "Fürsorgeleistung" +
+  Bürgergeld-Vergleich erzeugten den falschen Eindruck, man müsse
+  bereits Sozialhilfe-/Bürgergeld-Empfänger sein — neuer Klarstellungs-
+  Callout direkt nach dem Lead-Absatz (DE+EN).
+- **[LAUFEND] Grimmige Vollprüfung:** René-Auftrag "Sieh dir nochmal
+  alle Seiten grimmig durch und achte auf Missverständlichkeiten" — alle
+  ~35 Themenabschnitte werden systematisch auf dasselbe Fehlermuster
+  geprüft (Wortwahl erzeugt strengeren/exklusiveren Eindruck als
+  rechtlich zutrifft, vage Prozent-/Betragsangaben). Noch nicht
+  abgeschlossen, Fortsetzung folgt in einem eigenen Nachtrag.
+- Alle Änderungen live deployed + per `curl` gegengeprüft, committed+
+  gepusht (`53fcecb`).
+- **[OFFEN]:** Kein `legal-compliance`-Zweitprüfer-Lauf (Komplexitäts-
+  Gate, direkte René-Anweisung mit "Dringend", eigene Primärquellen-/
+  Logik-Verifikation statt Agentenlauf — die Beispielgeschichte nutzt nur
+  bereits an anderer Stelle verifizierte Zahlen).
+
 ## Nachtrag 2026-11-27 (7) — Zurück-Button fehlte nach Sprung zu Innen-Anker, jetzt strukturell behoben
 René-Fund per Screenshot: "Wenn die Kraft nachlässt"/Belastungs-
 Selbstcheck zeigte keinen Zurück-Button. **Root-Cause:** `jump()` trug
