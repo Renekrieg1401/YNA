@@ -1,6 +1,39 @@
 # Handoff — Pflege-Faktencheck (ex Pflege-Fakten / YNA Digital), 2026-11-15
 
-## Nachtrag 2026-11-27 (8) — Reload-Scroll-Fix + generisches Neuigkeiten-Overlay + 2 Missverständlichkeits-Funde behoben + grimmige Vollprüfung laufend
+## Nachtrag 2026-11-27 (9) — Grimmige Vollprüfung abgeschlossen: 2 echte Funde behoben, 1 Fund widerlegt
+Fortsetzung von Nachtrag (8). Fork hat alle ~35 Abschnitte durchgeprüft
+(1. Versuch am Session-Nutzungslimit gescheitert, 2. Versuch nach Reset
+erfolgreich, 311k Tokens/28 Tool-Calls/250s). Jeden gemeldeten Fund VOR
+Übernahme gegen die echte Quelle geprüft, nicht blind übernommen:
+- **Behoben (echt):** "hilfe-zur-pflege"-Footnote widersprach der
+  eigenen "entlastungsbetrag"-Sektion — suggerierte, der 131-€-
+  Entlastungsbetrag sei bei Pflegegrad 1 nur über das einkommensgeprüfte
+  § 66 SGB XII erreichbar, dabei gilt § 45b SGB XI automatisch für ALLE
+  Pflegegrade 1-5 ohne Prüfung. Footnote korrigiert (DE+EN).
+- **Behoben (echt, geringere Schwere):** "hausnotruf"-Voraussetzungen
+  las sich wie ein drittes, eigenständiges Ausschlusskriterium
+  (genereller Telefon-Unvermögen) statt der gemeinten situativen
+  Hilflosigkeit (z. B. nach einem Sturz). Mit Beispiel klargestellt (DE+EN).
+- **ABGELEHNT nach Primärquellen-Check:** Fork behauptete, vierteljährliche
+  Beratungseinsätze seien bei Pflegegrad 4/5 Pflicht statt nur
+  halbjährlich — per `WebFetch` direkt gegen gesetze-im-internet.de/
+  sgb_11/__37.html verifiziert (wortwörtliches Zitat eingeholt): § 37
+  Abs. 3 Satz 1 SGB XI sagt "haben...abzurufen" (Pflicht, halbjährlich,
+  Grad 2-5), Satz 1 Halbsatz 2 "können...in Anspruch nehmen" (optional,
+  vierteljährlich, nur Grad 4/5) — exakt umgekehrt zur Fork-Behauptung.
+  Bestehender Seitentext war bereits korrekt, unverändert gelassen.
+- Alle Änderungen live deployed + per `curl` gegengeprüft, committed+
+  gepusht (`7dbe4bc`).
+- **Lehre (für künftige Agent-/Fork-Läufe zu Rechtsfragen):** ein Fund
+  mit plausibel klingender Begründung ist kein Beweis — bei jeder
+  Rechtsbehauptung mit Pflicht/Optional-Unterscheidung lohnt sich ein
+  direkter Primärquellen-Zitat-Check, auch wenn der Fund vom eigenen
+  Fork-Aufruf stammt, nicht nur bei fremden Quellen.
+- **[OFFEN]:** Kein separater `legal-compliance`-Zweitprüfer-Lauf
+  (Komplexitäts-Gate) — eigene Primärquellen-Verifikation statt
+  Agentenlauf, konsistent mit dem gesamten heutigen Verlauf.
+
+## Nachtrag 2026-11-27 (8) — Reload-Scroll-Fix + generisches Neuigkeiten-Overlay + 2 Missverständlichkeits-Funde behoben (grimmige Vollprüfung: Fortsetzung + Abschluss in Nachtrag (9))
 - **[ERLEDIGT] Reload springt zum Anfang:** `history.scrollRestoration =
   'manual'` (ganz am Anfang von `<head>`, muss vor jedem Layout gesetzt
   werden) + `window.scrollTo(0,0)` in der Init-Logik. Browser-nativer
