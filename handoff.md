@@ -1,5 +1,40 @@
 # Handoff — Pflege-Faktencheck (ex Pflege-Fakten / YNA Digital), 2026-11-15
 
+## Nachtrag 2026-11-27 (7) — Zurück-Button fehlte nach Sprung zu Innen-Anker, jetzt strukturell behoben
+René-Fund per Screenshot: "Wenn die Kraft nachlässt"/Belastungs-
+Selbstcheck zeigte keinen Zurück-Button. **Root-Cause:** `jump()` trug
+nur beim Sprung zu einem `.topic`-Element einen Eintrag in
+`topicHistory` ein — Sprünge zu einem Innen-Anker (z. B.
+`belastungstest-de`, kein `.topic`-Element) liefen durch einen separaten
+`else`-Zweig ganz ohne History-Push. Beide Fälle laufen jetzt durch
+dieselbe Reveal+History-Logik (`targetTopic` wird einheitlich über
+`el.classList.contains('topic') ? el : el.closest('main > section.topic')`
+ermittelt), die Zweige unterscheiden sich nur noch im finalen Scroll-
+Ziel. Lokal per Playwright verifiziert (Innen-Anker-Sprung UND normaler
+Themen-Sprung beide korrekt), live deployed, committed (`555dbbd`).
+René hat den Fix anschließend live bestätigt ("jetzt habe ich... den
+Zurück-Button der zur letzten aufgerufenen Seite führt").
+
+## Nachtrag 2026-11-27 (6) — SGB-XII-Fakten ins facts-Backend aufgenommen
+Fortsetzung von Nachtrag (4): der bestehende `crawl.js`/Newsletter-
+Mechanismus deckte bisher nur 7 SGB-XI-Fakten ab, nicht die neuen SGB-
+XII-Zahlen des Haushaltshilfe-Sozialamt-Abschnitts. `server/db.js`
+(CHECK-Constraint-Migration für `source_type: 'sgb12_html'`, 3 neue
+Fakten: Regelbedarfsstufe 1/Schonvermögen §90/Einkommensgrenze §85),
+`scrapers/index.js` (Routing auf den bestehenden generischen HTML-
+Scraper, keine neue Datei nötig), `server.js` (Aufruf von
+`seedSgb12IfMissing()` beim Start). Migration vor dem Live-Deploy gegen
+eine ECHTE Kopie der Produktions-DB getestet (`sqlite3 .backup`, nicht
+nur `cp` — WAL-Modus hätte sonst nur die 4-KB-Kopfseite kopiert, ein
+reales Near-Miss beim ersten Backup-Versuch, rechtzeitig per
+Größenvergleich gegen die bekannten Tages-Backups bemerkt und korrigiert
+BEVOR die Migration lief). `integrity_check=ok`, `foreign_key_check`
+leer, Idempotenz bestätigt. Live deployed (Service kurz gestoppt,
+Dateien per `md5`/`md5sum` gegengeprüft, `GET /api/public/facts` zeigt
+alle 3 neuen Einträge), committed (`d929cc7`).
+- **[OFFEN]:** Noch kein echter `crawl.js`-Lauf gegen diese 3 neuen
+  Fakten beobachtet (nächster wöchentlicher Timer-Lauf, Mo 03:00).
+
 ## Nachtrag 2026-11-27 (5) — Belastungs-Selbstcheck zusätzlich unter "unsicher" verlinkt
 Kein Bug — René zeigte per Screenshot, dass auch bei der Situation "Ich
 weiß noch nicht, ob ein Pflegegrad nötig ist" ein Zugang zum Belastungs-
