@@ -1,5 +1,32 @@
 # Handoff — Pflege-Faktencheck (ex Pflege-Fakten / YNA Digital), 2026-11-15
 
+## Nachtrag 2026-11-27 — Eigenanteil-Rechner-Fund behoben + neuer Themenabschnitt Haushaltshilfe/Sozialamt
+René-Direktive "Dringend", zwei Teile:
+- **[ERLEDIGT] Korrektur:** "Eigenanteil-Rechner" zeigte nur den Leistungsbetrag
+  der Pflegekasse pro Pflegegrad, nicht den tatsächlichen Eigenanteil (ohne
+  Einzelfall-/Einrichtungskosten nicht seriös berechenbar — Tool selbst
+  weist das bereits im Footnote-Text aus). Konsistent zu "Leistungs-Rechner"/
+  "Benefit calculator" umbenannt (4 Stellen), Lead-Text um Klarstellung
+  ergänzt (DE+EN). Kein Rebuild der Berechnung nötig — nur das Label war
+  irreführend, die Zahlen selbst waren korrekt.
+- **[ERLEDIGT] Neuer Themenabschnitt "Haushaltshilfe über das Sozialamt"
+  (§ 66 SGB XII):** aus Renés strukturierter Vorlage verarbeitet. Kernzahlen
+  vorab per WebSearch gegen echte Primärquellen verifiziert (563 €
+  Regelbedarfsstufe 1 2026, Nullrunde; 10.000 €/20.000 € Schonvermögen
+  § 90 SGB XII) statt ungeprüft übernommen. PNOG-2027-Reformeffekt
+  (Entfall 131-€-Entlastungsbetrag bei PG1), § 85 Einkommensgrenze-Formel
+  inkl. Beispiel, § 87 Überschreitungs-Regelung, Bürgergeld-Abgrenzung.
+  Schonvermögen bewusst NICHT dupliziert (Querverweis auf bestehenden
+  Abschnitt). Sidebar-Tab, 2 Topic-Cards DE+EN, next-nav-Kette,
+  LEGAL_HTML-Quellen ergänzt.
+- Beide Änderungen in EINER Datei (`index.html`), gemerged mit 2
+  bereits bestehenden, aber noch nicht deployten Commits aus einer
+  anderen Session (Pflege-WG-Anschubfinanzierung 2.613 €/10.452 €,
+  Hausnotruf-Zuschuss 27 €) — alle drei Fixes jetzt gemeinsam live.
+- **[OFFEN]:** Kein `legal-compliance`-Zweitprüfer-Lauf (Komplexitäts-
+  Gate, direkte René-Anweisung mit "Dringend", eigene Primärquellen-
+  Verifikation durchgeführt statt Agentenlauf).
+
 ## Nachtrag 2026-11-21 (36) — Nächtliche Content-Automatisierung + echtes Favicon für Google
 René-Direktive: tägliche Automatisierung analog EvidenzKompass, explizit OHNE Freigabe-Pflicht
 (überschreibt die ursprüngliche Scoping-Entscheidung vom 2026-11-15 "Freigabe-Pflicht vor
