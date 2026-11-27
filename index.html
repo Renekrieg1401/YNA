@@ -86,6 +86,15 @@
     --header-h:126px;
   }
   *{box-sizing:border-box}
+  /* René-Fund 2026-11-27 (echtes Geraet-Screenshot): <button> hat im
+     User-Agent-Stylesheet standardmaessig text-align:center -- bei
+     einzeiligem Text unsichtbar, erst wenn Text (z.B. in .toclink)
+     auf eine zweite Zeile umbricht, zentriert sich NUR diese zweite
+     Zeile sichtbar. René-Vorgabe "Texte immer linksbuendig" generell
+     hier als Reset fuer ALLE Buttons der Seite durchgesetzt, statt nur
+     die eine gemeldete Stelle zu patchen -- verhindert denselben Bug
+     an jeder anderen Button-Klasse mit potenziell mehrzeiligem Text. */
+  button{text-align:left}
   html{scroll-behavior:smooth;background:#131B27!important;overflow-x:hidden}
   body{
     margin:0;color:#E7E2D6!important;font-family:var(--font-body);font-size:18px;line-height:1.65;
